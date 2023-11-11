@@ -1,0 +1,20 @@
+# Node.js
+node_modules/
+
+# Build directory
+dist/
+
+# Vite cache
+.cache/
+
+# Temporary files
+.DS_Store
+Thumbs.db
+
+# Dependency directories
+/.yarn
+.pnp.*
+
+# Optional: IDE/Editor-specific files
+.idea/
+.vscode/
