@@ -1,3 +1,5 @@
+import * as data from "../data/Document.data";
+
 type Param = {
   doc: string;
   chapter: string;

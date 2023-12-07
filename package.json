@@ -8,6 +8,7 @@
     "vitepress": "^1.0.0-rc.25"
   },
   "devDependencies": {
-    "@types/node": "^20.9.0"
+    "@types/node": "^20.9.0",
+    "vitepress-sidebar": "^1.18.0"
   }
 }
