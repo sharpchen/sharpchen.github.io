@@ -5,8 +5,8 @@ node_modules/
 dist/
 
 # Vite cache
-.cache/
-
+.cache
+cache/
 # Temporary files
 .DS_Store
 Thumbs.db
