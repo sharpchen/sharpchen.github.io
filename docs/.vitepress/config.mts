@@ -15,7 +15,7 @@ export default defineConfig({
     },
     head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
     title: 'Documented Notes',
-    titleTemplate: 'UPIMMUNITY',
+    titleTemplate: 'sharpchen',
     description: 'Personal Documented Notes',
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
@@ -29,12 +29,12 @@ export default defineConfig({
         outline: {
             level: 'deep',
         },
-        socialLinks: [{ icon: 'github', link: 'https://github.com/UPIMMUNITY' }],
-        siteTitle: 'UpImmunity',
+        socialLinks: [{ icon: 'github', link: 'https://github.com/sharpchen' }],
+        siteTitle: 'sharpchen',
         externalLinkIcon: true,
         footer: {
             message: 'Powered by VitePress - 1.0.0-rc.25',
-            copyright: 'Copyright © 2023-present UpImmunity',
+            copyright: 'Copyright © 2023-present sharpchen',
         },
         lastUpdated: {
             text: 'Last updated',

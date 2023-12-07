@@ -10,4 +10,4 @@ rui.chen.sharp@gmail.com
 
 ## Github
 
-[UPIMMUNITY](https://github.com/UPIMMUNITY)
+[sharpchen](https://github.com/sharpchen)
