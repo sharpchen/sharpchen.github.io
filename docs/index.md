@@ -15,19 +15,19 @@ hero:
 
 features:
   - title: SQL
-    details: SQL syntax for beginners
+    details: SQL syntax for beginners with MySQL
     icon: 📝
     linkText: Get started
-    link: document\Docker\2. Linux basics.md
+    link: /sql
   - title: Docker
     details: Ultimate Docker
     icon: 🐋
-    link: pages/DocList.md
+    link: /docker
     linkText: Get started
   - title: Design Patterns in C#
     details: Design Patterns in C#
     icon: 👾
-    link: \pages\Hello.md
+    link: /csharpdesignpatterns
     linkText: Get started
 ---
 
