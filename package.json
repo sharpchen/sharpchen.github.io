@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
+    "shikiji": "^0.8.0",
     "vitepress-sidebar": "^1.18.0"
   }
 }

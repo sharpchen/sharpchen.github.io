@@ -149,3 +149,21 @@ export function getSidebar(): DefaultTheme.Sidebar | undefined {
         })
         .flat();
 }
+import * as shikiji from 'shikiji';
+import * as fs from 'fs';
+import path from 'path';
+type CustomMarkdownTheme = 'Eva-Dark' | 'Eva-Light' | 'Rider-Dark' | 'Darcula' | 'vscode-dark-plus';
+export async function getRegisteredMarkdownTheme(
+    theme: CustomMarkdownTheme
+): Promise<shikiji.ThemeRegistration> {
+    let isThemeRegistered = (await shikiji.getSingletonHighlighter())
+        .getLoadedThemes()
+        .find(x => x === theme);
+    if (!isThemeRegistered) {
+        const myTheme = JSON.parse(
+            fs.readFileSync(path.join(projectRoot().fullName, `public/${theme}.json`), 'utf8')
+        );
+        (await shikiji.getSingletonHighlighter()).loadTheme(myTheme);
+    }
+    return (await shikiji.getSingletonHighlighter()).getTheme(theme);
+}
