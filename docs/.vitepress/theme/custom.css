@@ -2,3 +2,10 @@
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: -webkit-linear-gradient(120deg, rgb(86, 34, 191), rgb(251, 70, 202));
   }
+.VPImage {
+  border-radius: 20%;
+}
+
+/* .markdown-page {
+  
+} */

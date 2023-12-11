@@ -3,16 +3,8 @@
 layout: home
 title: "Home"
 hero:
-  name: "Welcome to my"
-  text: "Personal Documented Notes"
-  actions:
-    - theme: brand
-      text: Markdown Examples
-      # link: /markdown-examples
-    - theme: alt
-      text: API Examples
-      # link: /api-examples
-
+  name: "Documents"
+  # text: "Personal Documented Notes"
 features:
   - title: SQL
     details: SQL syntax for beginners with MySQL
@@ -28,6 +20,36 @@ features:
     details: Design Patterns in C#
     icon: 👾
     link: /csharpdesignpatterns
+    linkText: Get started
+  - title: JavaScript
+    details: JavaScript for C# developer
+    icon: 🦖
+    link: /javascript
+    linkText: Get started
+  - title: TypeScript
+    details: TypeScript for C# developer
+    icon: ⌨
+    link: /
+    linkText: Get started
+  - title: Rust
+    details: Rust for C# developer
+    icon: 🦀
+    link: /
+    linkText: Get started
+  - title: Python
+    details: Python for C# developer
+    icon: 🐍
+    link: /
+    linkText: Get started
+  - title: Java
+    details: Java for C# developer
+    icon: ☕
+    link: /
+    linkText: Get started
+  - title: Vue3
+    details: Vue3 for .NET blazor developer
+    icon: ⚡
+    link: /
     linkText: Get started
 ---
 
