@@ -775,7 +775,6 @@
             "name": "comment | 注释",
             "scope": "comment,comment markup.link,punctuation.definition.comment,markup.quote.markdown",
             "settings": {
-                "fontStyle": "italic",
                 "foreground": "#676E95"
             }
         },

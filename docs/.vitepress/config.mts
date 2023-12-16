@@ -1,9 +1,5 @@
-import { DefaultTheme, PageData, defineConfig } from 'vitepress';
-import { Sidebar, generateSidebar } from 'vitepress-sidebar';
-import { DirectoryInfo, Path, documentRoot, projectRoot } from '../shared/FileSystem';
+import { defineConfig } from 'vitepress';
 import { getSidebar } from '../shared/utils';
-import * as shikiji from 'shikiji';
-import * as fs from 'fs';
 import { getRegisteredMarkdownTheme } from '../shared/utils';
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -11,7 +7,7 @@ export default defineConfig({
         lineNumbers: true,
         theme: {
             light: await getRegisteredMarkdownTheme('Eva-Light'),
-            dark: 'dark-plus', // await getRegisteredMarkdownTheme('vscode-dark-plus'),
+            dark: await getRegisteredMarkdownTheme('Eva-Dark'),
         },
     },
     locales: {
