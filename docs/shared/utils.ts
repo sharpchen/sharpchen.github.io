@@ -39,10 +39,7 @@ export type DocumentPrevAndNext = {
     link: string;
 };
 import { DocumentResponse } from '../data/Document.data';
-export function getPrevNext(
-    docRoute: string,
-    currentDocData: DocumentResponse
-): DocumentPrevAndNext[] {
+export function getPrevNext(docRoute: string, currentDocData: DocumentResponse): DocumentPrevAndNext[] {
     const chain: DocumentPrevAndNext[] = [];
     const docInfo = currentDocData;
     if (docInfo.content.chapters.length > 0) {
@@ -104,11 +101,7 @@ export function getSidebar(): DefaultTheme.Sidebar | undefined {
                 docDir: x.getDirectories().filter(d => d.name === 'docs')[0],
             };
         })
-        .filter(
-            x =>
-                registeredDocs.filter(y => y.params.docRoute === routeNameOfDocument(x.name))
-                    .length !== 0
-        );
+        .filter(x => registeredDocs.filter(y => y.params.docRoute === routeNameOfDocument(x.name)).length !== 0);
     // generate sidebar for each docDir
     return docParents
         .map(x => {
@@ -116,15 +109,17 @@ export function getSidebar(): DefaultTheme.Sidebar | undefined {
             if (x.docDir.getDirectories().length !== 0) {
                 const subs = x.docDir.getDirectories();
                 return {
-                    text: x.name,
+                    // chapter level
+                    text: getDocNameWithEmoji(x.name),
                     collapsed: true,
                     items: subs.map(s => {
                         return {
+                            // doc level
                             collapsed: true,
                             text: s.name,
                             items: s.getFiles().map(f => {
                                 return {
-                                    text: f.name,
+                                    text: Path.GetFileNameWithoutExtension(f.fullName),
                                     link: Path.GetRelativePath(projectRoot().fullName, f.fullName),
                                 };
                             }),
@@ -134,12 +129,12 @@ export function getSidebar(): DefaultTheme.Sidebar | undefined {
             } else {
                 return {
                     collapsed: true,
-                    text: x.name,
+                    text: getDocNameWithEmoji(x.name),
                     items: x.docDir
                         .getFiles()
                         .map(f => {
                             return {
-                                text: f.name,
+                                text: Path.GetFileNameWithoutExtension(f.fullName),
                                 link: Path.GetRelativePath(projectRoot().fullName, f.fullName),
                             };
                         })
@@ -153,17 +148,21 @@ import * as shikiji from 'shikiji';
 import * as fs from 'fs';
 import path from 'path';
 type CustomMarkdownTheme = 'Eva-Dark' | 'Eva-Light' | 'Rider-Dark' | 'Darcula' | 'vscode-dark-plus';
-export async function getRegisteredMarkdownTheme(
-    theme: CustomMarkdownTheme
-): Promise<shikiji.ThemeRegistration> {
-    let isThemeRegistered = (await shikiji.getSingletonHighlighter())
-        .getLoadedThemes()
-        .find(x => x === theme);
+export async function getRegisteredMarkdownTheme(theme: CustomMarkdownTheme): Promise<shikiji.ThemeRegistration> {
+    let isThemeRegistered = (await shikiji.getSingletonHighlighter()).getLoadedThemes().find(x => x === theme);
     if (!isThemeRegistered) {
-        const myTheme = JSON.parse(
-            fs.readFileSync(path.join(projectRoot().fullName, `public/${theme}.json`), 'utf8')
-        );
+        const myTheme = JSON.parse(fs.readFileSync(path.join(projectRoot().fullName, `public/${theme}.json`), 'utf8'));
         (await shikiji.getSingletonHighlighter()).loadTheme(myTheme);
     }
     return (await shikiji.getSingletonHighlighter()).getTheme(theme);
+}
+import * as featureData from '../data/Features.data';
+function getDocNameWithEmoji(docName: string): string {
+    const features = featureData.default.load();
+    if (docName.toLowerCase() === 'articles') return `📰  ${docName}`;
+    const emoji = features.find(x => x.title === docName)?.icon;
+    if (emoji) {
+        return `${emoji}  ${docName}`;
+    }
+    return docName;
 }

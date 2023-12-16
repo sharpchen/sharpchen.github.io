@@ -101,6 +101,13 @@ export abstract class Path {
     static GetBaseName(fullName: string) {
         return path.basename(fullName);
     }
+    static GetFileNameWithoutExtension(path: string): string {
+        const fileName: string = new FileInfo(path).name;
+        const lastPeriod: number = fileName.lastIndexOf('.');
+        return lastPeriod < 0
+            ? fileName // No extension was found
+            : fileName.slice(0, lastPeriod);
+    }
 }
 
 export function projectRoot(): DirectoryInfo {

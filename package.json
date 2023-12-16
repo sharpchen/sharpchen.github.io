@@ -5,6 +5,8 @@
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
+    "gray-matter": "^4.0.3",
+    "linq": "^4.0.2",
     "vitepress": "^1.0.0-rc.25"
   },
   "devDependencies": {

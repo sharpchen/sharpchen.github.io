@@ -4,6 +4,8 @@ const object = {
         { params: { docRoute: 'javascript' } },
         { params: { docRoute: 'sql' } },
         { params: { docRoute: 'csharpdesignpatterns' } },
+        { params: { docRoute: 'articles' } },
+        { params: { docRoute: 'vue3' } },
     ],
 };
 

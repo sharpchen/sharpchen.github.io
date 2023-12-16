@@ -1,18 +1,21 @@
 {
-    "overrides": [
-      {
-        "files": ["*.vue","*.ts","*.mts","*.js"],
-        "options": {
-          "printWidth": 100,
-          "singleQuote": true,
-          "semi": true,
-          "htmlWhitespaceSensitivity": "ignore",
-          "tabWidth": 4,
-          "vueIndentScriptAndStyle": true,
-          "arrowParens": "avoid"
-        }
-    
+  "overrides": [
+    {
+      "files": [
+        "*.vue",
+        "*.ts",
+        "*.mts",
+        "*.js"
+      ],
+      "options": {
+        "singleQuote": true,
+        "semi": true,
+        "htmlWhitespaceSensitivity": "ignore",
+        "tabWidth": 4,
+        "vueIndentScriptAndStyle": true,
+        "arrowParens": "avoid",
+        "printWidth": 120
       }
-    ]
-  }
-  
+    }
+  ]
+}
