@@ -38,11 +38,6 @@ features:
     icon: 🐍
     link: /
     linkText: Get started
-  - title: Java
-    details: Java for C# developer
-    icon: ☕
-    link: /
-    linkText: Get started
   - title: Vue3
     details: Vue3 for .NET blazor developer
     icon: ⚡

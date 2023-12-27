@@ -1,7 +1,7 @@
 using Xunit;
 using Autofac;
 
-namespace CsharpDesignPatternsDemo.Creational.Singleton;
+namespace CSharpDesignPatternsDemo.Creational.Singleton;
 class OrdinaryClass
 {
     public OrdinaryClass() { }

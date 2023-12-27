@@ -1,4 +1,4 @@
-namespace CsharpDesignPatternsDemo.Creational.Singleton;
+namespace CSharpDesignPatternsDemo.Creational.Singleton;
 class Singleton
 {
     private static readonly Lazy<Singleton> _instance = new(() => new());

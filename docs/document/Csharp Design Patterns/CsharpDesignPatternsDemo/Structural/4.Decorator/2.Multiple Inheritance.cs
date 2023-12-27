@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Xunit;
-namespace CsharpDesignPatternsDemo.Structural.Decorator;
+﻿using Xunit;
+namespace CSharpDesignPatternsDemo.Structural;
 interface ICreature
 {
     int Age { get; set; }

@@ -1,5 +1,5 @@
 using Xunit;
-namespace CsharpDesignPatternsDemo.Creational.Singleton;
+namespace CSharpDesignPatternsDemo.Creational.Singleton;
 
 class AmbientContext : IDisposable
 {

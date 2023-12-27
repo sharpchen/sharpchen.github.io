@@ -1,7 +1,6 @@
 ﻿using System.Text;
-using System.Xml.Serialization;
 
-namespace CsharpDesignPatternsDemo.Structural.Decorator;
+namespace CSharpDesignPatternsDemo.Structural;
 
 class CustomStringBuilder
 {

@@ -1,11 +1,11 @@
 ﻿using System.Drawing;
 using Xunit;
-namespace CsharpDesignPatternsDemo.Structural.Composite;
+namespace CSharpDesignPatternsDemo.Structural.Composite;
 
 class Graphic
 {
     public Color Color { get; set; }
-    public string Name => this.GetType().Name;
+    public string Name => nameof(Graphic);
     protected readonly Lazy<List<Graphic>> children = new();
     public void AddChildren(params Graphic[] child) => child.ToList().ForEach(children.Value.Add);
     public void Display()

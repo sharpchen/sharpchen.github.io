@@ -1,7 +1,7 @@
 using Xunit;
 using Xunit.Abstractions;
 
-namespace CsharpDesignPatternsDemo.Structural.Adapter;
+namespace CSharpDesignPatternsDemo.Structural.Adapter;
 
 internal interface IAdapteeCannotImpl
 {

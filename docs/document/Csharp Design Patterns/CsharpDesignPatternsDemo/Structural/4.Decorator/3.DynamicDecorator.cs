@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Text;
 
-namespace CsharpDesignPatternsDemo.Structural.Decorator.DynamicDecorator;
+namespace CSharpDesignPatternsDemo.Structural.Decorator;
 
 interface IShape
 {
@@ -93,7 +93,7 @@ class ShapeWithTransparency : DecoratorForShapeWithPolicy<ThrowOnConstructionPol
     }
 }
 
-public class Test
+public class DynamicDecoratorTest
 {
     [Fact]
     public void TestName()

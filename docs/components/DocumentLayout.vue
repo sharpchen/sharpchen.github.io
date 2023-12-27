@@ -19,4 +19,6 @@
         console.log('route changed');
         console.log(useRoute().data);
     };
+
+    onMounted(() => {});
 </script>

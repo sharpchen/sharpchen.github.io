@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 using Xunit;
-namespace CsharpDesignPatternsDemo.Structural.Composite;
+namespace CSharpDesignPatternsDemo.Structural;
 
 class Neuron : IEnumerable<Neuron>
 {

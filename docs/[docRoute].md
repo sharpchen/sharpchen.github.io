@@ -5,11 +5,11 @@
     import { mdLinkToHtmlLink, routeNameOfDocument } from './shared/utils';
     import { DefaultTheme } from 'vitepress'
     import Enumerable from 'linq';
-    
+
     const { params } = useData();
     onMounted(() => {
         const { sidebarGroups } = useSidebar();
-        console.log(`first link of ${params.value!.docRoute}`,getFirstDocLink(sidebarGroups.value, params.value!.docRoute))
+        console.log(`first link of ${params.value!.docRoute}`, getFirstDocLink(sidebarGroups.value, params.value!.docRoute))
         window.location.replace(getFirstDocLink(sidebarGroups.value, params.value!.docRoute));
     })
 

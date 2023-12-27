@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Xunit;
-namespace CsharpDesignPatternsDemo.Structural.Bridge;
+namespace CSharpDesignPatternsDemo.Structural.Bridge;
 
 interface IRenderer
 {
