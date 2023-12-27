@@ -1,12 +1,13 @@
 <template>
     <div class="site-footer">
         MIT Licensed | Copyright © 2023-present
-        <a class="bold" href="https://github.com/sharpchen/sharpchen.github.io" target="_blank">
-            {{ webTitle }}
-        </a>
+        <a class="bold" href="https://github.com/sharpchen/sharpchen.github.io" target="_blank">@{{ webTitle }}</a>
         <br />
         Powered by
         <a class="bold" target="_blank" href="//vitepress.vuejs.org/">VitePress - 1.0.0-rc.25</a>
+        <!-- <br />
+        Markdown Themed by
+        <a class="bold" target="_blank" href="https://github.com/fisheva/Eva-Theme">Eva-Theme@fisheva</a> -->
     </div>
 </template>
 
