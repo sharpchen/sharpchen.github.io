@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Text;
 using Xunit;
-namespace CsharpDesignPatternsDemo.Structural.Adapter;
+namespace CSharpDesignPatternsDemo.Structural;
 
 #region Implementation for Numerics Only
 // class Vector<TData, TDim> :

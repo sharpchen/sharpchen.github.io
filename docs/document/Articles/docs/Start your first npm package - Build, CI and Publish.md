@@ -30,7 +30,7 @@ Init your repository and add `.gitignore`
 git init
 ```
 
-```gitignore
+```txt
 dist
 node_modules
 ```
@@ -348,7 +348,7 @@ jobs:
 `.npmignore` excludes the files we don't want to release in npm as a package.
 We should exclude all develop-stage files but compiled files in `./dist` and `package.json`, `CHANGELOG.md` as well as `LICENSE`.
 
-```npmignore
+```txt
 src
 .changeset
 .github

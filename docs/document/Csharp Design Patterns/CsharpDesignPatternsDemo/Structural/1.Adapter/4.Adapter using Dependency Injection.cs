@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Xunit;
-namespace CsharpDesignPatternsDemo.Structural.Adapter;
+namespace CSharpDesignPatternsDemo.Structural;
 
 interface ICommand
 {
@@ -32,7 +32,7 @@ class Editor
 }
 
 
-public class Test
+public class Test1
 {
     [Fact]
     public void DependencyInjectionTest()

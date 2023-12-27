@@ -1,4 +1,4 @@
-﻿namespace CsharpDesignPatternsDemo.Structural.Composite;
+﻿namespace CSharpDesignPatternsDemo.Structural;
 
 abstract class Specification<T>
 {

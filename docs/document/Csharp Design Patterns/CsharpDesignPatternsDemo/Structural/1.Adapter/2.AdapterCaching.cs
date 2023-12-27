@@ -1,7 +1,7 @@
 using Xunit;
 using System.Collections.ObjectModel;
 
-namespace CsharpDesignPatternsDemo.Structural.Adapter;
+namespace CSharpDesignPatternsDemo.Structural;
 
 record class Point(int X, int Y) : IGeometry
 {

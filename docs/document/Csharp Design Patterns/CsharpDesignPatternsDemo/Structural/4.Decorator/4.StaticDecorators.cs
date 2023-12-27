@@ -1,7 +1,7 @@
 using System.Drawing;
 using Xunit;
 
-namespace CsharpDesignPatternsDemo.Structural.Decorator.StaticDecorator;
+namespace CSharpDesignPatternsDemo.Structural;
 
 abstract class Shape
 {
@@ -30,7 +30,7 @@ class ShapeWithTransparency<T> : Shape where T : Shape, new()
     public ShapeWithTransparency() : base(default) { }
     public override string AsString() => $"{Shape.AsString()} with transparency {transparency}";
 }
-public class Test
+public class StaticDecoratorTest
 {
     [Fact]
     public void TestName()

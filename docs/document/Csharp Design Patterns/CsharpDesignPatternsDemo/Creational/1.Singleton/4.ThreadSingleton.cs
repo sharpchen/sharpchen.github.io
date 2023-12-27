@@ -1,4 +1,4 @@
-namespace CsharpDesignPatternsDemo.Creational.Singleton;
+namespace CSharpDesignPatternsDemo.Creational.Singleton;
 
 using Xunit;
 
