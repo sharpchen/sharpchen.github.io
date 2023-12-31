@@ -18,11 +18,43 @@
   --vp-c-bg-elv: #282c34;
   --vp-c-bg-soft: #282c34;
   /* inline code color */
-  --vp-code-color: #2dbc24
-    /*#a78cfa*/
-  ;
+  --vp-code-color: #2dbc24;
 }
 
 .VPImage {
   border-radius: 20%;
 }
+
+/* #region impl blur bav-bar */
+:root {
+  --nav-c-bg: rgba(255, 255, 255, 0.5);
+}
+
+.dark {
+  --nav-c-bg: rgba(30, 30, 32, 0.5);
+}
+
+.curtain {
+  display: none !important;
+}
+
+.fill {
+  background: transparent !important;
+}
+
+.content-body {
+  background: var(--nav-c-bg) !important;
+}
+
+.content-body::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: saturate(180%) blur(5px);
+  z-index: -1;
+}
+
+/* #endregion */
