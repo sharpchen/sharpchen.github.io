@@ -1,5 +1,5 @@
-import { type Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
 import matter from 'gray-matter';
+import { type Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
 // const matter = require('gray-matter');
 const featuresLiteral = `---
 features:
@@ -42,6 +42,11 @@ features:
     details: Vue3 for .NET blazor developer
     icon: ⚡
     link: /vue3
+    linkText: Get started
+  - title: CesiumJS
+    details: CesiumJS with vite
+    icon: 🌏
+    link: /cesiumjs
     linkText: Get started
 ---
 `;
