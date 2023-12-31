@@ -1,4 +1,4 @@
-# Integrating Cygwin with VSCode in Windows
+# Integrating `Cygwin` with `VSCode` in Windows
 
 ## Installation
 
@@ -6,9 +6,9 @@ Follow guide from [Cygwin](https://cygwin.com/).
 
 ## Add terminal profile in `settings.json`
 
-Add new profile for cygwin, this will register a new option when we choose to launch a new integrated terminal.
+Add new profile for `cygwin`, this will register a new option when we choose to launch a new integrated terminal.
 
-```json{15, 19}
+```json{15-19}
 {
     "terminal.integrated.profiles.windows": {
         "PowerShell": {
@@ -33,6 +33,7 @@ Add new profile for cygwin, this will register a new option when we choose to la
 ```
 
 Then we got a new option to create a integrated terminal.
+
 ![cygwin-option](../pics/cygwin-profile.png)
 
 :::info
@@ -41,7 +42,7 @@ For more information: [Terminal Profiles](https://code.visualstudio.com/docs/ter
 
 ## Change default working directory of cygwin in `.bashrc`
 
-The default working directory of cygwin is `{installation-path}\home\{username}` like `C:\cygwin64\home\anon`.
+The default working directory of `cygwin` is `{installation-path}\home\{username}` like `C:\cygwin64\home\anon`.
 
 You might like to launch cygwin with working directory as the root of current user.
 
