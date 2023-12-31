@@ -1,6 +1,5 @@
 import { defineConfig } from 'vitepress';
-import { getSidebar } from '../shared/utils';
-import { getRegisteredMarkdownTheme } from '../shared/utils';
+import { getRegisteredMarkdownTheme, getSidebar } from '../shared/utils';
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
     markdown: {
