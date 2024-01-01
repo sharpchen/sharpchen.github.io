@@ -5,8 +5,8 @@ export default defineConfig({
     markdown: {
         lineNumbers: true,
         theme: {
-            light: await getRegisteredMarkdownTheme('Eva-Light'),
-            dark: await getRegisteredMarkdownTheme('Eva-Dark'),
+            light: await getRegisteredMarkdownTheme('Eva Light'),
+            dark: await getRegisteredMarkdownTheme('Eva Dark'),
         },
     },
     locales: {
