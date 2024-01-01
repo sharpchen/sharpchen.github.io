@@ -34,34 +34,6 @@ export function mdLinkToHtmlLink(mdLink: string) {
     return mdLink;
 }
 
-export type DocumentPrevAndNext = {
-    text: string;
-    link: string;
-};
-import { DocumentResponse } from '../data/Document.data';
-export function getPrevNext(docRoute: string, currentDocData: DocumentResponse): DocumentPrevAndNext[] {
-    const chain: DocumentPrevAndNext[] = [];
-    const docInfo = currentDocData;
-    if (docInfo.content.chapters.length > 0) {
-        const chapters = docInfo.content.chapters.sort((x, y) => x.name.localeCompare(y.name));
-        chapters.forEach(c => {
-            c.filesRelativeToProjectRoot
-                ?.map(x => {
-                    return { text: x.substring(x.lastIndexOf('/') + 1), link: x };
-                })
-                ?.sort((x, y) => tryCompare(x.text, y.text))
-                .forEach(f => chain.push({ text: f.text, link: f.link }));
-        });
-    } else {
-        docInfo.content.filesRelativeToProjectRoot
-            ?.map(x => {
-                return { text: x.substring(x.lastIndexOf('/') + 1), link: x };
-            })
-            .sort((x, y) => tryCompare(x.text, y.text))
-            .forEach(f => chain.push({ text: f.text, link: f.link }));
-    }
-    return chain;
-}
 export function tryCompare(x: string, y: string): number {
     if (startsWithIndex(x) && startsWithIndex(y)) {
         const xNum = parseInt(x.substring(0, x.indexOf('.')));
@@ -147,7 +119,7 @@ export function getSidebar(): DefaultTheme.Sidebar | undefined {
 import * as shikiji from 'shikiji';
 import * as fs from 'fs';
 import path from 'path';
-type CustomMarkdownTheme = 'Eva-Dark' | 'Eva-Light' | 'Rider-Dark' | 'Darcula' | 'vscode-dark-plus';
+type CustomMarkdownTheme = 'Eva Dark' | 'Eva Light' | 'Rider Dark' | 'Darcula';
 export async function getRegisteredMarkdownTheme(theme: CustomMarkdownTheme): Promise<shikiji.ThemeRegistration> {
     let isThemeRegistered = (await shikiji.getSingletonHighlighter()).getLoadedThemes().find(x => x === theme);
     if (!isThemeRegistered) {
