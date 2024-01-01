@@ -41,12 +41,12 @@ jobs:
         with:
           node-version: 18
           cache: pnpm # or pnpm / yarn
+      - name: Install dependencies
+        run: pnpm install # or npm ci # or pnpm install / yarn install / bun install
       - name: Sync markdown themes
         run: node ./.github/workflows/beforeBuild/script.mjs
       - name: Setup Pages
         uses: actions/configure-pages@v3
-      - name: Install dependencies
-        run: pnpm install # or npm ci # or pnpm install / yarn install / bun install
       - name: Build with VitePress
         run: |
           pnpm docs:build # or npm run docs:build / yarn docs:build / bun run docs:build
