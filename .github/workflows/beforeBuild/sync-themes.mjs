@@ -4,9 +4,9 @@ import * as JSONC from 'jsonc-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-export const themes = {
-    'Eva Dark': 'https://raw.githubusercontent.com/fisheva/Eva-Theme/master/themes/Eva-Dark.json',
-    'Eva Light': 'https://raw.githubusercontent.com/fisheva/Eva-Theme/master/themes/Eva-Light.json',
+const themes = {
+    'Eva Dark': 'https://raw.githubusercontent.com/sharpchen/Eva-Theme/variant/themes/Eva-Dark.json',
+    'Eva Light': 'https://raw.githubusercontent.com/sharpchen/Eva-Theme/variant/themes/Eva-Light.json',
 };
 export const jsonOutDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../docs/public/');
 
