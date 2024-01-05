@@ -44,7 +44,7 @@ features:
     link: /vue3
     linkText: Get started
   - title: CesiumJS
-    details: CesiumJS with vite
+    details: CesiumJS with vue3+vite
     icon: 🌏
     link: /cesiumjs
     linkText: Get started
