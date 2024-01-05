@@ -21,3 +21,7 @@ Thumbs.db
 
 demo
 *.log
+
+.vitepress/cache
+
+/docs/public/*.json

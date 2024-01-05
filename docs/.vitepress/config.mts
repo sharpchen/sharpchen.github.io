@@ -5,7 +5,9 @@ export default defineConfig({
     markdown: {
         lineNumbers: true,
         theme: {
+            // @ts-ignore
             light: await getRegisteredMarkdownTheme('Eva Light'),
+            // @ts-ignore
             dark: await getRegisteredMarkdownTheme('Eva Dark'),
         },
     },
