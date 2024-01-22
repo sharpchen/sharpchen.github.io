@@ -65,3 +65,11 @@ cat .bashrc
 ```
 
 - Launch a new cygwin instance, it will start at your user root.
+
+## Using System Proxy from Windows
+
+Switch to `~` , append `http_proxy` and `https_proxy` to `.bashrc`.
+
+```bash
+cd ~ && echo "export http_proxy=<proxy:port>" >> .bashrc && echo "export https_proxy=<proxy:port>" >> .bashrc
+```
