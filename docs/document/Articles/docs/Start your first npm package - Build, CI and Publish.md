@@ -125,7 +125,7 @@ And `lint` for get syntax checking.
 
 Now add `./src/index.ts` just for demonstration.
 
-```ts
+```ts twoslash
 export const hello = () => console.log('Hello!');
 ```
 
