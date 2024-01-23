@@ -48,7 +48,7 @@ export default defineConfig({
         },
         editLink: {
             pattern: ({ filePath }) => {
-                return `https://github.com/sharpchen/sharpchen.github.io/blob/main/docs/${filePath}`;
+                return `https://github.com/sharpchen/sharpchen.github.io/edit/main/docs/${filePath}`;
             },
             text: 'Edit this page on GitHub',
         },
