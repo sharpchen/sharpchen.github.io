@@ -1,20 +1,20 @@
-# Start your first source generator for `C#`
+# Start your first source generator for C #
 
-## Init your source generator project
+## Init your source generator project ##
 
-### Create a new classlib project for source generator
+### Create a new classlib project for source generator ###
 
 ```bash
 dotnet new classlib -n MySourceGenerator
 ```
 
-### Add dependencies
+### Add dependencies ###
 
 ```bash
 dotnet add package Microsoft.CodeAnalysis.Analyzers && dotnet add package Microsoft.CodeAnalysis.CSharp
 ```
 
-### Configure `.csproj` property
+### Configure `.csproj` property ###
 
 - Set `TargetFramework` as `netstandard2.0`, it's required, not an option.
 
@@ -36,15 +36,15 @@ dotnet add package Microsoft.CodeAnalysis.Analyzers && dotnet add package Micros
 
 ```
 
-## Init your console project for testing your generator
+## Init your console project for testing your generator ##
 
-### Create a new console project
+### Create a new console project ##
 
 ```bash
 dotnet new console -n WorkWithSourceGenerator
 ```
 
-### Reference source generator project in console project
+### Reference source generator project in console project ###
 
 Edit your `.csproj` in console project as following.
 
@@ -62,7 +62,7 @@ Edit your `.csproj` in console project as following.
 In this case, two projects are placed in a same folder.
 :::
 
-## Create a new generator
+## Create a new generator ##
 
 Create a new file in generator project, implement `IIncrementalGenerator` for your generator.
 
@@ -87,9 +87,9 @@ public class HelloSourceGenerator : IIncrementalGenerator
 Check out this: [Source generator updates: incremental generators](https://andrewlock.net/exploring-dotnet-6-part-9-source-generator-updates-incremental-generators/)
 :::
 
-## Start with `SyntaxProvider`
+## Start with `SyntaxProvider` ##
 
-### Filter what syntax node to work with
+### Filter what syntax node to work with ##
 
 :::info
 
