@@ -2,11 +2,13 @@
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress build docs && vitepress preview docs"
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
+    "@types/markdown-it": "^13.0.7",
     "gray-matter": "^4.0.3",
     "linq": "^4.0.2",
+    "markdown-it": "^14.0.0",
     "vitepress": "^1.0.0-rc.40"
   },
   "devDependencies": {
@@ -14,6 +16,7 @@
     "axios": "^1.6.3",
     "jsonc-parser": "^3.2.0",
     "shikiji": "^0.8.0",
+    "vitepress-plugin-twoslash": "^0.10.0",
     "vitepress-sidebar": "^1.18.0"
   },
   "type": "module"
