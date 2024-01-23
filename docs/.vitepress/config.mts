@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress';
 import { getRegisteredMarkdownTheme, getSidebar } from '../shared/utils';
+import { transformerTwoslash } from 'vitepress-plugin-twoslash';
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
     markdown: {
@@ -10,6 +11,7 @@ export default defineConfig({
             // @ts-ignore
             dark: await getRegisteredMarkdownTheme('Eva Dark'),
         },
+        codeTransformers: [transformerTwoslash()],
     },
     locales: {
         root: {
