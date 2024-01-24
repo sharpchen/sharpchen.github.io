@@ -17,10 +17,7 @@
     import { data as globalData } from '../data/global.data';
     const { site, theme } = useData();
     const webTitle = site.value.titleTemplate;
-    const vitepressVersion = ref<string | null>(null);
-    onBeforeMount(async () => {
-        vitepressVersion.value = globalData.vitepressVersion;
-    });
+    const vitepressVersion = ref<string | null>(globalData.vitepressVersion);
 </script>
 
 <style scoped>
