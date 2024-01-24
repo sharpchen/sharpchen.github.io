@@ -12,22 +12,15 @@
 </template>
 
 <script setup lang="ts">
-    import fs from 'fs';
-    import path from 'path';
     import { useData } from 'vitepress';
     import { onBeforeMount, ref } from 'vue';
-
+    import { data as globalData } from '../data/global.data';
     const { site, theme } = useData();
     const webTitle = site.value.titleTemplate;
     const vitepressVersion = ref<string | null>(null);
     onBeforeMount(async () => {
-        vitepressVersion.value = await getPackageVersion('vitepress');
+        vitepressVersion.value = globalData.vitepressVersion;
     });
-    const getPackageVersion = async (packageName: string): Promise<string> => {
-        const packageJsonPath = path.dirname(require.resolve(`${packageName}/package.json`));
-        const packageJson = JSON.parse(fs.readFileSync(`${packageJsonPath}/package.json`, 'utf-8'));
-        return packageJson.version;
-    };
 </script>
 
 <style scoped>
