@@ -16,8 +16,7 @@
     "axios": "^1.6.3",
     "jsonc-parser": "^3.2.0",
     "shikiji": "^0.8.0",
-    "vitepress-plugin-twoslash": "^0.10.0",
-    "vitepress-sidebar": "^1.18.0"
+    "vitepress-plugin-twoslash": "^0.10.0"
   },
   "type": "module"
 }
