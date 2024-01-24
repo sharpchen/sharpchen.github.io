@@ -18,4 +18,18 @@ winget install python -y
 
 Download installer from [FontForge on Windows](https://fontforge.org/en-US/downloads/windows/)
 
-Add
+Add new path to `PATH`
+
+```ps1
+$env:PATH += ';C:\Program Files (x86)\FontForgeBuilds\bin'
+```
+
+## Run patcher script
+
+Redirect to the folder you decompressed
+
+```bash
+fontforge --script ./font-patcher --complete <YOUR FONT FILE>
+```
+
+Created nerd font will be placed at where the script locates.
