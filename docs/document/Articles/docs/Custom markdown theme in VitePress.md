@@ -1,5 +1,9 @@
 # Custom markdown theme in VitePress
 
+:::warning
+`vitepress` migrated to `shiki` from `shikiji` since [1.0.0-rc41](https://github.com/vuejs/vitepress/blob/main/CHANGELOG.md#100-rc41-2024-2-1), this approach may have been deprecated.
+:::
+
 ## What are textmate rules
 
 TextMate grammars are for syntax highlighting and language support. The rules are defined in JSON format.
