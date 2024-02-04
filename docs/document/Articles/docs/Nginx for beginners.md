@@ -31,7 +31,7 @@ Let's start configuring `nginx.conf` from scratch. You can find this file in you
 
 - Edit your `nginx.conf` as. Double quote is optional.
 
-```text
+```nginx
 http {
     server {
         listen 8080;
@@ -53,7 +53,7 @@ events {}
 All contents are `text/plain` by default, but this will lead to some issue like isolated css not working for html.
 So, to serve different types of content, add file extensions matching to content types.
 
-```text
+```nginx
 http {
     types {
         text/css css;
@@ -70,7 +70,7 @@ events {}
 
 However, `nginx` has predefined many type matching in `mime.types`. Simply adding `include` in `nginx.conf` is just fine.
 
-```text
+```nginx
 http {
     include mime.types;
     server {
@@ -91,7 +91,7 @@ Location is similar to api route that works when we access `localhost:port/<rout
 To access `index.html` in a different folder, we can make a **location** in server.
     - Create a folder `product` with `index.html`.
 
-```text
+```nginx
 http {
     include mime.types;
     server {
@@ -110,7 +110,7 @@ events {}
 
 To make a alias for a location, since it's a alias, we don;t have to make a folder named 'item'.
 
-```text
+```nginx
 http {
     include mime.types;
     server {
@@ -132,7 +132,7 @@ events {}
 
 `nginx` serve `index.html` by default. So, if `index.html` is not what we want to access, we should have a way to resolve it. The following config will try to access `car/car.html` if it exist, or it will fall back to `/index.html`. If all files are failed, it should show a `404` error page.
 
-```text
+```nginx
 http {
     include mime.types;
     server {
@@ -158,7 +158,7 @@ events {}
 
 `nginx` supports regex notate with `~*` to match dynamic locations.
 
-```text
+```nginx
 http {
     include mime.types;
     server {
@@ -190,7 +190,7 @@ events {}
 
 Redirecting is jumping from a location to another. The following will redirect to `/product/index.html` when we access `localhost:8080/list`.
 
-```text
+```nginx
 http {
     include mime.types;
     server {
@@ -223,7 +223,7 @@ events {}
 
 Rewriting is another way to alias a location but with regex. The following rewrite will mapping all matched location to `/count/`.
 
-```text
+```nginx
 http {
     include mime.types;
     server {
