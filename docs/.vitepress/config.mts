@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress';
-import { getRegisteredMarkdownTheme, getSidebar } from '../shared/utils';
 import { transformerTwoslash } from 'vitepress-plugin-twoslash';
+import { getRegisteredMarkdownTheme, getSidebar } from '../shared/utils';
+import { fileURLToPath } from 'url';
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
     markdown: {

@@ -19,12 +19,11 @@ features:
 <VPFeatures :features="features"/>
 
 <script lang="ts" setup>
-  import VPHero from 'vitepress/dist/client/theme-default/components/VPHero.vue';
-  import VPFeatures from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
-  import { type Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
-  import { data } from './data/Features.data';
   import Enumerable from 'linq';
+import VPFeatures, { type Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
+import VPHero from 'vitepress/dist/client/theme-default/components/VPHero.vue';
+import { data } from './data/Features.data';
 
-  const features: Feature[] = Enumerable.from(data).orderBy(_x => Math.random()).toArray();
+  const features: Feature[] = Enumerable.from(data).orderBy(_x => Math.random()).toArray()
 
 </script>
