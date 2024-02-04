@@ -4,7 +4,7 @@ import * as JSONC from 'jsonc-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const themes = {
+export const themes = {
     'Eva Dark': 'https://raw.githubusercontent.com/sharpchen/Eva-Theme/variant/themes/Eva-Dark.json',
     'Eva Light': 'https://raw.githubusercontent.com/sharpchen/Eva-Theme/variant/themes/Eva-Light.json',
 };

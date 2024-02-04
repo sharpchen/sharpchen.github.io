@@ -57,9 +57,14 @@ function compareIntegers(a: number, b: number): number {
     }
 }
 
-import * as registeredInfo from '../[docRoute].paths';
-import { Path, documentRoot, projectRoot } from './FileSystem';
+import * as fs from 'fs';
+import path from 'path';
+import * as shikiji from 'shikiji';
 import { DefaultTheme } from 'vitepress';
+import { themes } from '../../.github/workflows/beforeBuild/sync-themes.mjs';
+import * as registeredInfo from '../[docRoute].paths';
+import * as featureData from '../data/Features.data';
+import { Path, documentRoot, projectRoot } from './FileSystem';
 export function getSidebar(): DefaultTheme.Sidebar | undefined {
     const docRoot = documentRoot();
     const registeredDocs = registeredInfo.default.paths();
@@ -116,10 +121,7 @@ export function getSidebar(): DefaultTheme.Sidebar | undefined {
         })
         .flat();
 }
-import * as shikiji from 'shikiji';
-import * as fs from 'fs';
-import path from 'path';
-type CustomMarkdownTheme = 'Eva Dark' | 'Eva Light' | 'Rider Dark' | 'Darcula';
+type CustomMarkdownTheme = keyof typeof themes; //'Eva Dark' | 'Eva Light' | 'Rider Dark' | 'Darcula';
 export async function getRegisteredMarkdownTheme(theme: CustomMarkdownTheme): Promise<shikiji.ThemeRegistration> {
     let isThemeRegistered = (await shikiji.getSingletonHighlighter()).getLoadedThemes().find(x => x === theme);
     if (!isThemeRegistered) {
@@ -128,7 +130,6 @@ export async function getRegisteredMarkdownTheme(theme: CustomMarkdownTheme): Pr
     }
     return (await shikiji.getSingletonHighlighter()).getTheme(theme);
 }
-import * as featureData from '../data/Features.data';
 function getDocNameWithEmoji(docName: string): string {
     const features = featureData.default.load();
     if (docName.toLowerCase() === 'articles') return `📰  ${docName}`;
