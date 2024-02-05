@@ -50,11 +50,24 @@ features:
     linkText: Get started
 ---
 `;
-
+const articleLiteral = `---
+features:
+  - title: Articles
+    details: Regular articles
+    icon: 📰
+    linkText: Let's go
+    link: /document/Articles/docs/Start your first npm package - Build, CI and Publish.md
+---`;
 const featuresItems: Feature[] = matter(featuresLiteral).data.features;
+const articleFeature: Feature[] = matter(articleLiteral).data.features;
 const loader = {
-    load: (): Feature[] => featuresItems,
+    load: (): FeatureCompose => ({ features: featuresItems, articleFeature: articleFeature }),
 };
 
 export default loader;
-export declare const data: Feature[];
+type FeatureCompose = {
+    features: Feature[];
+    articleFeature: Feature[];
+};
+
+export declare const data: FeatureCompose;
