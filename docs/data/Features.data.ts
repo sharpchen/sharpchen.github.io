@@ -92,7 +92,10 @@ function addLinkToFeature(features: Feature[]): Feature[] {
             const feature = features[key];
             const match = names.find(x => x.toLowerCase() === feature.title.toLowerCase());
             if (match) {
-                const link = getIndexLink(feature.title);
+                const link = getIndexLink(
+                    // cs design pattern has conflict that I just leave it with a simple solution.
+                    feature.title.includes('CSharp') ? feature.title.replace('CSharp', 'Csharp') : feature.title
+                );
                 feature.link = link ? link : '/';
             }
         }
