@@ -85,7 +85,7 @@ function folderToSidebarItems(folder: DirectoryInfo, base: string): DefaultTheme
             const sub = subs[index];
             const currentSidebarItem: DefaultTheme.SidebarItem = {
                 collapsed: false,
-                text: sub.name,
+                text: sub.name.replace(/^\d+\.\s*/, ''), // remove leading index
                 items: folderToSidebarItems(sub, `${base}/${folder.name}`),
             };
             items.push(currentSidebarItem);
