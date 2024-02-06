@@ -1,10 +1,8 @@
 import { defineConfig } from 'vitepress';
 import { transformerTwoslash } from 'vitepress-plugin-twoslash';
-import { getRegisteredMarkdownTheme, getSidebar } from '../shared/utils';
+import { getRegisteredMarkdownTheme } from '../shared/utils';
 // https://vitepress.dev/reference/site-config
 import { builder } from '../shared/multipleSidebarBuilder';
-// console.log(JSON.stringify(builder.emitSidebar(), null, 2));
-console.log(JSON.stringify(builder.emitRewrites(), null, 2));
 export default defineConfig({
     markdown: {
         lineNumbers: true,
