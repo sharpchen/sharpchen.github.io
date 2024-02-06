@@ -44,8 +44,6 @@ export const builder = {
                         .where(i => i.link !== void 0)
                         .firstOrDefault()?.link!;
                     this.rewrites[`${index}`] = `${sidebarRoute}index.html`;
-                    console.log(`rewrite: ${index} -> ${sidebarRoute}`);
-
                     continue;
                 }
                 // find a collapsible
@@ -57,9 +55,7 @@ export const builder = {
                     .where(i => i.link !== void 0)
                     .orderBy(i => i.text)
                     .firstOrDefault()?.link!;
-                // console.log(parentOfIndex);
                 this.rewrites[`${index}`] = `${sidebarRoute}index.html`;
-                console.log(`rewrite: ${index} -> ${sidebarRoute}`);
             }
         }
         return this;
