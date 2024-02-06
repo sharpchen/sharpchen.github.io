@@ -1,128 +1,11 @@
-/**
- * - Converts a document name to corresponding registered route name.
- * @param fullName name of document root folder
- * @returns corresponding route name registered statically
- */
-export function routeNameOfDocument(fullName: string): string {
-    const ret = fullName.split(' ').join('').toLowerCase();
-    return ret;
-}
-
-/**
- * truncateUrl('http://.../pages/document/.../xx.md', 'pages')
- * @param url url to truncate
- * @param prefix prefix to be truncated
- * @returns
- */
-export function truncateUrl(url: string, prefix: string): string {
-    const index = url.indexOf(prefix);
-    if (index === -1) {
-        return url;
-    }
-    return url.substring(index + prefix.length);
-}
-
-/**
- *
- * @param mdLink `http://../../xx.md`
- * @returns `http://../../xx.html`
- */
-export function mdLinkToHtmlLink(mdLink: string) {
-    if (mdLink.endsWith('.md')) {
-        return `${mdLink.substring(0, mdLink.lastIndexOf('.md'))}.html`;
-    }
-    return mdLink;
-}
-
-export function tryCompare(x: string, y: string): number {
-    if (startsWithIndex(x) && startsWithIndex(y)) {
-        const xNum = parseInt(x.substring(0, x.indexOf('.')));
-        const yNum = parseInt(y.substring(0, y.indexOf('.')));
-        return compareIntegers(xNum, yNum);
-    }
-    return x.localeCompare(y);
-}
-function startsWithIndex(input: string): boolean {
-    const regex = /^\d+\./;
-    return regex.test(input);
-}
-
-function compareIntegers(a: number, b: number): number {
-    if (a < b) {
-        return -1;
-    } else if (a > b) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
 import * as fs from 'fs';
 import path from 'path';
 import * as shikiji from 'shikiji';
 import { DefaultTheme } from 'vitepress';
 import { themes } from '../../.github/workflows/beforeBuild/sync-themes.mjs';
-import * as registeredInfo from '../[docRoute].paths';
-import * as featureData from '../data/Features.data';
-import { Path, documentRoot, projectRoot } from './FileSystem';
-export function getSidebar(): DefaultTheme.Sidebar | undefined {
-    const docRoot = documentRoot();
-    const registeredDocs = registeredInfo.default.paths();
-    // get all registered doc parents
-    const docParents = docRoot
-        .getDirectories()
-        .filter(x => !x.name.startsWith('.'))
-        .map(x => {
-            return {
-                name: x.name,
-                docDir: x.getDirectories().filter(d => d.name === 'docs')[0],
-            };
-        })
-        .filter(x => registeredDocs.filter(y => y.params.docRoute === routeNameOfDocument(x.name)).length !== 0);
-    // generate sidebar for each docDir
-    return docParents
-        .map(x => {
-            // if has chapters
-            if (x.docDir.getDirectories().length !== 0) {
-                const subs = x.docDir.getDirectories();
-                return {
-                    // chapter level
-                    text: getDocNameWithEmoji(x.name),
-                    collapsed: true,
-                    items: subs.map(s => {
-                        return {
-                            // doc level
-                            collapsed: true,
-                            text: s.name,
-                            items: s.getFiles().map(f => {
-                                return {
-                                    text: Path.GetFileNameWithoutExtension(f.fullName),
-                                    link: Path.GetRelativePath(projectRoot().fullName, f.fullName),
-                                };
-                            }),
-                        };
-                    }),
-                };
-            } else {
-                return {
-                    collapsed: true,
-                    text: getDocNameWithEmoji(x.name),
-                    items: x.docDir
-                        .getFiles()
-                        .map(f => {
-                            return {
-                                text: Path.GetFileNameWithoutExtension(f.fullName),
-                                link: Path.GetRelativePath(projectRoot().fullName, f.fullName),
-                            };
-                        })
-                        .sort((x, y) => tryCompare(x.text, y.text)),
-                };
-            }
-        })
-        .flat();
-}
-type CustomMarkdownTheme = keyof typeof themes; //'Eva Dark' | 'Eva Light' | 'Rider Dark' | 'Darcula';
-export async function getRegisteredMarkdownTheme(theme: CustomMarkdownTheme): Promise<shikiji.ThemeRegistration> {
+import { FileInfo, Path, DirectoryInfo, projectRoot } from './FileSystem';
+
+export async function getRegisteredMarkdownTheme(theme: keyof typeof themes): Promise<shikiji.ThemeRegistration> {
     let isThemeRegistered = (await shikiji.getSingletonHighlighter()).getLoadedThemes().find(x => x === theme);
     if (!isThemeRegistered) {
         const myTheme = JSON.parse(fs.readFileSync(path.join(projectRoot().fullName, `public/${theme}.json`), 'utf8'));
@@ -130,12 +13,34 @@ export async function getRegisteredMarkdownTheme(theme: CustomMarkdownTheme): Pr
     }
     return (await shikiji.getSingletonHighlighter()).getTheme(theme);
 }
-function getDocNameWithEmoji(docName: string): string {
-    const features = featureData.default.load();
-    if (docName.toLowerCase() === 'articles') return `📰  ${docName}`;
-    const emoji = features.find(x => x.title === docName)?.icon;
-    if (emoji) {
-        return `${emoji}  ${docName}`;
+
+export function filesToSidebarItems(files: FileInfo[], base: string): DefaultTheme.SidebarItem[] {
+    return files.map(file => {
+        const link = `${base}/${file.name}`;
+        return {
+            text: Path.GetFileNameWithoutExtension(file.name),
+            link: link.substring(0, link.lastIndexOf('.')),
+        };
+    });
+}
+
+export function folderToSidebarItems(folder: DirectoryInfo, base: string): DefaultTheme.SidebarItem[] {
+    if (!folder.exists) throw new Error(`folder: ${folder.name} not found`);
+    const subs = folder.getDirectories();
+    // load files in this folder
+    let items: DefaultTheme.SidebarItem[] = folder.getFiles().length
+        ? filesToSidebarItems(folder.getFiles(), `${base}/${folder.name}`)
+        : [];
+    for (const index in subs) {
+        if (Object.prototype.hasOwnProperty.call(subs, index)) {
+            const sub = subs[index];
+            const currentSidebarItem: DefaultTheme.SidebarItem = {
+                collapsed: false,
+                text: sub.name.replace(/^\d+\.\s*/, ''), // remove leading index
+                items: folderToSidebarItems(sub, `${base}/${folder.name}`),
+            };
+            items.push(currentSidebarItem);
+        }
     }
-    return docName;
+    return items;
 }

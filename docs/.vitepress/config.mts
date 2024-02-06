@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitepress';
 import { transformerTwoslash } from 'vitepress-plugin-twoslash';
 import { getRegisteredMarkdownTheme } from '../shared/utils';
-// https://vitepress.dev/reference/site-config
 import { builder } from '../shared/multipleSidebarBuilder';
+
+// https://vitepress.dev/reference/site-config
 export default defineConfig({
     markdown: {
         lineNumbers: true,
@@ -32,7 +33,7 @@ export default defineConfig({
             { text: 'Contact', link: '../contact.md' },
         ],
         logo: '/favicon.ico',
-        sidebar: builder.emitSidebar(), //getSidebar(),
+        sidebar: builder.emitSidebar(),
         outline: {
             level: 'deep',
         },
@@ -45,10 +46,6 @@ export default defineConfig({
         search: {
             provider: 'local',
         },
-        // docFooter: {
-        //     prev: false,
-        //     next: false,
-        // },
         editLink: {
             pattern: ({ filePath }) => {
                 return `https://github.com/sharpchen/sharpchen.github.io/edit/main/docs/${filePath}`;
