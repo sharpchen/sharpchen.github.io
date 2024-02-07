@@ -21,6 +21,11 @@
   --vp-code-color: #2dbc24;
 }
 
+/* bold for second level sidebar-item */
+#VPSidebarNav h3 {
+  font-weight: bold;
+}
+
 .VPImage {
   border-radius: 20%;
 }
