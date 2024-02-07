@@ -50,3 +50,12 @@ That's why we should prefer typed discard if we do need to be cautious about dec
 :::info
 `C#` is going to make `_` as discards everywhere? See: [Open issues: Breaking changes](https://github.com/dotnet/csharplang/issues/7918)
 :::
+
+## lambdas
+
+Currently only when parameter list contains more than one discard can it be treated as true discard.
+
+```cs
+var f = (int _) => Console.WriteLine(_); // valid
+var m = (int _, string _) => Console.WriteLine(_); // both discards
+```
