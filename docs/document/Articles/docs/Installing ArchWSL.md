@@ -33,3 +33,11 @@ Check default subsystem
 ```bash
 wsl --status
 ```
+
+## Set pacman mirror
+
+Open config file, uncomment predefined mirror urls suitable for your region.
+
+```bash
+sudo nano /etc/pacman.d/mirrorlist
+```
