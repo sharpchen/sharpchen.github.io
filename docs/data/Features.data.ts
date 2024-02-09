@@ -51,6 +51,11 @@ features:
     icon: 🌏
     link: /cesiumjs
     linkText: Get started
+  - title: Mars3D
+    details:
+    icon: 🌟
+    link: /cesiumjs
+    linkText: Get started
 ---
 `;
 const articleLiteral = `---
