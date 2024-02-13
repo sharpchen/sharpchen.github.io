@@ -85,21 +85,14 @@ foreach (var (value, index) in items.Select((x, i) => (x, i)))
 
 `SelectMany` simply flatten **two levels** of collection into one that with generated elements.
 
+:::code-group
+
 ```cs
 IEnumerable<IEnumerable<int>> items = [[1, 2, 3], [4, 5, 6]];
 items.SelectMany(x => x).Dump();
 ```
 
-The selected `x` is the one to be flattened.
-
-```cs
-IEnumerable<IEnumerable<int>> items = [[1, 2, 3], [4, 5, 6]];
-items.SelectMany(x => x.ToString()).Dump();
-```
-
-That's why we get a `char` sequence represents the concrete type name of `x`(`<>z__ReadOnlyArray\`1[System.Int32]\<\>z__ReadOnlyArray`1[System.Int32]`).
-
-```console
+```console[result]
 ╭──────────────────────────────────────────────────────────╮
 │ SelectManySingleSelectorIterator<IEnumerable<int>, char> │
 ├──────────────────────────────────────────────────────────┤
@@ -174,7 +167,19 @@ That's why we get a `char` sequence represents the concrete type name of `x`(`<>
 ╰──────────────────────────────────────────────────────────╯
 ```
 
-```console
+:::
+
+The selected `x` is the one to be flattened.
+That's why we get a `char` sequence represents the concrete type name of `x`(`<>z__ReadOnlyArray\`1[System.Int32]\<\>z__ReadOnlyArray`1[System.Int32]`).
+
+:::code-group
+
+```cs
+IEnumerable<IEnumerable<int>> items = [[1, 2, 3], [4, 5, 6]];
+items.SelectMany(x => x.ToString()).Dump();
+```
+
+```console[result]
 ╭─────────────────────────────────────────────────────────╮
 │ SelectManySingleSelectorIterator<IEnumerable<int>, int> │
 ├─────────────────────────────────────────────────────────┤
@@ -186,6 +191,8 @@ That's why we get a `char` sequence represents the concrete type name of `x`(`<>
 │ 6                                                       │
 ╰─────────────────────────────────────────────────────────╯
 ```
+
+:::
 
 ### `SelectMany` with index
 
