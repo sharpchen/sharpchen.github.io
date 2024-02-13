@@ -27,7 +27,7 @@ For string from external resources, we may need to registered it into string poo
 This approach is the same as declaring a string literal, they will all exist during application domain.
 
 ```c#
-string url = ...;
+string url = /* ... */;
 HttpResponseMessage response = await httpClient.GetAsync(url);
 string responseBody = await response.Content.ReadAsStringAsync();
 // Register the string so it won't be auto collected.
