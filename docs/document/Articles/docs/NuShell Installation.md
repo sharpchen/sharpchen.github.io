@@ -1,4 +1,4 @@
-# NuShell - Modern Shell?
+# NuShell Installation
 
 ## Installation
 
