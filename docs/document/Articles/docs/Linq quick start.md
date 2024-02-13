@@ -408,23 +408,13 @@ items.DefaultIfEmpty().Count().Dump(); // 1
 
 ## Conversion
 
-### `ToLookUp` vs `GroupBy`
-
-#### `ToLookUp` <Badge type="info" text="immediate execution" />
+### `ToLookUp` <Badge type="info" text="immediate execution" />
 
 ```cs
 IEnumerable<Person> people = [new("John", 30), new("Jane", 30), new("Modi", 18), new("John", 12)];
 var a = people.ToLookup(x => x.Age).Dump();
 people.ToLookup(x => x.Age)[30].Dump(); // John: 30, Jane: 30
 people.ToLookup(x => x.Name)["John"].Dump(); // John: 30, John: 18
-record class Person(string Name, int Age);
-```
-
-#### `GroupBy`
-
-```cs
-IEnumerable<Person> people = [new("John", 30), new("Jane", 30), new("Modi", 18), new("John", 12)];
-people.GroupBy(x => x.Age).Dump(); // No indexer, but group as the same
 record class Person(string Name, int Age);
 ```
 
