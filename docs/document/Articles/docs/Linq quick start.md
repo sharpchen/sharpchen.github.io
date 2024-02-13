@@ -331,7 +331,7 @@ IEnumerable<int> items = [1, 2, 3, 4, 5, 6];
 items.Aggregate(10, (sum, current) => sum + current).Dump(); // 31
 ```
 
-To generate a header for csv rows:
+To generate csv rows with header:
 
 ```cs
 IEnumerable<Person> people = [new("John", 30), new("Jane", 20), new("Modi", 18)];
