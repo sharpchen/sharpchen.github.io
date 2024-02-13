@@ -170,7 +170,7 @@ items.SelectMany(x => x).Dump();
 :::
 
 The selected `x` is the one to be flattened.
-That's why we get a `char` sequence represents the concrete type name of `x`(`` <>z__ReadOnlyArray`1[System.Int32]&lt;>z__ReadOnlyArray`1[System.Int32] ``).
+That's why we get a `char` sequence represents the concrete type name of `x`(`` <>z__ReadOnlyArray`1[System.Int32]&lt; >z__ReadOnlyArray`1[System.Int32] ``).
 
 :::code-group
 
@@ -351,7 +351,7 @@ record class Person(string Name, int Age);
 
 #### Third overload
 
-The third overload of `Aggregate` takes an initial value and a result selector.
+The third overload of `Aggregate` takes an initial value and a result selector to perform **post** operations.
 The result selector takes the final result from iteration.
 
 ```cs
