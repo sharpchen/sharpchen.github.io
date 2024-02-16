@@ -283,6 +283,12 @@ items.Count().Dump(); // 6
 items.Count(x => x > 3).Dump(); // 3
 ```
 
+### CountBy <Badge type="info" text="immediate execution" />
+>
+> coming from .net9 ...
+>
+### `LongCount` <Badge type="info" text="immediate execution" />
+
 ### `TryGetNonEnumeratedCount` <Badge type="info" text="immediate execution" />
 
 ```cs
@@ -295,14 +301,12 @@ items.Where(x => x > 3).TryGetNonEnumeratedCount(out var count2).Dump(); // fals
 
 ### `Average` <Badge type="info" text="immediate execution" />
 
-### `LongCount` <Badge type="info" text="immediate execution" />
-
 ### `Aggregate` <Badge type="info" text="immediate execution" />
 
 `Aggregate` is a very special extension to perform iteration from previous context to next context.
 It has three overloads:
 
-#### First overload
+- First overload
 
 ```cs
 IEnumerable<int> items = [1, 2, 3, 4, 5, 6];
@@ -322,7 +326,7 @@ chars.Select(x => x.ToString()).Aggregate((context, current) => $"{context}, {cu
 // "a, b, c"
 ```
 
-#### Second overload
+- Second overload
 
 The second overload of `Aggregate` takes an initial value.
 
@@ -349,7 +353,7 @@ people.Select(x => $"{x.Name}, {x.Age}")
 record class Person(string Name, int Age);
 ```
 
-#### Third overload
+- Third overload
 
 The third overload of `Aggregate` takes an initial value and a result selector to perform **post** operations.
 The result selector takes the final result from iteration.
@@ -359,6 +363,10 @@ IEnumerable<int> items = [1, 2, 3];
 items.Aggregate(10, (sum, current) => sum + current, x => x / 2F).Dump(); // (10 + 1 + 2 + 3) / 2f = 8
 ```
 
+### AggregateBy <Badge type="info" text="immediate execution" />
+>
+> coming from .net9 ...
+>
 ## Element Operators
 
 ### `First` <Badge type="info" text="immediate execution" />
