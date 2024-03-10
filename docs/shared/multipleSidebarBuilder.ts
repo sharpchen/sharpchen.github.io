@@ -13,7 +13,7 @@ export const builder = {
             if (Object.prototype.hasOwnProperty.call(docFolders, index)) {
                 const docParent = docFolders[index];
                 const docs = docParent.getDirectories().find(d => d.name === 'docs');
-                if (!docs) throw new Error(`doc folder not found`);
+                if (!docs) throw new Error(`doc folder for ${docParent.name} not found`);
                 const current: DefaultTheme.SidebarItem[] = [
                     {
                         text: docParent.name,
