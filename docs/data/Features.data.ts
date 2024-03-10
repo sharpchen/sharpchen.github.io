@@ -60,6 +60,10 @@ features:
     details: AvaloniaUI
     icon: 😱
     linkText: Get started
+  - title: Git
+    details: Git mastery
+    icon: 🐱
+    linkText: Get started
 ---
 `;
 const articleLiteral = `---
@@ -68,7 +72,6 @@ features:
     details: Regular articles
     icon: 📰
     linkText: Let's go
-    #link: /document/Articles/docs/Start your first npm package - Build, CI and Publish.md
 ---`;
 const getIndexLink = (title: string): string | undefined => {
   const docs = documentRoot()
