@@ -56,6 +56,10 @@ features:
     details: Modernized C#
     icon: 🐱‍👤
     linkText: Get started
+  - title: Avalonia
+    details: AvaloniaUI
+    icon: 😱
+    linkText: Get started
 ---
 `;
 const articleLiteral = `---
