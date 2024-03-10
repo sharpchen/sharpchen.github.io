@@ -53,7 +53,7 @@ features:
     icon: 💩
     linkText: Get started
   - title: Modern C#
-    details: Modernized C#
+    details: Modernized C# since 2015?
     icon: 🐱‍👤
     linkText: Get started
   - title: Avalonia
