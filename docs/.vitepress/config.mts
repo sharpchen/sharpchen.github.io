@@ -3,6 +3,7 @@ import { transformerTwoslash } from 'vitepress-plugin-twoslash';
 import { getRegisteredMarkdownTheme } from '../shared/utils';
 import { builder } from '../shared/multipleSidebarBuilder';
 
+console.log(JSON.stringify(builder.emitSidebar()['/document/Avalonia/docs/'], null, 2));
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   markdown: {
