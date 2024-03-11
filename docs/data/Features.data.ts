@@ -1,7 +1,7 @@
 import matter from 'gray-matter';
 import Enumerable from 'linq';
 import { type Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
-import { Path, documentRoot } from '../shared/FileSystem';
+import { DirectoryInfo, Path, documentRoot } from '../shared/FileSystem';
 
 // const matter = require('gray-matter');
 const featuresLiteral = `---
@@ -82,14 +82,13 @@ const getIndexLink = (title: string): string | undefined => {
   if (!docs) return;
   // has multiple chapters
   if (docs.getDirectories().length > 0) {
-    const folder = Enumerable.from(docs.getDirectories())
-      .where(x => x.getFiles().length > 0)
-      .orderBy(x => x.name)
-      .firstOrDefault();
+    const { first: folder, level } = findFirstFolder(docs);
     const file = folder?.getFiles()[0];
-    return `${documentRoot().name}/${title}/docs/${folder?.name}/${Path.GetFileNameWithoutExtension(
-      file?.name!
-    )}`;
+    let name = `${documentRoot().name}/${title}/docs/`;
+    for (let i = level - 1; i > 0; i--) {
+      name += file?.directory.up(i)?.name + '/';
+    }
+    return `${name}${folder?.name}/${Path.GetFileNameWithoutExtension(file?.name!)}`;
   }
   // no chapter
   if (docs.getFiles().length > 0) {
@@ -132,6 +131,25 @@ function addLinkToFeatures(features: Feature[]): Feature[] {
     }
   }
   return features;
+}
+
+function findFirstFolder(
+  current: DirectoryInfo,
+  level: number = 1
+): { first?: DirectoryInfo; level: number } {
+  // has direct file in sub folder
+  const first = Enumerable.from(current.getDirectories())
+    .where(x => x.getFiles().length > 0)
+    .orderBy(x => x.name)
+    .firstOrDefault();
+  if (!first) {
+    const next = Enumerable.from(current.getDirectories())
+      .orderBy(x => x.name)
+      .firstOrDefault();
+    if (!next) return { first: undefined, level: level + 1 };
+    return findFirstFolder(next, level + 1);
+  }
+  return { first, level };
 }
 
 const featuresItems: Feature[] = addLinkToFeatures(matter(featuresLiteral).data.features);
