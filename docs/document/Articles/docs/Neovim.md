@@ -27,7 +27,7 @@ require("lazy").setup({})
 -- ~/.config/nvim/init.lua
 
 require("sharpchen")
-require("sharpchen.lazy") // [!code++]
+require("sharpchen.lazy") // [!code ++]
 ```
 
 ## Organize plugins
@@ -72,5 +72,5 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup("sharpchen.plugins") // ![code ++]
+require("lazy").setup("sharpchen.plugins") // [!code ++]
 ```
