@@ -27,7 +27,7 @@ require("lazy").setup({})
 -- ~/.config/nvim/init.lua
 
 require("sharpchen")
-require("sharpchen.lazy") // [!code ++]
+require("sharpchen.lazy") // [!code++]
 ```
 
 ## Organize plugins
