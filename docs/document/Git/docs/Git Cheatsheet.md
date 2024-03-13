@@ -52,7 +52,7 @@
 
 ### Rebasing
 
-:::Warning
+:::warning
 Rebasing rewrites history, use it only in local.
 :::
 
