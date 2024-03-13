@@ -1,5 +1,7 @@
 # Git cheat sheet
 
+## History
+
 ## Branching
 
 ### Branch manipulation
@@ -22,7 +24,7 @@
 |show diff between two branches|`git diff [--name-only\|--name-status] <branch_from>..<branch_to>`|
 |show diff between current branch to target branch|`git diff [--name-only\|--name-status] <target_branch>`|
 
-## Stashing
+### Stashing
 
 |usage|command|
 |---|---|
@@ -34,7 +36,7 @@
 |delete stash|`git stash drop stash@{<index>}\|<index>`|
 |delete all stash|`git stash clear`|
 
-## Merging
+### Merging
 
 |usage|command|
 |---|---|
@@ -48,7 +50,7 @@
 |undo merge if history shared|`git revert -m <parent-number> HEAD`|
 |merger branch as squashed to current branch|`git merge --squash <branch>`|
 
-## Rebasing
+### Rebasing
 
 :::Warning
 Rebasing rewrites history, use it only in local.
@@ -61,14 +63,16 @@ Rebasing rewrites history, use it only in local.
 |continue rebasing if conflicts are resolved|`git rebase --continue`|
 |disable rebasing backup|`git config [--global] mergetool.keepBackup false`|
 
-## Cherry-picking
+### Cherry-picking
 
 |usage|command|
 |---|---|
 |pick one commit into current branch|`git cherry-pick <commit_hash>`|
 
-## Picking a file from branch
+### Picking a file from branch
 
 |usage|command|
 |---|---|
 |pick file from another branch to current|`git restore --source=<branch> -- <filename>`|
+
+## Collaboration
