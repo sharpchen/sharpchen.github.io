@@ -10,6 +10,7 @@
 |---|---|
 |create new branch|`git branch <branch>`|
 |list all branches|`git branch`|
+|list all remote branches|`git branch -r\|--remotes`|
 |switch to branch|`git checkout\|switch <branch>`|
 |create and switch to new branch|`git checkout -b <branch>` or `git switch -C <branch>`|
 |rename branch|`git branch -m <old_branch> <new_branch>`|
