@@ -40,14 +40,6 @@ features:
     details: Vue3 for .NET blazor developer
     icon: ⚡
     linkText: Get started
-  - title: CesiumJS
-    details: CesiumJS with vue3+vite
-    icon: 🌏
-    linkText: Get started
-  - title: Mars3D
-    details:
-    icon: 🌟
-    linkText: Get started
   - title: VBA
     details: VBA for excel
     icon: 💩
