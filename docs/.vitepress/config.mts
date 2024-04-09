@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress';
 import { transformerTwoslash } from 'vitepress-plugin-twoslash';
 import { getRegisteredMarkdownTheme } from '../shared/utils';
-import { builder } from '../shared/multipleSidebarBuilder';
+import { sidebarService } from '../services/SidebarService';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -33,7 +33,7 @@ export default defineConfig({
       { text: 'Contact', link: '../contact.md' },
     ],
     logo: '/favicon.ico',
-    sidebar: builder.emitSidebar(),
+    sidebar: sidebarService.getMultipleSidebar(),
     outline: {
       level: 'deep',
     },
