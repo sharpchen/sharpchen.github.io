@@ -1,11 +1,38 @@
-import { DocumentName, documentMap } from '../services/IDocumentService';
+// import { DocumentName, documentMap } from '../services/IDocumentService';
+import Enumerable from 'linq';
 import * as File from '../shared/FileSystem';
 import { IDocumentService } from './IDocumentService';
 
-class DocumentService implements IDocumentService {
+export type DocumentInfo = Record<string, { icon: string; description: string }>;
+export const documentMap = {
+  'Csharp Design Patterns': { icon: '👾', description: 'Design Patterns in C#' },
+  'Modern CSharp': { icon: '🐱‍👤', description: 'Modernized C# since 2015?' },
+  Articles: { icon: '📰', description: 'Regular articles' },
+  Avalonia: { icon: '😱', description: 'AvaloniaUI' },
+  Docker: { icon: '🐋', description: 'Ultimate Docker' },
+  Git: { icon: '🐱', description: 'Git mastery' },
+  JavaScript: { icon: '😅', description: 'JavaScript for C# developer' },
+  SQL: { icon: '📝', description: 'SQL syntax for beginners with MySQL' },
+  TypeScript: { icon: '⌨', description: 'TypeScript for C# developer' },
+  VBA: { icon: '💩', description: 'VBA for excel' },
+  Vue3: { icon: '⚡', description: 'Vue3 for .NET blazor developer' },
+} as const satisfies DocumentInfo;
+export type DocumentName = keyof typeof documentMap;
+export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
+export type DocumentDescription = (typeof documentMap)[DocumentName]['description'];
+export class DocumentService implements IDocumentService {
+  isEmptyDocument(name: DocumentName): boolean {
+    try {
+      const entry = this.getMarkdownEntryFolder(name);
+      return entry.getFiles().length === 0 && entry.getDirectories().length === 0;
+    } catch (error) {
+      return true;
+    }
+  }
+  readonly documentInfo: DocumentInfo = documentMap;
   getDocumentEntryFolder(name: DocumentName): File.DirectoryInfo {
     const ret = this.registeredDocumentFolders().find(x => x.name === name);
-    if (!ret) throw new Error(`Document entry of ${name} not found.`);
+    if (!ret) throw new Error(`Document entry of "${name}" not found.`);
     return ret;
   }
   registeredDocumentFolders(): File.DirectoryInfo[] {
@@ -18,7 +45,7 @@ class DocumentService implements IDocumentService {
     const ret = this.getDocumentEntryFolder(name)
       .getDirectories()
       .find(x => x.name === 'docs');
-    if (!ret) throw new Error(`Markdown entry of ${name} not found.`);
+    if (!ret) throw new Error(`Markdown entry of "${name}" not found.`);
     return ret;
   }
   registeredCount(): number {
@@ -30,8 +57,31 @@ class DocumentService implements IDocumentService {
   physicalCountBy(f: (x: File.DirectoryInfo) => boolean): number {
     return this.documentSrc.getDirectories().filter(x => f(x)).length;
   }
-  getIndexLinkOfDocument(name: DocumentName): string {
-    throw new Error('Method not implemented.');
+  tryGetIndexLinkOfDocument(name: DocumentName): string {
+    if (this.isEmptyDocument(name)) return '/';
+    const solveSharpSign = (link: string) => {
+      if (link.includes('Csharp')) return link.replace('#', 'Csharp');
+      return link.replace('#', 'Sharp');
+    };
+    const shouldSolveSharpSign = (name: DocumentName) => name.includes('#');
+    const markdownEntry = this.getMarkdownEntryFolder(name);
+    let linkContext = `${this.documentSrc.name}/${name}/`;
+    if (markdownEntry.getFiles().length) {
+      const file = Enumerable.from(markdownEntry.getFiles())
+        .orderBy(x => x.name)
+        .first();
+      const link = `${linkContext}/docs/${File.Path.GetFileNameWithoutExtension(file?.name!)}`;
+      return shouldSolveSharpSign(name) ? solveSharpSign(link) : link;
+    }
+    const { firstFolder, depth } = this.tryGetFirstChapterFolderOfDocument(name);
+    const file = firstFolder?.getFiles()[0];
+    for (let i = depth - 1; i > 0; i--) {
+      linkContext += file?.directory.up(i)?.name + '/';
+    }
+    const link = `${linkContext}${firstFolder?.name}/${File.Path.GetFileNameWithoutExtension(
+      file?.name!
+    )}`;
+    return shouldSolveSharpSign(name) ? solveSharpSign(link) : link;
   }
   get documentSrc(): File.DirectoryInfo {
     const ret = File.projectRoot()
@@ -39,6 +89,33 @@ class DocumentService implements IDocumentService {
       .find(x => x.name === 'document');
     if (!ret) throw new Error('Document source not found.');
     return ret;
+  }
+  tryGetFirstChapterFolderOfDocument(name: DocumentName): {
+    firstFolder: File.DirectoryInfo;
+    depth: number;
+  } {
+    const markdownEntry = this.getMarkdownEntryFolder(name);
+    return getFirst(markdownEntry);
+
+    function getFirst(
+      current: File.DirectoryInfo,
+      depth: number = 1
+    ): { firstFolder: File.DirectoryInfo; depth: number } {
+      const nextLevelsSorted = Enumerable.from(
+        current
+          .getDirectories()
+          .filter(x => x.getFiles().length > 0 || x.getDirectories().length > 0)
+      ).orderBy(x => x.name);
+      //if no folder
+      if (!nextLevelsSorted.count()) return { firstFolder: current, depth: depth };
+      //if has folders
+      return getFirst(nextLevelsSorted.first(), depth + 1);
+    }
+  }
+  tryGetFormulaNameOfDocument(name: DocumentName): string {
+    if (name.includes('Csharp')) return name.replace('Csharp', 'C#');
+    if (name.includes('Sharp')) return name.replace('Sharp', '#');
+    return name;
   }
 }
 

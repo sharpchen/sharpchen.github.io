@@ -1,5 +1,5 @@
 import { DefaultTheme } from 'vitepress';
-import { DocumentName } from './IDocumentService';
+import { DocumentName } from './DocumentService';
 import * as File from '../shared/FileSystem';
 import { IDocumentService } from './IDocumentService';
 export interface ISidebarService {

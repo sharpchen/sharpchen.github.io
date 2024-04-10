@@ -1,6 +1,6 @@
 import Enumerable from 'linq';
 import { DefaultTheme } from 'vitepress';
-import { DocumentName, documentMap } from './IDocumentService';
+import { DocumentName, documentMap } from './DocumentService';
 import { DirectoryInfo, FileInfo, Path, documentRoot } from '../shared/FileSystem';
 import { documentService } from './DocumentService';
 import { IDocumentService } from './IDocumentService';
