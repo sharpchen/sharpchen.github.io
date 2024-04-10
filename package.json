@@ -9,16 +9,16 @@
     "@types/markdown-it": "^13.0.7",
     "gray-matter": "^4.0.3",
     "linq": "^4.0.2",
-    "markdown-it": "^14.0.0",
-    "vitepress": "^1.0.0-rc.40",
-    "vue": "^3.4.15"
+    "markdown-it": "^14.1.0",
+    "vitepress": "^1.1.0",
+    "vue": "^3.4.21"
   },
   "devDependencies": {
-    "@types/node": "^20.9.0",
-    "axios": "^1.6.3",
-    "jsonc-parser": "^3.2.0",
-    "shikiji": "^0.8.0",
-    "vitepress-plugin-twoslash": "^0.10.0"
+    "@types/node": "^20.12.7",
+    "axios": "^1.6.8",
+    "jsonc-parser": "^3.2.1",
+    "shikiji": "^0.8.7",
+    "vitepress-plugin-twoslash": "^0.10.2"
   },
   "type": "module"
 }
