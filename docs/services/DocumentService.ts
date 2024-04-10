@@ -1,4 +1,4 @@
-import { DocumentName, documentMap } from '../data/global.data';
+import { DocumentName, documentMap } from '../services/IDocumentService';
 import * as File from '../shared/FileSystem';
 import { IDocumentService } from './IDocumentService';
 
