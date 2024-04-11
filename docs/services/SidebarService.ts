@@ -1,8 +1,6 @@
-import Enumerable from 'linq';
 import { DefaultTheme } from 'vitepress';
-import { DocumentName, documentMap } from './DocumentService';
 import { DirectoryInfo, FileInfo, Path, documentRoot } from '../shared/FileSystem';
-import { documentService } from './DocumentService';
+import { DocumentName, documentMap, documentService } from './DocumentService';
 import { IDocumentService } from './IDocumentService';
 import { ISidebarService } from './ISidebarService';
 
@@ -26,6 +24,11 @@ class SidebarService implements ISidebarService {
     ];
   }
   transformFolderToSidebarItem(folder: DirectoryInfo, base: string): DefaultTheme.SidebarItem[] {
+    const solveSharpSign = (text: string) => {
+      if (text.includes('sharp')) return text.replace('sharp', '#');
+      if (text.includes('Sharp')) return text.replace('Sharp', '#');
+      return text;
+    };
     const subs = folder.getDirectories();
     // load files in this folder
     let items: DefaultTheme.SidebarItem[] = folder.getFiles().length
@@ -36,7 +39,7 @@ class SidebarService implements ISidebarService {
         const sub = subs[index];
         const currentSidebarItem: DefaultTheme.SidebarItem = {
           collapsed: false,
-          text: sub.name.replace(/^\d+\.\s*/, ''), // remove leading index
+          text: solveSharpSign(sub.name.replace(/^\d+\.\s*/, '')), // remove leading index
           items: this.transformFolderToSidebarItem(sub, `${base}/${folder.name}`),
         };
         items.push(currentSidebarItem);
@@ -48,7 +51,7 @@ class SidebarService implements ISidebarService {
         .map(file => {
           const link = `${base}/${file.name}`;
           return {
-            text: Path.GetFileNameWithoutExtension(file.name),
+            text: solveSharpSign(Path.GetFileNameWithoutExtension(file.name)),
             link: link.substring(0, link.lastIndexOf('.')),
           };
         })
