@@ -41,7 +41,7 @@
 
 |usage|command|
 |---|---|
-|merge branch to current branch|`git merge branch`|
+|merge branch to current branch|`git merge <branch>`|
 |merge branch with fast-forward disabled|`git merge --no-ff <branch>`|
 |disable fast-forward|`git config [--global] ff no`|
 |list merged branches|`git branch --merged`|
