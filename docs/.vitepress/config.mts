@@ -1,4 +1,6 @@
+import { MermaidConfig } from 'mermaid';
 import { defineConfig } from 'vitepress';
+import { withMermaid } from 'vitepress-plugin-mermaid';
 import { transformerTwoslash } from 'vitepress-plugin-twoslash';
 import { sidebarService } from '../services/SidebarService';
 import { themeService } from '../services/ThemeService';
@@ -9,7 +11,8 @@ type VitepressThemeType = Exclude<
 type ShikiThemeType = Exclude<Awaited<ReturnType<typeof themeService.getTheme>>, null>;
 type Is = ShikiThemeType extends VitepressThemeType ? true : false;
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+const vitepressConfig = defineConfig({
+  cleanUrls: true,
   markdown: {
     lineNumbers: true,
     theme: {
@@ -57,3 +60,10 @@ export default defineConfig({
     },
   },
 });
+type MermaidPluginConfig = {
+  mermaid: MermaidConfig;
+  mermaidPlugin: {
+    class: '';
+  };
+};
+export default withMermaid({ ...({} as MermaidPluginConfig), ...vitepressConfig });
