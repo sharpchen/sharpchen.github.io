@@ -2,7 +2,7 @@ import matter from 'gray-matter';
 import { type Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
 import { DocumentName, documentService } from './DocumentService';
 import { IFeatureService } from './IFeatureService';
-export class FeatureService implements IFeatureService {
+class FeatureService implements IFeatureService {
   readonly linkText: string = 'Get started';
   getFeaturesAsYaml(): string {
     return matter.stringify('', { features: this.getFeatures() });

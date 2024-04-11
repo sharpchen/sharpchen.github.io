@@ -20,7 +20,7 @@ export const documentMap = {
 export type DocumentName = keyof typeof documentMap;
 export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
 export type DocumentDescription = (typeof documentMap)[DocumentName]['description'];
-export class DocumentService implements IDocumentService {
+class DocumentService implements IDocumentService {
   isEmptyDocument(name: DocumentName): boolean {
     try {
       const entry = this.getMarkdownEntryFolder(name);

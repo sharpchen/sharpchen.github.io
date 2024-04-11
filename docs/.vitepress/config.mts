@@ -1,17 +1,20 @@
 import { defineConfig } from 'vitepress';
 import { transformerTwoslash } from 'vitepress-plugin-twoslash';
-import { getRegisteredMarkdownTheme } from '../shared/utils';
 import { sidebarService } from '../services/SidebarService';
-
+import { themeService } from '../services/ThemeService';
+type VitepressThemeType = Exclude<
+  Exclude<Parameters<typeof defineConfig>[0]['markdown'], undefined>['theme'],
+  undefined
+>;
+type ShikiThemeType = Exclude<Awaited<ReturnType<typeof themeService.getTheme>>, null>;
+type Is = ShikiThemeType extends VitepressThemeType ? true : false;
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   markdown: {
     lineNumbers: true,
     theme: {
-      // @ts-ignore
-      light: await getRegisteredMarkdownTheme('Eva Light'),
-      // @ts-ignore
-      dark: await getRegisteredMarkdownTheme('Eva Dark'),
+      light: await themeService.getTheme('Eva Light'),
+      dark: await themeService.getTheme('Eva Dark'),
     },
     codeTransformers: [transformerTwoslash()],
   },
