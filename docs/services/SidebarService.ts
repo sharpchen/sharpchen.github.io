@@ -3,7 +3,11 @@ import { DirectoryInfo, FileInfo, Path, documentRoot } from '../shared/FileSyste
 import { DocumentName, documentMap, documentService } from './DocumentService';
 import { IDocumentService } from './IDocumentService';
 import { ISidebarService } from './ISidebarService';
-
+const solveSharpSign = (text: string) => {
+  if (text.includes('sharp')) return text.replace('sharp', '#');
+  if (text.includes('Sharp')) return text.replace('Sharp', '#');
+  return text;
+};
 class SidebarService implements ISidebarService {
   private readonly base: string = `/${documentRoot().name}`;
   readonly documentService: IDocumentService = documentService;
@@ -18,17 +22,12 @@ class SidebarService implements ISidebarService {
     const markdownEntry = this.documentService.getMarkdownEntryFolder(name as DocumentName);
     return [
       {
-        text: name,
+        text: solveSharpSign(name),
         items: this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`),
       },
     ];
   }
   transformFolderToSidebarItem(folder: DirectoryInfo, base: string): DefaultTheme.SidebarItem[] {
-    const solveSharpSign = (text: string) => {
-      if (text.includes('sharp')) return text.replace('sharp', '#');
-      if (text.includes('Sharp')) return text.replace('Sharp', '#');
-      return text;
-    };
     const subs = folder.getDirectories();
     // load files in this folder
     let items: DefaultTheme.SidebarItem[] = folder.getFiles().length
