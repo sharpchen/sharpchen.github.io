@@ -1,8 +1,8 @@
 // import { DocumentName, documentMap } from '../services/IDocumentService';
+import fg from 'fast-glob';
 import Enumerable from 'linq';
 import * as File from '../shared/FileSystem';
 import { IDocumentService } from './IDocumentService';
-
 export type DocumentInfo = Record<string, { icon: string; description: string }>;
 export const documentMap = {
   'Csharp Design Patterns': { icon: '👾', description: 'Design Patterns in C#' },
@@ -16,6 +16,7 @@ export const documentMap = {
   TypeScript: { icon: '⌨', description: 'TypeScript for C# developer' },
   VBA: { icon: '💩', description: 'VBA for excel' },
   Vue3: { icon: '⚡', description: 'Vue3 for .NET blazor developer' },
+  'Unsafe CSharp': { icon: '😎', description: 'Entering the danger zone...' },
 } as const satisfies DocumentInfo;
 export type DocumentName = keyof typeof documentMap;
 export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
@@ -24,7 +25,7 @@ class DocumentService implements IDocumentService {
   isEmptyDocument(name: DocumentName): boolean {
     try {
       const entry = this.getMarkdownEntryFolder(name);
-      return entry.getFiles().length === 0 && entry.getDirectories().length === 0;
+      return fg.globSync(`**/*.md`, { cwd: entry.fullName }).length === 0;
     } catch (error) {
       return true;
     }

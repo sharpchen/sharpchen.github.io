@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@types/markdown-it": "^13.0.7",
+    "fast-glob": "^3.3.2",
     "gray-matter": "^4.0.3",
     "linq": "^4.0.2",
     "markdown-it": "^14.1.0",
