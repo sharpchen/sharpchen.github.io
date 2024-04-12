@@ -1,4 +1,4 @@
-# Start your first source generator for `csharp` #
+# Start your first source generator #
 
 ## Init your source generator project ##
 
