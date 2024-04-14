@@ -1,6 +1,7 @@
 import matter from 'gray-matter';
 import { type Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
 import { DocumentName, documentService } from './DocumentService';
+import { emojiService } from './EmojiService';
 import { IFeatureService } from './IFeatureService';
 class FeatureService implements IFeatureService {
   readonly linkText: string = 'Get started';
@@ -16,7 +17,7 @@ class FeatureService implements IFeatureService {
       {
         title: 'Articles' as DocumentName,
         details: info.description,
-        icon: info.icon,
+        icon: { src: emojiService.getIcon(info.icon) },
         link: documentService.tryGetIndexLinkOfDocument('Articles' as DocumentName),
       },
     ];
@@ -30,7 +31,7 @@ class FeatureService implements IFeatureService {
           features.push({
             title: documentService.tryGetFormulaNameOfDocument(key as DocumentName),
             details: documentInfo.description,
-            icon: documentInfo.icon,
+            icon: { src: emojiService.getIcon(documentInfo.icon) },
             link: documentService.tryGetIndexLinkOfDocument(key as DocumentName),
             linkText: this.linkText,
           });

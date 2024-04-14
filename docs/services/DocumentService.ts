@@ -6,7 +6,7 @@ import { IDocumentService } from './IDocumentService';
 export type DocumentInfo = Record<string, { icon: string; description: string }>;
 export const documentMap = {
   'Csharp Design Patterns': { icon: '👾', description: 'Design Patterns in C#' },
-  'Modern CSharp': { icon: '🐱‍👤', description: 'Modernized C# since 2015?' },
+  'Modern CSharp': { icon: '🦖', description: 'Modernized C# since 2015?' },
   Articles: { icon: '📰', description: 'Regular articles' },
   Avalonia: { icon: '😱', description: 'AvaloniaUI' },
   Docker: { icon: '🐋', description: 'Ultimate Docker' },
