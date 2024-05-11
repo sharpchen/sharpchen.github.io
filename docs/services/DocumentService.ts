@@ -17,12 +17,17 @@ export const documentMap = {
   VBA: { icon: '💩', description: 'VBA for excel' },
   Vue3: { icon: '⚡', description: 'Vue3 for .NET blazor developer' },
   'Unsafe CSharp': { icon: '😎', description: 'Entering the danger zone...' },
+  'NeoVim ColorScheme Development': {
+    icon: '🎨',
+    description: 'Make your own nvim color scheme using lua.',
+  },
 } as const satisfies DocumentInfo;
 export type DocumentName = keyof typeof documentMap;
 export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
 export type DocumentDescription = (typeof documentMap)[DocumentName]['description'];
 class DocumentService implements IDocumentService {
   isEmptyDocument(name: DocumentName): boolean {
+    1 * 2;
     try {
       const entry = this.getMarkdownEntryFolder(name);
       return fg.globSync(`**/*.md`, { cwd: entry.fullName }).length === 0;
