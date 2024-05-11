@@ -1,4 +1,4 @@
-# Vim motion cheat sheet
+# Vim built-in motion cheat sheet
 
 ## Editing
 
