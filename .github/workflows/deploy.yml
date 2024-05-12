@@ -45,12 +45,11 @@ jobs:
         run: pnpm install # or npm ci # or pnpm install / yarn install / bun install
       - name: Sync markdown themes
         run: node ./.github/workflows/beforeBuild/script.mjs
-      - name: Delete dist
-        run: "[ -d ./docs/.vitepress/dist ] && echo exists"
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Build with VitePress
         run: |
+          [ -d ./docs/.vitepress/dist ] && echo exists
           pnpm docs:build # or npm run docs:build / yarn docs:build / bun run docs:build
           touch docs/.vitepress/dist/.nojekyll
       - name: Upload artifact
