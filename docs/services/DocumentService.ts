@@ -27,7 +27,6 @@ export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
 export type DocumentDescription = (typeof documentMap)[DocumentName]['description'];
 class DocumentService implements IDocumentService {
   isEmptyDocument(name: DocumentName): boolean {
-    1 * 2;
     try {
       const entry = this.getMarkdownEntryFolder(name);
       return fg.globSync(`**/*.md`, { cwd: entry.fullName }).length === 0;
