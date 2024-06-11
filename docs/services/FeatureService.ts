@@ -17,7 +17,7 @@ class FeatureService implements IFeatureService {
       {
         title: 'Articles' as DocumentName,
         details: info.description,
-        icon: { src: emojiService.getIcon(info.icon) },
+        icon: { src: emojiService.getIconUrl(info.icon) },
         link: documentService.tryGetIndexLinkOfDocument('Articles' as DocumentName),
       },
     ];
@@ -31,7 +31,7 @@ class FeatureService implements IFeatureService {
           features.push({
             title: documentService.tryGetFormulaNameOfDocument(key as DocumentName),
             details: documentInfo.description,
-            icon: { src: emojiService.getIcon(documentInfo.icon) },
+            icon: { src: emojiService.getIconUrl(documentInfo.icon) },
             link: documentService.tryGetIndexLinkOfDocument(key as DocumentName),
             linkText: this.linkText,
           });

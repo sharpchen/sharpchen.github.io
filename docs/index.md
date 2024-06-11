@@ -20,6 +20,6 @@ import VPFeatures, { type Feature } from 'vitepress/dist/client/theme-default/co
 import VPHero from 'vitepress/dist/client/theme-default/components/VPHero.vue';
 import { ref } from 'vue';
 import { data } from './data/Features.data';
-  const features: Feature[] = Enumerable.from(data.features).orderBy(_x => Math.random()).toArray();
+  const features: Feature[] = data.features;
   const articleFeature = ref(data.articleFeature);
 </script>

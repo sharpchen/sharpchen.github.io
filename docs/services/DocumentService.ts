@@ -9,11 +9,11 @@ export const documentMap = {
   'Modern CSharp': { icon: '🦖', description: 'Modernized C# since 2015?' },
   Articles: { icon: '📰', description: 'Regular articles' },
   Avalonia: { icon: '😱', description: 'AvaloniaUI' },
-  Docker: { icon: '🐋', description: 'Ultimate Docker' },
-  Git: { icon: '🐱', description: 'Git mastery' },
+  Docker: { icon: '🐳', description: 'Ultimate Docker' },
+  Git: { icon: '😸', description: 'Git mastery' },
   JavaScript: { icon: '😅', description: 'JavaScript for C# developer' },
-  SQL: { icon: '📝', description: 'SQL syntax for beginners with MySQL' },
-  TypeScript: { icon: '⌨', description: 'TypeScript for C# developer' },
+  SQL: { icon: '🦭', description: 'SQL syntax for beginners' },
+  TypeScript: { icon: '🤯', description: 'TypeScript for C# developer' },
   VBA: { icon: '💩', description: 'VBA for excel' },
   Vue3: { icon: '⚡', description: 'Vue3 for .NET blazor developer' },
   'Unsafe CSharp': { icon: '😎', description: 'Entering the danger zone...' },
@@ -21,6 +21,8 @@ export const documentMap = {
     icon: '🎨',
     description: 'Make your own nvim color scheme using lua.',
   },
+  Bash: { icon: '🐢', description: 'shebang!' },
+  'Regular Expression': { icon: '🐫', description: '' },
 } as const satisfies DocumentInfo;
 export type DocumentName = keyof typeof documentMap;
 export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
