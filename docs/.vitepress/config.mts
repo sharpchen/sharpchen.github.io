@@ -1,7 +1,7 @@
 import { MermaidConfig } from 'mermaid';
 import { defineConfig } from 'vitepress';
 import { withMermaid } from 'vitepress-plugin-mermaid';
-import { transformerTwoslash } from 'vitepress-plugin-twoslash';
+import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
 import { DocumentName, documentService } from '../services/DocumentService';
 import { sidebarService } from '../services/SidebarService';
 import { themeService } from '../services/ThemeService';
@@ -40,7 +40,7 @@ const vitepressConfig = defineConfig({
         items: Object.keys(documentService.documentInfo)
           .filter((x): x is DocumentName => x !== 'Articles')
           .map(key => ({
-            text: `${documentService.documentInfo[key].icon}${key}`,
+            text: `${documentService.documentInfo[key].icon} ${key}`,
             link: documentService.tryGetIndexLinkOfDocument(key),
           })),
       },
