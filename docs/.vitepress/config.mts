@@ -2,6 +2,7 @@ import { MermaidConfig } from 'mermaid';
 import { defineConfig } from 'vitepress';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import { transformerTwoslash } from 'vitepress-plugin-twoslash';
+import { DocumentName, documentService } from '../services/DocumentService';
 import { sidebarService } from '../services/SidebarService';
 import { themeService } from '../services/ThemeService';
 type VitepressThemeType = Exclude<
@@ -34,6 +35,19 @@ const vitepressConfig = defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
+      {
+        text: 'Documents',
+        items: Object.keys(documentService.documentInfo)
+          .filter((x): x is DocumentName => x !== 'Articles')
+          .map(key => ({
+            text: `${documentService.documentInfo[key].icon}${key}`,
+            link: documentService.tryGetIndexLinkOfDocument(key),
+          })),
+      },
+      {
+        text: 'Articles',
+        link: documentService.tryGetIndexLinkOfDocument('Articles'),
+      },
       { text: 'Home', link: '/' },
       { text: 'About', link: '../about.md' },
       { text: 'Contact', link: '../contact.md' },

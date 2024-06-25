@@ -11,33 +11,48 @@ class FeatureService implements IFeatureService {
   getArticleFeatureAsYaml(): string {
     return matter.stringify('', { features: this.getArticleFeature() });
   }
-  getArticleFeature(): Feature[] {
+  async getArticleFeature(): Promise<Feature[]> {
     const info = documentService.documentInfo['Articles' as DocumentName];
     return [
       {
         title: 'Articles' as DocumentName,
         details: info.description,
-        icon: { src: emojiService.getIconUrl(info.icon) },
+        icon: { src: await emojiService.getIconUrl(info.icon) },
         link: documentService.tryGetIndexLinkOfDocument('Articles' as DocumentName),
       },
     ];
   }
-  getFeatures(): Feature[] {
-    const features: Feature[] = [];
-    for (const key in documentService.documentInfo) {
-      if (Object.prototype.hasOwnProperty.call(documentService.documentInfo, key)) {
-        const documentInfo = documentService.documentInfo[key];
-        if ((key as DocumentName) !== 'Articles')
-          features.push({
+  async getFeatures(): Promise<Feature[]> {
+    // const features: Feature[] = [];
+    // for (const key in documentService.documentInfo) {
+    //   if (Object.prototype.hasOwnProperty.call(documentService.documentInfo, key)) {
+    //     const documentInfo = documentService.documentInfo[key];
+    //     if ((key as DocumentName) !== 'Articles')
+    //       features.push({
+    //         title: documentService.tryGetFormulaNameOfDocument(key as DocumentName),
+    //         details: documentInfo.description,
+    //         icon: { src: await emojiService.getIconUrl(documentInfo.icon) },
+    //         link: documentService.tryGetIndexLinkOfDocument(key as DocumentName),
+    //         linkText: this.linkText,
+    //       });
+    //   }
+    // }
+
+    // return features;
+    return await Promise.all(
+      Object.keys(documentService.documentInfo)
+        .filter(key => key !== ('Articles' as DocumentName))
+        .map(async key => {
+          const documentInfo = documentService.documentInfo[key];
+          return {
             title: documentService.tryGetFormulaNameOfDocument(key as DocumentName),
             details: documentInfo.description,
-            icon: { src: emojiService.getIconUrl(documentInfo.icon) },
+            icon: { src: await emojiService.getIconUrl(documentInfo.icon) },
             link: documentService.tryGetIndexLinkOfDocument(key as DocumentName),
             linkText: this.linkText,
-          });
-      }
-    }
-    return features;
+          };
+        })
+    );
   }
 }
 

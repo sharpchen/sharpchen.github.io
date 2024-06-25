@@ -52,6 +52,8 @@ jobs:
           [ -d ./docs/.vitepress/dist ] && rm -rf ./docs/.vitepress/dist
           pnpm docs:build # or npm run docs:build / yarn docs:build / bun run docs:build
           touch docs/.vitepress/dist/.nojekyll
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:

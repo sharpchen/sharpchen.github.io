@@ -9,6 +9,6 @@ export type EmojiVariant =
 export interface IEmojiService {
   globalVariant: EmojiVariant;
   emojiHandler: EmojiHandler;
-  getIconUrl(emoji: DocumentIcon | string, variant?: EmojiVariant): string;
+  getIconUrl(emoji: DocumentIcon | string, variant?: EmojiVariant): Promise<string>;
   use(variant: EmojiVariant): this;
 }

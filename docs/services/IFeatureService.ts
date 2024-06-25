@@ -3,6 +3,6 @@ import { Feature } from 'vitepress/dist/client/theme-default/components/VPFeatur
 export interface IFeatureService {
   getFeaturesAsYaml(): string;
   getArticleFeatureAsYaml(): string;
-  getFeatures(): Feature[];
-  getArticleFeature(): Feature[];
+  getFeatures(): Promise<Feature[]>;
+  getArticleFeature(): Promise<Feature[]>;
 }
