@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as shiki from 'shiki';
-import { getRepoFileInfo, githubService } from './GithubService';
+import { githubService } from './GithubService';
 import { IThemeService } from './IThemeService';
 const highlighter = await shiki.getSingletonHighlighter();
 
@@ -39,11 +39,11 @@ class ThemeService implements IThemeService {
     return this.innerThemeService.getLoadedThemes().includes(name);
   }
   async fetchThemeObject(info: RemoteThemeInfo): Promise<TextmateTheme> {
-    const url = (await getRepoFileInfo(info.repo, info.path)).download_url!;
+    const url = (await githubService.fromRepository(info.repo).getFileInfo(info.path))
+      .download_url!;
     try {
       const response = await axios.get<string>(url, { responseType: 'text' });
       const theme = (await import('jsonc-parser')).parse(response.data) as TextmateTheme;
-      console.log(theme.name);
       return theme;
     } catch (error) {
       console.error('Error fetching JSON data:', error);
@@ -53,8 +53,9 @@ class ThemeService implements IThemeService {
   async initializeRegistration(): Promise<void> {
     await Promise.all(
       (Object.entries(themeInfos) as [ThemeName, RemoteThemeInfo][]).map(async x => {
-        const json = await this.fetchThemeObject(x[1]);
-        await this.register(json);
+        const theme = await this.fetchThemeObject(x[1]);
+        await this.register(theme);
+        console.log(`Textmate theme: \`${x[0]}\` has loaded.`);
       })
     );
   }

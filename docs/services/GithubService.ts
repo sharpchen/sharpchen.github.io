@@ -29,7 +29,7 @@ class GithubRepositoryEndPointMethods {
           await octokit.rest.git.getRef({
             owner: this.owner,
             repo: this.repo,
-            ref: `heads/${branch}}`,
+            ref: `heads/${branch}`,
           })
         ).data.object.sha;
     } catch (error) {
@@ -90,20 +90,21 @@ class GithubRepositoryEndPointMethods {
       return (await Promise.all(tasks)).flat();
     }
   }
-}
-export async function getRepoFileInfo(repo: string, path: string): Promise<RepoFileSystemInfo> {
-  if (/^[\w.]+\/\b[-\w]+\b$/.test(repo)) {
-    const split = repo.split('/');
-    const owner = split[0];
-    const _repo = split[1];
-    return (
-      await octokit.rest.repos.getContent({
-        owner: owner,
-        repo: _repo,
-        path: path,
-      })
-    ).data as RepoFileSystemInfo;
-  } else throw new Error();
+  async getFileInfo(path: string) {
+    const repo = `${this.owner}/${this.repo}`;
+    if (/^[\w.]+\/\b[-\w]+\b$/.test(repo)) {
+      const split = repo.split('/');
+      const owner = split[0];
+      const _repo = split[1];
+      return (
+        await octokit.rest.repos.getContent({
+          owner: owner,
+          repo: _repo,
+          path: path,
+        })
+      ).data as RepoFileSystemInfo;
+    } else throw new Error();
+  }
 }
 export class GithubService {
   constructor(token: string) {

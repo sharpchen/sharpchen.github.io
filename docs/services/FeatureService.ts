@@ -23,22 +23,6 @@ class FeatureService implements IFeatureService {
     ];
   }
   async getFeatures(): Promise<Feature[]> {
-    // const features: Feature[] = [];
-    // for (const key in documentService.documentInfo) {
-    //   if (Object.prototype.hasOwnProperty.call(documentService.documentInfo, key)) {
-    //     const documentInfo = documentService.documentInfo[key];
-    //     if ((key as DocumentName) !== 'Articles')
-    //       features.push({
-    //         title: documentService.tryGetFormulaNameOfDocument(key as DocumentName),
-    //         details: documentInfo.description,
-    //         icon: { src: await emojiService.getIconUrl(documentInfo.icon) },
-    //         link: documentService.tryGetIndexLinkOfDocument(key as DocumentName),
-    //         linkText: this.linkText,
-    //       });
-    //   }
-    // }
-
-    // return features;
     return await Promise.all(
       Object.keys(documentService.documentInfo)
         .filter(key => key !== ('Articles' as DocumentName))

@@ -1,7 +1,7 @@
 import fg from 'fast-glob';
 import { projectRoot } from '../shared/FileSystem';
 import { DocumentIcon } from './DocumentService';
-import { getRepoFileInfo, githubService } from './GithubService';
+import { githubService } from './GithubService';
 import { EmojiVariant, IEmojiService } from './IEmojiService';
 
 export abstract class EmojiHandler {
@@ -33,7 +33,7 @@ class FluentEmojiHandler extends EmojiHandler {
     );
     if (!match.length) throw new Error(`APNG path of emoji ${emoji} not found. Hex: ${hex}`);
     const path = match[0].path;
-    const file = await getRepoFileInfo('bignutty/fluent-emoji', path!);
+    const file = await githubService.fromRepository('bignutty/fluent-emoji').getFileInfo(path!);
     if (!file) throw new Error(`file of path: ${path} is ${file}`);
     const url = file.download_url!;
     return url;
