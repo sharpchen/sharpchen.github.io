@@ -20,8 +20,8 @@ export type RemoteThemeInfo = {
 };
 
 const themeInfos = {
-  'Eva-Light': { repo: 'fisheva/Eva-Theme', path: 'themes/Eva-Light.json', branch: 'master' },
-  'Eva-Dark': { repo: 'fisheva/Eva-Theme', path: 'themes/Eva-Dark.json', branch: 'master' },
+  'Eva Light': { repo: 'fisheva/Eva-Theme', path: 'themes/Eva-Light.json', branch: 'master' },
+  'Eva Dark': { repo: 'fisheva/Eva-Theme', path: 'themes/Eva-Dark.json', branch: 'master' },
 } satisfies Record<string, RemoteThemeInfo>;
 export type ThemeName = keyof typeof themeInfos;
 class ThemeService implements IThemeService {
@@ -42,7 +42,9 @@ class ThemeService implements IThemeService {
     const url = (await getRepoFileInfo(info.repo, info.path)).download_url!;
     try {
       const response = await axios.get<string>(url, { responseType: 'text' });
-      return (await import('jsonc-parser')).parse(response.data) as TextmateTheme;
+      const theme = (await import('jsonc-parser')).parse(response.data) as TextmateTheme;
+      console.log(theme.name);
+      return theme;
     } catch (error) {
       console.error('Error fetching JSON data:', error);
       throw error;

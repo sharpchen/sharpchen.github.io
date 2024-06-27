@@ -1,7 +1,7 @@
+import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
 import { MermaidConfig } from 'mermaid';
 import { defineConfig } from 'vitepress';
 import { withMermaid } from 'vitepress-plugin-mermaid';
-import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
 import { DocumentName, documentService } from '../services/DocumentService';
 import { sidebarService } from '../services/SidebarService';
 import { themeService } from '../services/ThemeService';
@@ -17,8 +17,8 @@ const vitepressConfig = defineConfig({
   markdown: {
     lineNumbers: true,
     theme: {
-      light: await themeService.getTheme('Eva-Light'),
-      dark: await themeService.getTheme('Eva-Dark'),
+      light: await themeService.getTheme('Eva Light'),
+      dark: await themeService.getTheme('Eva Dark'),
     },
     codeTransformers: [transformerTwoslash()],
   },
