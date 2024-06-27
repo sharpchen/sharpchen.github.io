@@ -39,12 +39,7 @@ class ThemeService implements IThemeService {
     return this.innerThemeService.getLoadedThemes().includes(name);
   }
   async fetchThemeObject(info: RemoteThemeInfo): Promise<TextmateTheme> {
-    console.error('hello???');
-    const matches = (
-      await githubService.fromRepository(info.repo).getTree({ branch: info.branch })
-    ).filter(x => x.path === info.path);
-    if (!matches.length) throw new Error();
-    const url = (await getRepoFileInfo(info.repo, matches[0].path!)).download_url!;
+    const url = (await getRepoFileInfo(info.repo, info.path)).download_url!;
     try {
       const response = await axios.get<string>(url, { responseType: 'text' });
       return (await import('jsonc-parser')).parse(response.data) as TextmateTheme;
