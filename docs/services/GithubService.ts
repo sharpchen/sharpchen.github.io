@@ -19,23 +19,48 @@ class GithubRepositoryEndPointMethods {
       })
     ).data as RepoFileResponse;
   }
-  async getTree(branchSHA?: string): Promise<RepoTreeResponse> {
-    return (
-      await octokit.rest.git.getTree({
-        owner: this.owner,
-        repo: this.repo,
-        tree_sha:
-          branchSHA ??
-          (
-            await octokit.rest.git.getRef({
-              owner: this.owner,
-              repo: this.repo,
-              ref: `heads/main`,
-            })
-          ).data.object.sha,
-        recursive: 'true',
-      })
-    ).data.tree;
+  async getTree(options: { branchSHA?: string; branch?: string }): Promise<RepoTreeResponse> {
+    let branch: string = options.branch ?? 'main';
+    let sha: string;
+    try {
+      sha =
+        options.branchSHA ??
+        (
+          await octokit.rest.git.getRef({
+            owner: this.owner,
+            repo: this.repo,
+            ref: `heads/${branch}}`,
+          })
+        ).data.object.sha;
+    } catch (error) {
+      console.log(
+        `Error fetching ref of ${JSON.stringify({
+          repo: `${this.owner}/${this.repo}`,
+          branch: branch,
+        })}`,
+        error
+      );
+      throw error;
+    }
+    try {
+      return (
+        await octokit.rest.git.getTree({
+          owner: this.owner,
+          repo: this.repo,
+          tree_sha: sha,
+          recursive: 'true',
+        })
+      ).data.tree;
+    } catch (error) {
+      console.log(
+        `Error fetching tree of ${JSON.stringify({
+          repo: `${this.owner}/${this.repo}`,
+          branch: branch,
+        })}`,
+        error
+      );
+      throw error;
+    }
   }
   async getFiles(dir: string, searchOption: 'top' | 'deep'): Promise<RepoFileResponse> {
     const current = await this.fetchStructureByPath(dir);

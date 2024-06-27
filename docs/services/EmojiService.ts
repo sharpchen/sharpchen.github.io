@@ -28,7 +28,7 @@ class FluentEmojiHandler extends EmojiHandler {
   }
   async getEmojiUrl(variant: EmojiVariant, emoji: DocumentIcon): Promise<string> {
     const hex = this.getHexOfEmoji(emoji);
-    const match = (await githubService.fromRepository('bignutty/fluent-emoji').getTree()).filter(
+    const match = (await githubService.fromRepository('bignutty/fluent-emoji').getTree({})).filter(
       x => x.path?.includes(hex) && x.path.includes('animated-static')
     );
     if (!match.length) throw new Error(`APNG path of emoji ${emoji} not found. Hex: ${hex}`);
