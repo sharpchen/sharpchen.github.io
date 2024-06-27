@@ -43,8 +43,6 @@ jobs:
           # cache: pnpm # or pnpm / yarn # cache requires lock file!
       - name: Install dependencies
         run: pnpm install # or npm ci # or pnpm install / yarn install / bun install
-      - name: Sync markdown themes
-        run: node ./.github/workflows/beforeBuild/script.mjs
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Build with VitePress
