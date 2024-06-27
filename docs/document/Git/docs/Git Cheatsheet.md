@@ -92,3 +92,9 @@ Rebasing rewrites history, use it only in local.
 |delete remote branch|`git push -d\|--delete origin <branch>`|
 |track remote branch for local|`git switch -C <new_branch> origin/<remote_branch>`|
 |remove tracked branch already deleted from remote|`git remote prune origin`|
+
+## Repository inspecting
+
+|usage|command|
+|---|---|
+|get tracked file count|`git ls-files \| wc -l`|
