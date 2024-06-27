@@ -89,7 +89,7 @@ Rebasing rewrites history, use it only in local.
 |push with tag|`git push origin <tag>`|
 |delete remote tag|`git push origin -d\|--delete <tag>`|
 |publish local branch to remote|`git push -u\|--upstream <upstream_branch> <branch>`|
-|delete remote branch|`git push -d\|--delete origin <branch>`|
+|delete remote branch|`git push origin -d\|--delete <branch>`|
 |track remote branch for local|`git switch -C <new_branch> origin/<remote_branch>`|
 |remove tracked branch already deleted from remote|`git remote prune origin`|
 
