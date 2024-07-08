@@ -21,8 +21,9 @@ export const documentMap = {
     icon: '🎨',
     description: 'Make your own nvim color scheme using lua.',
   },
-  Bash: { icon: '🐢', description: 'shebang!' },
-  'Regular Expression': { icon: '🐫', description: '' },
+  Bash: { icon: '🐢', description: 'Shebang!' },
+  'Regular Expression': { icon: '🐫', description: 'Memory lossss for every 6 months' },
+  Nix: { icon: '❄', description: 'Reproduce freedom' },
 } as const satisfies DocumentInfo;
 export type DocumentName = keyof typeof documentMap;
 export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
@@ -86,7 +87,7 @@ class DocumentService implements IDocumentService {
       linkContext += file?.directory.up(i)?.name + '/';
     }
     const link = `${linkContext}${firstFolder?.name}/${File.Path.GetFileNameWithoutExtension(
-      file?.name!
+      file?.name!,
     )}`;
     return shouldSolveSharpSign(name) ? solveSharpSign(link) : link;
   }
@@ -106,12 +107,12 @@ class DocumentService implements IDocumentService {
 
     function getFirst(
       current: File.DirectoryInfo,
-      depth: number = 1
+      depth: number = 1,
     ): { firstFolder: File.DirectoryInfo; depth: number } {
       const nextLevelsSorted = Enumerable.from(
         current
           .getDirectories()
-          .filter(x => x.getFiles().length > 0 || x.getDirectories().length > 0)
+          .filter(x => x.getFiles().length > 0 || x.getDirectories().length > 0),
       ).orderBy(x => x.name);
       //if no folder
       if (!nextLevelsSorted.count()) return { firstFolder: current, depth: depth };
