@@ -1,4 +1,4 @@
-import fg from 'fast-glob';
+import fg, { async } from 'fast-glob';
 import { projectRoot } from '../shared/FileSystem';
 import { DocumentIcon } from './DocumentService';
 import { githubService } from './GithubService';
@@ -22,6 +22,7 @@ export abstract class EmojiHandler {
     return ret;
   }
 }
+import { Path } from '../shared/FileSystem';
 class FluentEmojiHandler extends EmojiHandler {
   shouldHandle(variant: EmojiVariant): boolean {
     return variant === 'animated-fluent-emoji';
@@ -29,13 +30,16 @@ class FluentEmojiHandler extends EmojiHandler {
   async getEmojiUrl(variant: EmojiVariant, emoji: DocumentIcon): Promise<string> {
     const hex = this.getHexOfEmoji(emoji);
     const match = (await githubService.fromRepository('bignutty/fluent-emoji').getTree({})).filter(
-      x => x.path?.includes(hex) && x.path.includes('animated-static')
+      x =>
+        Path.GetFileNameWithoutExtension(x.path!).startsWith(hex) &&
+        x.path!.includes('animated-static'),
     );
     if (!match.length) throw new Error(`APNG path of emoji ${emoji} not found. Hex: ${hex}`);
     const path = match[0].path;
     const file = await githubService.fromRepository('bignutty/fluent-emoji').getFileInfo(path!);
     if (!file) throw new Error(`file of path: ${path} is ${file}`);
     const url = file.download_url!;
+    console.log(JSON.stringify({ emoji: emoji, hex: hex, file: file.name }));
     return url;
   }
 }

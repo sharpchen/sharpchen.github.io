@@ -9,7 +9,10 @@ type RepoTreeResponse = Awaited<ReturnType<Octokit['rest']['git']['getTree']>>['
 type ElementType<T> = T extends (infer U)[] ? U : never;
 type RepoFileSystemInfo = ElementType<RepoFileResponse>;
 class GithubRepositoryEndPointMethods {
-  constructor(private owner: string, private repo: string) {}
+  constructor(
+    private owner: string,
+    private repo: string,
+  ) {}
   private async fetchStructureByPath(path: string): Promise<RepoFileResponse> {
     return (
       await octokit.rest.repos.getContent({
@@ -38,7 +41,7 @@ class GithubRepositoryEndPointMethods {
           repo: `${this.owner}/${this.repo}`,
           branch: branch,
         })}`,
-        error
+        error,
       );
       throw error;
     }
@@ -57,7 +60,7 @@ class GithubRepositoryEndPointMethods {
           repo: `${this.owner}/${this.repo}`,
           branch: branch,
         })}`,
-        error
+        error,
       );
       throw error;
     }
@@ -72,13 +75,13 @@ class GithubRepositoryEndPointMethods {
           ...current.filter(x => x.type === 'file'),
           ...(await dive(
             current.filter(x => x.type === 'dir'),
-            this
+            this,
           )),
         ];
     }
     async function dive(
       dirs: RepoFileResponse,
-      self: GithubRepositoryEndPointMethods
+      self: GithubRepositoryEndPointMethods,
     ): Promise<RepoFileResponse> {
       const tasks = dirs.map(async x => {
         const nexts = await self.fetchStructureByPath(x.path);
