@@ -1,4 +1,4 @@
-import fg, { async } from 'fast-glob';
+import fg from 'fast-glob';
 import { projectRoot } from '../shared/FileSystem';
 import { DocumentIcon } from './DocumentService';
 import { githubService } from './GithubService';

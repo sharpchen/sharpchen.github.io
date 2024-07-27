@@ -18,6 +18,17 @@ let foo = { bar = "???"; baz = "!!!" }; in
     ${bar} + ${baz} # `bar` and `baz` are introduced
 ```
 
+```nix
+f = { x ? 1, y ? 2, ... }@args: with args; x + y + z
+```
+
+```nix
+foo = rec {
+  p = { x = 1; y = 1; };
+  bar = with p; [ x y ];
+};
+```
+
 ## Importing from another module
 
 When another module is imported, all attributes will be deconstructed from the set into scope.

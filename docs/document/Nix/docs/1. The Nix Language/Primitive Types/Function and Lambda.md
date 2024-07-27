@@ -27,7 +27,8 @@ It's recursive-like, but with absolute recursion count(which is the paramter cou
 ```nix
 let add = x: y: x + y; in add 2 3 # returns 5
 ```
-## Set pattern paramters
+
+## Set pattern paramters(Named parameters)
 
 Another workround for multiple paramters for function is using *set parttern*.
 Paramters are separated by comma instead of semicolon.
@@ -37,6 +38,10 @@ let format_person = { name, age }: { name = name; age = age };
 in 
   format_person { name = "jane"; age =  18 }
 ```
+
+:::info
+Set parttern is similar to named paramters, they're all named, can be sepecified by any order.
+:::
 
 ## Variadic parameter
 
