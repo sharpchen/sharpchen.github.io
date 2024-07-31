@@ -22,6 +22,7 @@ There's two ways to install packages using home-manager.
 ```
 
 **However, you won't be able to config the package in a same place.**
+To generate any file as well as config file, use `home.file."<file_path>"`
 
 ```nix
 { cofig, pkgs, ... }: {
@@ -34,3 +35,24 @@ There's two ways to install packages using home-manager.
   };
 }
 ```
+
+## Install and config by builtin option
+
+**For some packages, nix provides builtin options to set them up programmatically**
+
+```nix
+{ cofig, pkgs, ... }: {
+  programs.git = {
+    enable = true;
+    userName = "foo";
+    userEmail = "example@bar.com";
+  };
+}
+```
+
+*`enable` implies that the package will be installed implicitly.*
+
+:::info
+Only few packages has builtin options, how do I know?
+Go to [Home-manager Options](https://nix-community.github.io/home-manager/options.xhtml) and search `programs.<pkg_name>`
+:::
