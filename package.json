@@ -1,27 +1,27 @@
 {
-  "scripts": {
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
-  },
-  "dependencies": {
-    "@types/markdown-it": "^13.0.8",
-    "fast-glob": "^3.3.2",
-    "gray-matter": "^4.0.3",
-    "linq": "^4.0.3",
-    "markdown-it": "^14.1.0",
-    "octokit": "^4.0.2",
-    "vitepress": "latest",
-    "vue": "^3.4.29"
-  },
-  "devDependencies": {
-    "@shikijs/vitepress-twoslash": "^1.9.0",
-    "@types/node": "^20.14.5",
-    "axios": "^1.7.2",
-    "jsonc-parser": "^3.2.1",
-    "mermaid": "^10.9.1",
-    "shiki": "^1.7.0",
-    "vitepress-plugin-mermaid": "^2.0.16"
-  },
-  "type": "module"
+    "scripts": {
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs",
+        "docs:preview": "vitepress preview docs"
+    },
+    "dependencies": {
+        "@types/markdown-it": "^13.0.8",
+        "fast-glob": "^3.3.2",
+        "gray-matter": "^4.0.3",
+        "linq": "^4.0.3",
+        "markdown-it": "^14.1.0",
+        "octokit": "^4.0.2",
+        "vue": "^3.4.29"
+    },
+    "devDependencies": {
+        "vitepress": "latest",
+        "@shikijs/vitepress-twoslash": "^1.9.0",
+        "@types/node": "^20.14.5",
+        "axios": "^1.7.2",
+        "jsonc-parser": "^3.2.1",
+        "mermaid": "^10.9.1",
+        "shiki": "^1.7.0",
+        "vitepress-plugin-mermaid": "^2.0.16"
+    },
+    "type": "module"
 }
