@@ -12,24 +12,26 @@
 </template>
 
 <script setup lang="ts">
-    import { useData } from 'vitepress';
-    import { onBeforeMount, ref } from 'vue';
-    import { data as globalData } from '../data/global.data';
-    const { site, theme } = useData();
-    const webTitle = site.value.titleTemplate;
-    const vitepressVersion = ref<string | null>(globalData.vitepressVersion);
+import { useData } from 'vitepress';
+import { onBeforeMount, ref } from 'vue';
+import { data as globalData } from '../data/global.data';
+const { site, theme } = useData();
+const webTitle = site.value.titleTemplate;
+const vitepressVersion = ref<string | null>(globalData.vitepressVersion);
 </script>
 
 <style scoped>
-    .site-footer {
-        color: #888;
-        text-align: center;
-        font-size: 0.75rem;
-        width: 100%;
-        padding: 15px 0;
-        overflow: auto;
-    }
-    .bold {
-        color: var(--vp-code-color);
-        font-weight: 700;
-    }
+.site-footer {
+    color: #888;
+    text-align: center;
+    font-size: 0.75rem;
+    width: 100%;
+    padding: 15px 0;
+    overflow: auto;
+}
+
+.bold {
+    color: var(--vp-code-color);
+    font-weight: 700;
+}
+</style>
