@@ -23,7 +23,7 @@ class GithubRepositoryEndPointMethods {
     ).data as RepoFileResponse;
   }
   async getTree(options: { branchSHA?: string; branch?: string }): Promise<RepoTreeResponse> {
-    let branch: string = options.branch ?? 'main';
+    const branch: string = options.branch ?? 'main';
     let sha: string;
     try {
       sha =
@@ -106,7 +106,8 @@ class GithubRepositoryEndPointMethods {
           path: path,
         })
       ).data as RepoFileSystemInfo;
-    } else throw new Error();
+    }
+    throw new Error();
   }
 }
 export class GithubService {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as shiki from 'shiki';
 import { githubService } from './GithubService';
-import { IThemeService } from './IThemeService';
+import type { IThemeService } from './IThemeService';
 const highlighter = await shiki.getSingletonHighlighter();
 
 type TextmateRule = {
@@ -56,7 +56,7 @@ class ThemeService implements IThemeService {
         const theme = await this.fetchThemeObject(x[1]);
         await this.register(theme);
         console.log(`Textmate theme: \`${x[0]}\` has loaded.`);
-      })
+      }),
     );
   }
 }

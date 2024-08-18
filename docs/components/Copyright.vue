@@ -33,4 +33,3 @@
         color: var(--vp-code-color);
         font-weight: 700;
     }
-</style>

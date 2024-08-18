@@ -2,7 +2,7 @@
 import fg from 'fast-glob';
 import Enumerable from 'linq';
 import * as File from '../shared/FileSystem';
-import { IDocumentService } from './IDocumentService';
+import type { IDocumentService } from './IDocumentService';
 export type DocumentInfo = Record<string, { icon: string; description: string }>;
 export const documentMap = {
   'Csharp Design Patterns': { icon: '👾', description: 'Design Patterns in C#' },
@@ -14,7 +14,7 @@ export const documentMap = {
   JavaScript: { icon: '😅', description: 'JavaScript for C# developer' },
   SQL: { icon: '🦭', description: 'SQL syntax for beginners' },
   TypeScript: { icon: '🤯', description: 'TypeScript for C# developer' },
-  VBA: { icon: '💩', description: 'VBA for excel' },
+  // VBA: { icon: '💩', description: 'VBA for excel' },
   Vue3: { icon: '⚡', description: 'Vue3 for .NET blazor developer' },
   'Unsafe CSharp': { icon: '😎', description: 'Entering the danger zone...' },
   'NeoVim ColorScheme Development': {
@@ -24,6 +24,7 @@ export const documentMap = {
   Bash: { icon: '🐢', description: 'Shebang!' },
   'Regular Expression': { icon: '🐫', description: 'Memory lossss for every 6 months' },
   Nix: { icon: '❄', description: 'Reproduce freedom' },
+  'Entity Framework Core':{icon:'🗿', description:''},
 } as const satisfies DocumentInfo;
 export type DocumentName = keyof typeof documentMap;
 export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
@@ -32,7 +33,7 @@ class DocumentService implements IDocumentService {
   isEmptyDocument(name: DocumentName): boolean {
     try {
       const entry = this.getMarkdownEntryFolder(name);
-      return fg.globSync(`**/*.md`, { cwd: entry.fullName }).length === 0;
+      return fg.globSync('**/*.md', { cwd: entry.fullName }).length === 0;
     } catch (error) {
       return true;
     }
@@ -84,7 +85,7 @@ class DocumentService implements IDocumentService {
     const { firstFolder, depth } = this.tryGetFirstChapterFolderOfDocument(name);
     const file = firstFolder?.getFiles()[0];
     for (let i = depth - 1; i > 0; i--) {
-      linkContext += file?.directory.up(i)?.name + '/';
+      linkContext += `${file?.directory.up(i)?.name}/`;
     }
     const link = `${linkContext}${firstFolder?.name}/${File.Path.GetFileNameWithoutExtension(
       file?.name!,
