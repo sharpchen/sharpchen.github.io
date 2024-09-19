@@ -1,8 +1,8 @@
 import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
-import { MermaidConfig } from 'mermaid';
+import type { MermaidConfig } from 'mermaid';
 import { defineConfig } from 'vitepress';
 import { withMermaid } from 'vitepress-plugin-mermaid';
-import { DocumentName, documentService } from '../services/DocumentService';
+import { type DocumentName, documentService } from '../services/DocumentService';
 import { sidebarService } from '../services/SidebarService';
 import { themeService } from '../services/ThemeService';
 type VitepressThemeType = Exclude<

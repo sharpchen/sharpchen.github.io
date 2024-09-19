@@ -1,5 +1,5 @@
-import { DocumentIcon } from './DocumentService';
-import { EmojiHandler } from './EmojiService';
+import type { DocumentIcon } from './DocumentService';
+import type { EmojiHandler } from './EmojiService';
 export type EmojiVariant =
   | 'noto-emoji-v2020-04-08-unicode12_1'
   | 'noto-emoji-v2.042'

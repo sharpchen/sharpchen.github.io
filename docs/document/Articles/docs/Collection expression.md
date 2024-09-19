@@ -4,7 +4,7 @@
 
 ```cs
 int[] empty = [];
-(empty == Array.Empty<int>())Dump(); // true
+(empty == Array.Empty<int>()).Dump(); // true
 ```
 
 ```cs
