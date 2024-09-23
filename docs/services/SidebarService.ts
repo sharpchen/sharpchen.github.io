@@ -1,8 +1,17 @@
-import { DefaultTheme } from 'vitepress';
-import { DirectoryInfo, FileInfo, Path, documentRoot } from '../shared/FileSystem';
-import { DocumentName, documentMap, documentService } from './DocumentService';
-import { IDocumentService } from './IDocumentService';
-import { ISidebarService } from './ISidebarService';
+import { exec, spawnSync } from 'node:child_process';
+import type { DefaultTheme } from 'vitepress';
+import {
+  type DirectoryInfo,
+  type FileInfo,
+  Path,
+  documentRoot,
+  projectRoot,
+} from '../shared/FileSystem';
+import { type DocumentName, documentMap, documentService } from './DocumentService';
+import type { IDocumentService } from './IDocumentService';
+import type { ISidebarService } from './ISidebarService';
+import { async } from 'fast-glob';
+import path from 'node:path';
 const solveSharpSign = (text: string) => {
   if (text.includes('sharp')) return text.replace('sharp', '#');
   if (text.includes('Sharp')) return text.replace('Sharp', '#');
@@ -12,7 +21,7 @@ class SidebarService implements ISidebarService {
   private readonly base: string = `/${documentRoot().name}`;
   readonly documentService: IDocumentService = documentService;
   getMultipleSidebar(): DefaultTheme.SidebarMulti {
-    let sidebar: DefaultTheme.SidebarMulti = {};
+    const sidebar: DefaultTheme.SidebarMulti = {};
     for (const name of Object.keys(documentMap)) {
       sidebar[`${this.base}/${name}/docs/`] = this.getSidebarOfDocument(name as DocumentName);
     }
@@ -23,14 +32,32 @@ class SidebarService implements ISidebarService {
     return [
       {
         text: solveSharpSign(name),
-        items: this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`),
+        items:
+          name === 'Articles'
+            ? this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`).sort(
+                compareTrackedDate,
+              )
+            : this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`),
       },
     ];
+    function compareTrackedDate(a: DefaultTheme.SidebarItem, b: DefaultTheme.SidebarItem) {
+      return gitTrackedDate(a.link) - gitTrackedDate(b.link);
+    }
+    function gitTrackedDate(file: string): Date {
+      return new Date(
+        spawnSync('git', [
+          'log',
+          '-1',
+          '--pretty="%ai"',
+          path.join(documentRoot().fullName, file),
+        ]).stdout.toString(),
+      );
+    }
   }
   transformFolderToSidebarItem(folder: DirectoryInfo, base: string): DefaultTheme.SidebarItem[] {
     const subs = folder.getDirectories();
     // load files in this folder
-    let items: DefaultTheme.SidebarItem[] = folder.getFiles().length
+    const items: DefaultTheme.SidebarItem[] = folder.getFiles().length
       ? filesToSidebarItems(folder.getFiles(), `${base}/${folder.name}`)
       : [];
     for (const index in subs) {

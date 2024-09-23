@@ -1,8 +1,8 @@
 import matter from 'gray-matter';
-import { type Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
-import { DocumentName, documentService } from './DocumentService';
+import type { Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
+import { type DocumentName, documentService } from './DocumentService';
 import { emojiService } from './EmojiService';
-import { IFeatureService } from './IFeatureService';
+import type { IFeatureService } from './IFeatureService';
 class FeatureService implements IFeatureService {
   readonly linkText: string = 'Get started';
   getFeaturesAsYaml(): string {
@@ -35,7 +35,7 @@ class FeatureService implements IFeatureService {
             link: documentService.tryGetIndexLinkOfDocument(key as DocumentName),
             linkText: this.linkText,
           };
-        })
+        }),
     );
   }
 }
