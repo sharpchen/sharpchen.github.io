@@ -89,7 +89,9 @@ public class RepositoryTest
         Assert.NotNull(okResult);
         Assert.Equal(200, okResult.StatusCode);
         Assert.Equal("Action", (okResult.Value as Foo)?.Name);
-        await repository.Received().GetByIdAsync(2); // assert the fake repository has called the method.
+        // assert the fake repository has called the method.
+        // because this method should called inside the controller!
+        await repository.Received().GetByIdAsync(2); 
     }
 }
 ```
