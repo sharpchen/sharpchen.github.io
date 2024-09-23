@@ -44,7 +44,7 @@ class SidebarService implements ISidebarService {
       return gitTrackedDate(a.link) - gitTrackedDate(b.link);
     }
     function gitTrackedDate(file: string): Date {
-      return new Date(
+      const foo = new Date(
         spawnSync('git', [
           'log',
           '-1',
@@ -52,6 +52,8 @@ class SidebarService implements ISidebarService {
           path.join(documentRoot().fullName, file),
         ]).stdout.toString(),
       );
+      console.log(foo);
+      return foo;
     }
   }
   transformFolderToSidebarItem(folder: DirectoryInfo, base: string): DefaultTheme.SidebarItem[] {
