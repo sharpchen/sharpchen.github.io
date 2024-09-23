@@ -47,9 +47,10 @@ class SidebarService implements ISidebarService {
       const foo = new Date(
         spawnSync('git', [
           'log',
-          '-1',
-          '--pretty="%ai"',
-          path.join(documentRoot().fullName, file),
+          '--diff-filter=A',
+          '--format="%cI"',
+          '--',
+          `'${path.join(documentRoot().fullName, file)}'`,
         ]).stdout.toString(),
       );
       console.log(foo);
