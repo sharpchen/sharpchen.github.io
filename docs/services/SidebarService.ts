@@ -50,7 +50,7 @@ class SidebarService implements ISidebarService {
           '--diff-filter=A',
           '--format="%cI"',
           '--',
-          `'${path.join(documentRoot().fullName, file)}'`,
+          `'${path.join(documentRoot().fullName, file)}.md'`,
         ]).stdout.toString(),
       );
       console.log(foo);
