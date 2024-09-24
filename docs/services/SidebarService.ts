@@ -35,7 +35,7 @@ class SidebarService implements ISidebarService {
         items:
           name === 'Articles'
             ? this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`).sort(
-                compareTrackedDate,
+                (a, b) => compareTrackedDate(a, b),
               )
             : this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`),
       },
@@ -44,16 +44,17 @@ class SidebarService implements ISidebarService {
       return gitTrackedDate(a.link) - gitTrackedDate(b.link);
     }
     function gitTrackedDate(file: string): Date {
-      const foo = new Date(
-        spawnSync('git', [
-          'log',
-          '--diff-filter=A',
-          '--format="%cI"',
-          '--',
-          `'${path.join(documentRoot().fullName, file)}.md'`,
-        ]).stdout.toString(),
-      );
-      console.log(foo);
+      const dateStr = spawnSync('git', [
+        'log',
+        '--diff-filter=A',
+        '--format="%cI"',
+        '--',
+        `'${path.join(documentRoot().fullName, file)}.md'`,
+      ]).stdout.toString();
+      console.log(`current file: ${file}`);
+      console.log(`current timestamp: ${dateStr}`);
+      const foo = new Date(dateStr);
+      console.log(`current date converted: ${foo}`);
       return foo;
     }
   }

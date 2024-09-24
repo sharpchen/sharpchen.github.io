@@ -5,13 +5,21 @@ import { expect, test } from 'vitest';
 import path from 'node:path';
 import { documentRoot, projectRoot } from '../shared/FileSystem';
 
-test('', () => {
+test('', async () => {
   const foo = spawnSync('git', [
     'log',
     '--diff-filter=A',
     '--format="%cI"',
     '--',
-    `'${path.join(documentRoot().fullName, 'docs/test/firstTrackedDate.test.ts')}'`,
-  ]).stdout.toString();
-  expect(foo.startsWith('2024')).toBe(true);
+    `"${path.join(documentRoot().fullName, 'SQL/docs/View/View.md')}"`,
+  ])
+    .stdout.toString()
+    .trim();
+  // await new Promise(resolve => setTimeout(resolve, 5000));
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+  console.log(foo ? foo : 'empty string');
+  console.log(`"${path.join(documentRoot().fullName, 'SQL/docs/View/View.md')}"`);
+  console.log(documentRoot().fullName);
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+  expect(foo.startsWith('2023')).toBe(true);
 });
