@@ -45,7 +45,7 @@ class SidebarService implements ISidebarService {
     }
     function gitTrackedDate(file: string): Date {
       const dateStr = execSync(
-        `git log --diff-filter=A --format="%cI" -- '${path.join(documentRoot().fullName, file)}.md'`,
+        `git log --diff-filter=A --format="%cI" -- '${path.join(documentRoot().parent!.fullName, file)}.md'`,
       )
         .toString()
         .trim();
@@ -58,7 +58,7 @@ class SidebarService implements ISidebarService {
         `'${path.join(documentRoot().fullName, file)}.md'`,
       ]).stdout.toString(); */
       console.log(
-        `current command: ${`git log --diff-filter=A --format="%cI" -- "${path.join(documentRoot().fullName, file)}.md"`}`,
+        `current command: ${`git log --diff-filter=A --format="%cI" -- '${path.join(documentRoot().fullName, file)}.md'`}`,
       );
       console.log(`current timestamp: ${dateStr}`);
       const foo = new Date(dateStr);
