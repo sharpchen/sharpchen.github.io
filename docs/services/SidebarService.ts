@@ -1,17 +1,10 @@
 import { exec, execSync, spawnSync } from 'node:child_process';
+import path from 'node:path';
 import type { DefaultTheme } from 'vitepress';
-import {
-  type DirectoryInfo,
-  type FileInfo,
-  Path,
-  documentRoot,
-  projectRoot,
-} from '../shared/FileSystem';
+import { type DirectoryInfo, type FileInfo, Path, documentRoot } from '../shared/FileSystem';
 import { type DocumentName, documentMap, documentService } from './DocumentService';
 import type { IDocumentService } from './IDocumentService';
 import type { ISidebarService } from './ISidebarService';
-import { async } from 'fast-glob';
-import path from 'node:path';
 const solveSharpSign = (text: string) => {
   if (text.includes('sharp')) return text.replace('sharp', '#');
   if (text.includes('Sharp')) return text.replace('Sharp', '#');
@@ -43,27 +36,13 @@ class SidebarService implements ISidebarService {
     function compareTrackedDate(a: DefaultTheme.SidebarItem, b: DefaultTheme.SidebarItem) {
       return gitTrackedDate(a.link) - gitTrackedDate(b.link);
     }
-    function gitTrackedDate(file: string): Date {
+    function gitTrackedDate(file: string): number {
       const dateStr = execSync(
         `git log --diff-filter=A --format="%cI" -- '${path.join(documentRoot().parent!.fullName, file)}.md'`,
       )
         .toString()
         .trim();
-
-      /* spawnSync('git', [
-        'log',
-        '--diff-filter=A',
-        '--format="%cI"',
-        '--',
-        `'${path.join(documentRoot().fullName, file)}.md'`,
-      ]).stdout.toString(); */
-      console.log(
-        `current command: ${`git log --diff-filter=A --format="%cI" -- '${path.join(documentRoot().fullName, file)}.md'`}`,
-      );
-      console.log(`current timestamp: ${dateStr}`);
-      const foo = new Date(dateStr);
-      console.log(`current date converted: ${foo}`);
-      return foo;
+      return Date.parse(dateStr);
     }
   }
   transformFolderToSidebarItem(folder: DirectoryInfo, base: string): DefaultTheme.SidebarItem[] {
@@ -94,14 +73,6 @@ class SidebarService implements ISidebarService {
           };
         })
         .sort((x, y) => {
-          //   if (!/^\d+\.\s*/.test(x.text) || !/^\d+\.\s*/.test(y.text))
-          //     throw new Error(
-          //       `Files:\n${Enumerable.from(files)
-          //         .select(f => f.fullName)
-          //         .aggregate(
-          //           (prev, current) => `${prev},\n${current}\n`
-          //         )} don't have consistent leading indices.`
-          //     );
           return (
             parseInt(x.text.match(/^\d+\.\s*/)?.[0]!) - parseInt(y.text.match(/^\d+\.\s*/)?.[0]!)
           );
