@@ -45,7 +45,7 @@ class SidebarService implements ISidebarService {
     }
     function gitTrackedDate(file: string): Date {
       const dateStr = execSync(
-        `git log --diff-filter=A --format="%cI" -- "${path.join(documentRoot().fullName, file)}.md"`,
+        `git log --diff-filter=A --format="%cI" -- '${path.join(documentRoot().fullName, file)}.md'`,
       )
         .toString()
         .trim();
