@@ -1,4 +1,4 @@
-import { exec, spawnSync } from 'node:child_process';
+import { exec, execSync, spawnSync } from 'node:child_process';
 import type { DefaultTheme } from 'vitepress';
 import {
   type DirectoryInfo,
@@ -44,13 +44,19 @@ class SidebarService implements ISidebarService {
       return gitTrackedDate(a.link) - gitTrackedDate(b.link);
     }
     function gitTrackedDate(file: string): Date {
-      const dateStr = spawnSync('git', [
+      const dateStr = execSync(
+        `git log --diff-filter=A --format="%cI" -- "${path.join(documentRoot().fullName, file)}.md"`,
+      )
+        .toString()
+        .trim();
+
+      /* spawnSync('git', [
         'log',
         '--diff-filter=A',
         '--format="%cI"',
         '--',
         `'${path.join(documentRoot().fullName, file)}.md'`,
-      ]).stdout.toString();
+      ]).stdout.toString(); */
       console.log(`current file: ${file}`);
       console.log(`current timestamp: ${dateStr}`);
       const foo = new Date(dateStr);
