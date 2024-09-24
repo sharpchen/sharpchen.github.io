@@ -57,7 +57,9 @@ class SidebarService implements ISidebarService {
         '--',
         `'${path.join(documentRoot().fullName, file)}.md'`,
       ]).stdout.toString(); */
-      console.log(`current file: ${file}`);
+      console.log(
+        `current command: ${`git log --diff-filter=A --format="%cI" -- "${path.join(documentRoot().fullName, file)}.md"`}`,
+      );
       console.log(`current timestamp: ${dateStr}`);
       const foo = new Date(dateStr);
       console.log(`current date converted: ${foo}`);
