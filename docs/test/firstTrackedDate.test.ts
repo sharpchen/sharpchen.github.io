@@ -7,7 +7,7 @@ import { documentRoot, projectRoot } from '../shared/FileSystem';
 
 test('', async () => {
   const boo = execSync(
-    `git log --diff-filter=A --format="%cI" -- "${path.join(documentRoot().fullName, 'SQL/docs/View/View.md')}"`,
+    `git log --diff-filter=A --format="%cI" -- "${path.join(documentRoot().parent.fullName, 'SQL/docs/View/View.md')}"`,
   );
   console.log(boo.toString());
   expect(boo.toString().trim()).toBe('');
@@ -16,13 +16,11 @@ test('', async () => {
     '--diff-filter=A',
     '--format="%cI"',
     '--',
-    `"${path.join(documentRoot().fullName, 'SQL/docs/View/View.md')}"`,
+    `"${path.join(documentRoot().parent.fullName, 'document/SQL/docs/View/View.md')}"`,
   ]).stdout.toString();
-  // await new Promise(resolve => setTimeout(resolve, 5000));
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
   console.log(foo ? foo : 'empty string');
   console.log(`"${path.join(documentRoot().fullName, 'SQL/docs/View/View.md')}"`);
-  console.log(documentRoot().fullName);
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
   expect(foo.startsWith('2023')).toBe(true);
 });

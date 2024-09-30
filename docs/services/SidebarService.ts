@@ -1,4 +1,4 @@
-import { exec, execSync, spawnSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import path from 'node:path';
 import type { DefaultTheme } from 'vitepress';
 import { type DirectoryInfo, type FileInfo, Path, documentRoot } from '../shared/FileSystem';

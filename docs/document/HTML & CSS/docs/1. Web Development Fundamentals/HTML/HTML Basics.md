@@ -39,6 +39,8 @@ Since HTML5 we got a more concise syntax.
 
 ## Structure of html
 
+A common structure of html:
+
 - `<!DOCTYPE ..>`
 - `<html>`
     - `<head>`
@@ -49,4 +51,48 @@ Since HTML5 we got a more concise syntax.
         - `<style>`: internal css
         - `<script>`: links to or contains JavaScript code.
     - `<body>`: the actually page
-        - other elements...
+        - `<header>`
+             - `<nav>`: navigation
+        - `<main>`: main page in the middle, shoule be unique
+            - `<section>`: different sections in main page
+        - `<aside>`: can be a sidebar like toc in left or right
+        - `<footer>` 
+
+> [!IMPORTANT]
+> It's just an example! It can be any form.
+
+## Metadata
+
+`<meta>` is used for defining a many metadata of the html page.
+`name` attribute as the key, `content` attribute is the value for the metadata.
+
+- `viewport`: visible area
+
+```html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- [!code highlight]  -->
+  <title>I am foo</title>
+</head>
+</html>
+```
+
+- `keywords`: simply for SEO, not really useful in these days.
+
+`<meta name="keywords" content="typescript, tutorial">{:html}`
+
+- `desc`: description for the page, should be shown in search results.
+
+`<meta name="desc" content="a tutorial website">{:html}`
+
+## HTML entities
+
+A escaping for characters.
+
+`&nbsp;{:html}` for example.
+
+> [!TIP]
+> [Full list of HTML entities](https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references) 
