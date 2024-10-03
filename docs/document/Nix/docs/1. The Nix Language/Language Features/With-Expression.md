@@ -35,5 +35,19 @@ When another module is imported, all attributes will be deconstructed from the s
 
 ```nix
 let foo = null; in 
-    with (import ./foo.nix) 
+    with (import ./foo.nix);
+```
+
+## Practical usage
+
+```nix
+{ config, pkgs, ... }:
+
+{
+    home.packages = with pkgs; [
+        git
+        ripgrep
+        neovim
+    ];
+}
 ```
