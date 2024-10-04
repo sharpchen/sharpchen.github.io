@@ -29,6 +29,11 @@ class ThemeService implements IThemeService {
     highlighter;
   async register(theme: TextmateTheme): Promise<void> {
     if (this.isThemeRegistered(theme.name as ThemeName)) return;
+    if (theme.name.includes('Eva')) {
+      theme.tokenColors.filter(x =>
+        x.scope.includes('punctuation.definition.comment'),
+      )[0].settings.fontStyle = 'italic';
+    }
     this.innerThemeService.loadTheme(theme);
   }
   async getTheme(name: ThemeName): Promise<shiki.ThemeRegistration> {
