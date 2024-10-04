@@ -23,16 +23,19 @@ const themeInfos = {
   'Eva Light': { repo: 'fisheva/Eva-Theme', path: 'themes/Eva-Light.json', branch: 'master' },
   'Eva Dark': { repo: 'fisheva/Eva-Theme', path: 'themes/Eva-Dark.json', branch: 'master' },
 } satisfies Record<string, RemoteThemeInfo>;
+
 export type ThemeName = keyof typeof themeInfos;
+
 class ThemeService implements IThemeService {
   readonly innerThemeService: Awaited<ReturnType<typeof shiki.getSingletonHighlighter>> =
     highlighter;
   async register(theme: TextmateTheme): Promise<void> {
     if (this.isThemeRegistered(theme.name as ThemeName)) return;
     if (theme.name.includes('Eva')) {
-      theme.tokenColors.filter(x =>
+      const foo = theme.tokenColors.filter(x =>
         x.scope.includes('punctuation.definition.comment'),
-      )[0].settings.fontStyle = 'italic';
+      )[0];
+      foo.scope = foo.scope.replace(/punctuation.definition.comment,/, '');
     }
     this.innerThemeService.loadTheme(theme);
   }
