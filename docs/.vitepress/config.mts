@@ -16,10 +16,10 @@ const vitepressConfig = defineConfig({
   cleanUrls: true,
   markdown: {
     lineNumbers: true,
-    // theme: {
-      // light: await themeService.getTheme('Eva Light'),
-      // dark: await themeService.getTheme('Eva Dark'),
-    // },
+    theme: {
+      light: await themeService.getTheme('Eva Light'),
+      dark: await themeService.getTheme('Eva Dark'),
+    },
     codeTransformers: [transformerTwoslash()],
   },
   locales: {
