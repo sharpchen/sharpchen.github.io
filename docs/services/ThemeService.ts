@@ -32,10 +32,8 @@ class ThemeService implements IThemeService {
   async register(theme: TextmateTheme): Promise<void> {
     if (this.isThemeRegistered(theme.name as ThemeName)) return;
     if (theme.name.includes('Eva')) {
-      const foo = theme.tokenColors.filter(x =>
-        x.scope.includes('punctuation.definition.comment'),
-      )[0];
-      foo.scope = foo.scope.replace(/punctuation.definition.comment,/, '');
+      const foo = theme.tokenColors.filter(x => x.scope.startsWith('comment'))[0];
+      foo.settings.fontStyle = '';
     }
     this.innerThemeService.loadTheme(theme);
   }
