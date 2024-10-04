@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import { type DocumentName, documentService } from '../services/DocumentService';
 import { sidebarService } from '../services/SidebarService';
-import type { themeService } from '../services/ThemeService';
+import { themeService } from '../services/ThemeService';
 type VitepressThemeType = Exclude<
   Exclude<Parameters<typeof defineConfig>[0]['markdown'], undefined>['theme'],
   undefined
