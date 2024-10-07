@@ -3,7 +3,9 @@ import fg from 'fast-glob';
 import Enumerable from 'linq';
 import * as File from '../shared/FileSystem';
 import type { IDocumentService } from './IDocumentService';
+
 export type DocumentInfo = Record<string, { icon: string; description: string }>;
+
 export const documentMap = {
   'Csharp Design Patterns': { icon: '👾', description: 'Design Patterns in C#' },
   'Modern CSharp': { icon: '🦖', description: 'Modernized C# since 2015?' },
@@ -11,11 +13,11 @@ export const documentMap = {
   Avalonia: { icon: '😱', description: 'AvaloniaUI' },
   Docker: { icon: '🐳', description: 'Ultimate Docker' },
   Git: { icon: '😸', description: 'Git mastery' },
-  JavaScript: { icon: '😅', description: 'JavaScript for C# developer' },
-  SQL: { icon: '🦭', description: 'SQL syntax for beginners' },
-  TypeScript: { icon: '🤯', description: 'TypeScript for C# developer' },
+  JavaScript: { icon: '😅', description: '' },
+  SQL: { icon: '🦭', description: '' },
+  TypeScript: { icon: '🤯', description: '' },
   // VBA: { icon: '💩', description: 'VBA for excel' },
-  Vue3: { icon: '⚡', description: 'Vue3 for .NET blazor developer' },
+  Vue3: { icon: '⚡', description: '' },
   'Unsafe CSharp': { icon: '😎', description: 'Entering the danger zone...' },
   'NeoVim ColorScheme Development': {
     icon: '🎨',
@@ -24,11 +26,16 @@ export const documentMap = {
   Bash: { icon: '🐢', description: 'Shebang!' },
   'Regular Expression': { icon: '🐫', description: 'Memory lossss for every 6 months' },
   Nix: { icon: '❄', description: 'Reproduce freedom' },
-  'Entity Framework Core':{icon:'🗿', description:''},
+  'Entity Framework Core': { icon: '🗿', description: '' },
+  'HTML & CSS': { icon: '😬', description: '' },
 } as const satisfies DocumentInfo;
+
 export type DocumentName = keyof typeof documentMap;
+
 export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
+
 export type DocumentDescription = (typeof documentMap)[DocumentName]['description'];
+
 class DocumentService implements IDocumentService {
   isEmptyDocument(name: DocumentName): boolean {
     try {
