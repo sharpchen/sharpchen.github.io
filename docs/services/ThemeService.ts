@@ -2,6 +2,7 @@ import axios from 'axios';
 import * as shiki from 'shiki';
 import { githubService } from './GithubService';
 import type { IThemeService } from './IThemeService';
+
 const highlighter = await shiki.getSingletonHighlighter();
 
 type TextmateRule = {

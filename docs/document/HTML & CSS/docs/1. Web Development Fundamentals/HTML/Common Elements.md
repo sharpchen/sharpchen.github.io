@@ -37,12 +37,12 @@
 List and Table are groups of related elements commonly used together.
 
 ### List elements
-    - `<ul>`: unordered list
-    - `<ol>`: ordered list
-    - `<li>`: list item
-    - `<dl>`: description list
-        - `<dt>`: description term
-        - `<dd>`: description detail
+- `<ul>`: unordered list
+- `<ol>`: ordered list
+- `<li>`: list item
+- `<dl>`: description list
+    - `<dt>`: description term
+    - `<dd>`: description detail
 
 `<li>` in `<ol>` is ordered, while in `<ul>` is not.
 
