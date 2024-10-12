@@ -28,14 +28,11 @@ class SidebarService implements ISidebarService {
         items:
           name === 'Articles'
             ? this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`).sort(
-                (a, b) => compareTrackedDate(a, b),
+                (a, b) => gitTrackedDate(a.link!) - gitTrackedDate(b.link!),
               )
             : this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`),
       },
     ];
-    function compareTrackedDate(a: DefaultTheme.SidebarItem, b: DefaultTheme.SidebarItem) {
-      return gitTrackedDate(a.link) - gitTrackedDate(b.link);
-    }
     function gitTrackedDate(file: string): number {
       const dateStr = execSync(
         `git log --diff-filter=A --format="%cI" -- '${path.join(documentRoot().parent!.fullName, file)}.md'`,
@@ -48,8 +45,9 @@ class SidebarService implements ISidebarService {
   transformFolderToSidebarItem(folder: DirectoryInfo, base: string): DefaultTheme.SidebarItem[] {
     const subs = folder.getDirectories();
     // load files in this folder
-    const items: DefaultTheme.SidebarItem[] = folder.getFiles().length
-      ? filesToSidebarItems(folder.getFiles(), `${base}/${folder.name}`)
+    const files = folder.getFiles();
+    const items: DefaultTheme.SidebarItem[] = files.length
+      ? filesToSidebarItems(files, `${base}/${folder.name}`)
       : [];
     for (const index in subs) {
       if (Object.prototype.hasOwnProperty.call(subs, index)) {
