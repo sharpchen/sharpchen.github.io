@@ -8,7 +8,7 @@ In .NET, the string pool (also known as the intern pool) is a special area of me
 
 We are able to mutate the string in pool in `unsafe` block to demonstrate this characteristic.
 
-```c#
+```cs
 string text = "abc";
 
 unsafe 
@@ -26,7 +26,7 @@ Console.Write("abc"); // dbc
 For string from external resources, we may need to registered it into string pool using `string.Intern(str: string): string`.
 This approach is the same as declaring a string literal, they will all exist during application domain.
 
-```c#
+```cs
 string url = /* ... */;
 HttpResponseMessage response = await httpClient.GetAsync(url);
 string responseBody = await response.Content.ReadAsStringAsync();

@@ -29,7 +29,7 @@ impl Foo {
 
 ## Conversion operator
 
-Should happens between nonminal types.
+Should happens between nominal types.
 
 ```ts
 let foo = Foo {} as Bar
@@ -86,8 +86,6 @@ It should offer benefits:
 - Cpp approach lacks of type info since it just simply returns a same type.
 - If each unit type is nominal, we will have `m*m` conversion explosion.
 - Another way is extension upon the data type, but it's just a problem of form.
-
-
 
 ```ts
 let foo = 360deg
@@ -159,4 +157,55 @@ type Foo = {
     bar: string
 }
 type Bar = Foo with { foo: double, baz: any } // [!code highlight] 
+```
+
+## Constant members
+
+Constants as special members, including functions and fields.
+
+```ts
+// should be evaluated at compile-time
+function foo(): const string { // implies the function returns const
+    return "I am an constant"
+}
+
+type Foo {
+    foo: const string = foo() // only constant can be assigned from an constant generator function
+    bar: const string = "I am also an constant"
+    fn = (): const string => "foo"
+}
+
+_ = Foo::foo // use :: to access constant members
+_ = Foo::fn() // this evaluates to an constant too
+
+```
+
+### Reflection constants
+
+Some reflection properties should be just constants.
+Any type should have some default constant members like `name`, `fullName`, `namespace`(if we do plan to design the module system like this)
+Which means they're preserved constants.
+
+```ts
+
+type Bar {
+    typeName: any  // preserved member name can not be set // [!code error] 
+}
+// Use `::` as constant accessor.
+_ = Foo::typeName // -> `Foo`
+_ = Bar::name
+```
+
+## Default parameter mutation
+
+```ts
+type Person {
+    name: string
+    age: uint
+}
+function foo(arg: Person = { name = "John", age = 18 }): void {
+
+}
+// use `default` to represent the default value of the parameter
+foo(default with { name = "jane" })
 ```
