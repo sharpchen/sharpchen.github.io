@@ -1,65 +1,65 @@
 :root {
-  --vp-home-hero-name-color: #fa5c15;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #fa5c15, rgb(251, 70, 202));
-  --vp-font-family-mono: ui-monospace, 'SF Mono SC', SFMono-Regular, 'SF Mono', 'Cascadia Code', Menlo, 'JetBrains Mono', Monaco,
-    Consolas, 'Liberation Mono', 'Courier New', monospace;
-  --vp-font-family-base: 'Chinese Quotes', 'Inter var', 'Inter', ui-sans-serif,
-    system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Helvetica, Arial, 'Noto Sans', sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  --vp-c-brand-1: #2cbc23;
-  --vp-c-indigo-2: #fa5c15;
+    --vp-home-hero-name-color: #fa5c15;
+    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #fa5c15, rgb(251, 70, 202));
+    --vp-font-family-mono: 'Noto Mono', 'SF Mono SC', 'SF Mono', 'Cascadia Code', Menlo, 'JetBrains Mono', Monaco,
+        Consolas, 'Liberation Mono', 'Courier New', ui-monospace, monospace;
+    --vp-font-family-base: 'Chinese Quotes', 'Inter var', 'Inter', ui-sans-serif,
+        system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        'Helvetica Neue', Helvetica, Arial, 'Noto Sans', sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --vp-c-brand-1: #2cbc23;
+    --vp-c-indigo-2: #fa5c15;
 }
 
 .dark {
-  --vp-code-block-bg: #282c34;
-  --vp-c-bg: #21252b;
-  --vp-c-bg-alt: #282c34;
-  --vp-c-bg-elv: #282c34;
-  --vp-c-bg-soft: #282c34;
-  /* inline code color */
-  --vp-code-color: #2dbc24;
+    --vp-code-block-bg: #282c34;
+    --vp-c-bg: #21252b;
+    --vp-c-bg-alt: #282c34;
+    --vp-c-bg-elv: #282c34;
+    --vp-c-bg-soft: #282c34;
+    /* inline code color */
+    --vp-code-color: #2dbc24;
 }
 
 /* bold for second level sidebar-item */
 #VPSidebarNav h3 {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .VPImage {
-  border-radius: 20%;
+    border-radius: 20%;
 }
 
 /* #region impl blur bav-bar */
 :root {
-  --nav-c-bg: rgba(255, 255, 255, 0.5);
+    --nav-c-bg: rgba(255, 255, 255, 0.5);
 }
 
 .dark {
-  --nav-c-bg: rgba(30, 30, 32, 0.5);
+    --nav-c-bg: rgba(30, 30, 32, 0.5);
 }
 
 .curtain {
-  display: none !important;
+    display: none !important;
 }
 
 .fill {
-  background: transparent !important;
+    background: transparent !important;
 }
 
 .content-body {
-  background: var(--nav-c-bg) !important;
+    background: var(--nav-c-bg) !important;
 }
 
 .content-body::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  backdrop-filter: saturate(180%) blur(5px);
-  z-index: -1;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    backdrop-filter: saturate(180%) blur(5px);
+    z-index: -1;
 }
 
 /* #endregion */

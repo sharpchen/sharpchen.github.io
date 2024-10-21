@@ -90,7 +90,7 @@ It should offer benefits:
 ```ts
 let foo = 360deg
 let bar = 6.28rad // for literal
-let baz = Math.PI<rad> // for non literal, or (Math.PI)rad ? What if we need a tuple in future? violates generic property?
+let baz = Math.PI<rad> // for non literal, or (Math.PI)rad ? What if we need a tuple in future? this also conflicts with generic property?
 let a = 2 * 3deg // evaluates to (2 * 3)deg, unit type as target type always
 let b = 1 - 2deg // error: only scalars can be applied, should do (1 - 2)deg instead
 let f = (): <rad> => 1rad // bracketed annotation for differ from normal types
