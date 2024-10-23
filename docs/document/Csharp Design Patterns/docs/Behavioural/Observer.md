@@ -3,8 +3,10 @@
 ## Motivation
 
 - To be informed when status changed
--  To be informed when certain things happened.
+- To be informed when certain things happened.
 - Listen to events and get notified when they occurs
+
+.NET has following builtin types to perform observer pattern.
 
 - `INotifyPropertyChanged`
 - `INotifyPropertyChanging`
@@ -13,8 +15,9 @@
 - `ObervableCollection<T>`
 - `BindingList<T>`
 
-> Observer is the object to be informed when event occurs
-> Observable is the object generating the event.
+> [!NOTE]
+> Observer is the object to be informed when event occurs, informed by passing event args.
+> Observable is the object passes the event args when performing something.
 
 ## By Event
 
@@ -166,7 +169,7 @@ classDiagram
     PlayerEventArgs <|-- OnAttackEventArgs
 ```
 
-**Observable and Observer do not know each other, the mediator is certain `EventArgs`. Observer handles notifications by different kinds of `EvntArgs`.**
+**Observable and Observer do not know each other, the mediator is certain `EventArgs`. Observer handles notifications by different kinds of `EventArgs`.**
 
 - Observable: adds Observers
     - Subscription: as a `IDisposable` pair of Observer and Observable, will be stored on a collection inside Observable.
