@@ -19,7 +19,7 @@
 > Observer is the object to be informed when event occurs, informed by passing event args.
 > Observable is the object passes the event args when performing something.
 
-## By Event
+## Builtin Event
 
 C# has builtin event support. Use `+=` to subscribe a method.
 
