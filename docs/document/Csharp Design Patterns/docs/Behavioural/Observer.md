@@ -123,7 +123,6 @@ The major downside of event in C# is **event leak**, which happens when event ha
 
 .NET has builtin types to implement the same event mechanism with `System.IObserver<T>` and `System.IObservable<T>`
 
-
 ```mermaid
 classDiagram
     class IObserver~T~ {
@@ -180,8 +179,8 @@ classDiagram
 ```cs
 Player player = new() { Id = 1 };
 Player? enemy = new() { Id = 2 };
-var subscriber = new PlayerObserver();
-using var _ = player.Subscribe(subscriber);
+var subscriber = new PlayerObserver(); // [!code highlight] 
+using var _ = player.Subscribe(subscriber); // [!code highlight] 
 player.Attack(enemy, 100); // [!code highlight] 
 
 class Player : IObservable<PlayerEventArgs>
@@ -207,7 +206,7 @@ class Player : IObservable<PlayerEventArgs>
         }
     }
     // a subscription should know which one is being subscribed and who is the observer. // [!code highlight] 
-    // observer take a `PlayerEventArgs` which is a base EventArgs, allowing different type of subscription to be inside `subscriptions`
+    // observer take a `PlayerEventArgs` which is a base EventArgs, allowing different type of subscription to be inside `subscriptions` // [!code highlight] 
     private class Subscription(Player player, IObserver<PlayerEventArgs> observer) : IDisposable // [!code highlight] 
     {
         private readonly Player player = player;
