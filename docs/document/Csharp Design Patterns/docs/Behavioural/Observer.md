@@ -244,3 +244,210 @@ class PlayerObserver : IObserver<PlayerEventArgs>
     }
 }
 ```
+
+
+## Observable Collection
+
+`BindingList<T>` is a collection type with builtin event to tracked on collection manipulations.
+
+```cs
+using System.ComponentModel;
+
+new Weather().Measure(); // [!code highlight] 
+
+class Weather
+{
+    public BindingList<float> Tempretures { get; } = [];
+    public Weather()
+    {
+        // BindingList has a builtin event on manipulation
+        Tempretures.ListChanged += (sender, args) => // [!code highlight] 
+        { // [!code highlight] 
+            if (args.ListChangedType == ListChangedType.ItemAdded) // [!code highlight] 
+            { // [!code highlight] 
+                var newtempreture = (sender as BindingList<float>)?[args.NewIndex]; // [!code highlight] 
+                Console.WriteLine($"New tempreture {newtempreture} degree has been added."); // [!code highlight] 
+            } // [!code highlight] 
+        }; // [!code highlight] 
+    }
+    public void Measure()
+    {
+        Tempretures.Add(Random.Shared.NextSingle() * 100);
+    }
+}
+```
+
+> [!WARNING]
+> `BindingList<T>` can only track manipulations, can't track on status.
+> For those purposes, you should add custom events.
+
+
+## Property Observer
+
+Use `INotifyPropertyChanged` for watching properties.
+`PropertyChangedEventArgs` takes only `PropertyName`
+
+```cs
+using System.ComponentModel;
+
+Player player = new() { Id = 1 };
+Player? enemy = new() { Id = 2 };
+player.Attack(enemy, 100); // [!code highlight] 
+
+class Player : INotifyPropertyChanged
+{
+    public int Id { get; init; }
+    public int Health { get; private set; } = 100;
+
+    public event PropertyChangedEventHandler? PropertyChanged; // [!code highlight] 
+
+    public Player()
+    {
+        PropertyChanged += (sender, args) =>
+        {
+            Console.WriteLine($"Property `{args.PropertyName}` of {(sender as Player)?.Id ?? -1} changed!");
+        };
+    }
+    public void Attack(Player enemy, int damage)
+    {
+        enemy.Health -= damage;
+        Console.WriteLine($"enemy {Id} been attacked by player {enemy.Id} with damage {damage}");
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Health)));
+    }
+}
+```
+
+### Bidirectional Observer
+
+A bidirectional observer means two objects subscribe each other, will get notification on no matter which side.
+So, a common approach is implementing `INotifyPropertyChanged` and append event handlers for both.
+
+```cs
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+var init = "Hello"; // [!code highlight] 
+View view = new() { InnerText = init }; // [!code highlight] 
+TextBlock textBlock = new() { Text = init }; // [!code highlight] 
+// [!code highlight] 
+view.PropertyChanged += (sender, args) => // [!code highlight] 
+{ // [!code highlight] 
+    if (args.PropertyName == nameof(View.InnerText)) // [!code highlight] 
+    { // [!code highlight] 
+        Console.WriteLine($"Property {typeof(View).Name}.{nameof(View.InnerText)} has changed."); // [!code highlight] 
+        textBlock.Text = view.InnerText; // also updates for another side // [!code highlight] 
+    } // [!code highlight] 
+}; // [!code highlight] 
+// [!code highlight] 
+textBlock.PropertyChanged += (sender, args) => // [!code highlight] 
+{ // [!code highlight] 
+    if (args.PropertyName == nameof(TextBlock.Text)) // [!code highlight] 
+    { // [!code highlight] 
+        Console.WriteLine($"Property {typeof(TextBlock).Name}.{nameof(TextBlock.Text)} has changed."); // [!code highlight] 
+        view.InnerText = textBlock.Text; // also updates for another side // [!code highlight] 
+    } // [!code highlight] 
+}; // [!code highlight] 
+
+view.InnerText = "World"; // [!code highlight] 
+// Property View.InnerText has changed. // [!code highlight] 
+// Property TextBlock.Text has changed. // [!code highlight] 
+Console.WriteLine(view.InnerText); // <- World // [!code highlight] 
+Console.WriteLine(textBlock.Text); // <- World // [!code highlight] 
+
+class TextBlock : INotifyPropertyChanged
+{
+    private string? text;
+
+    public string? Text
+    {
+        get => text;
+        set
+        {
+            if (value == text) return; // [!code highlight] 
+            text = value;
+            OnPropertyChanged(); // [!code highlight] 
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}
+class View : INotifyPropertyChanged
+{
+    private string? innerText;
+
+    public string? InnerText
+    {
+        get => innerText;
+        set
+        {
+            if (value == innerText) return; // [!code highlight] 
+            innerText = value;
+            OnPropertyChanged(); // [!code highlight] 
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}
+```
+
+> [!NOTE]
+> An interesting part is, bidirectional observer above does not cause stack overflow.
+> simply because a guardian `if(value == prop) return` is inside setter.
+
+### Bidirectional Binding
+
+Previous example shows a very tedious implementation for bidirectional observer, we don't really want to hard code everything for each pair of object we have.
+So, a custom generic class for performing the mechanism if required.
+
+```cs
+using System.ComponentModel;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+var init = "Hello";
+View view = new() { InnerText = init };
+TextBlock textBlock = new() { Text = init };
+
+var _ = new BidirectionalBinding<View, TextBlock>(
+    view,
+    v => v.InnerText, // selects which property to track // [!code highlight] 
+    textBlock,
+    t => t.Text // [!code highlight] 
+);
+
+view.InnerText = "World"; // [!code highlight] 
+Console.WriteLine(view.InnerText); // <- World // [!code highlight] 
+Console.WriteLine(textBlock.Text); // <- World // [!code highlight] 
+
+class BidirectionalBinding<TFirst, TSecond>
+    where TFirst : INotifyPropertyChanged // both should be `INotifyPropertyChanged` // [!code highlight] 
+    where TSecond : INotifyPropertyChanged
+{
+    public BidirectionalBinding(
+        TFirst first,
+        Expression<Func<TFirst, object?>> firstSelector,
+        TSecond second,
+        Expression<Func<TSecond, object?>> secondSelector)
+    {
+        if (firstSelector.Body is MemberExpression firExpr && secondSelector.Body is MemberExpression secExpr)
+        {
+            if (firExpr.Member is PropertyInfo firProp && secExpr.Member is PropertyInfo secProp)
+            {
+                first.PropertyChanged += (sender, args) => secProp.SetValue(second, firProp.GetValue(first)); // [!code highlight] 
+                second.PropertyChanged += (sender, args) => firProp.SetValue(first, secProp.GetValue(second)); // [!code highlight] 
+            }
+        }
+    }
+}
+```

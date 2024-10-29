@@ -8,11 +8,5 @@
     import Copyright from '../components/Copyright.vue';
     import { ref } from 'vue';
     import Layout from 'vitepress/dist/client/theme-default/Layout.vue';
-    import { useSidebar } from 'vitepress/theme';
     const layout = ref<typeof Layout | null>(null);
-    const { toggle, isOpen, close, hasSidebar } = useSidebar()
-    if (hasSidebar.value)
-        if (isOpen.value) {
-           close() 
-        }
 </script>
