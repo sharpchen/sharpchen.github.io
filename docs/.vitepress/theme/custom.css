@@ -1,8 +1,8 @@
 :root {
     --vp-home-hero-name-color: #fa5c15;
     --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #fa5c15, rgb(251, 70, 202));
-    --vp-font-family-mono: 'Noto Mono', 'SF Mono SC', 'SF Mono', 'Cascadia Code', Menlo, 'JetBrains Mono', Monaco,
-        Consolas, 'Liberation Mono', 'Courier New', ui-monospace, monospace;
+    --vp-font-family-mono: 'JetBrains Mono NL', 'Noto Sans Mono', 'SF Mono SC', 'SF Mono', 'Cascadia Code', Menlo, 'JetBrains Mono', Monaco,
+        Consolas, 'Liberation Mono', 'Courier New', 'Nerd Font Symbols', ui-monospace, monospace;
     --vp-font-family-base: 'Chinese Quotes', 'Inter var', 'Inter', ui-sans-serif,
         system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
         'Helvetica Neue', Helvetica, Arial, 'Noto Sans', sans-serif,
