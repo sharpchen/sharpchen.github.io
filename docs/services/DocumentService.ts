@@ -8,7 +8,7 @@ export type DocumentInfo = Record<string, { icon: string; description: string }>
 
 export const documentMap = {
   'Csharp Design Patterns': { icon: '👾', description: 'Design Patterns in C#' },
-  'Modern CSharp': { icon: '🦖', description: 'Modernized C# since 2015?' },
+  // 'Modern CSharp': { icon: '🦖', description: 'Modernized C# since 2015?' },
   Articles: { icon: '📰', description: 'Regular articles' },
   Avalonia: { icon: '😱', description: 'AvaloniaUI' },
   Docker: { icon: '🐳', description: 'Ultimate Docker' },
@@ -17,7 +17,7 @@ export const documentMap = {
   SQL: { icon: '🦭', description: '' },
   TypeScript: { icon: '🤯', description: '' },
   // VBA: { icon: '💩', description: 'VBA for excel' },
-  Vue3: { icon: '⚡', description: '' },
+  // Vue3: { icon: '⚡', description: '' },
   'Unsafe CSharp': { icon: '😎', description: 'Entering the danger zone...' },
   'NeoVim ColorScheme Development': {
     icon: '🎨',

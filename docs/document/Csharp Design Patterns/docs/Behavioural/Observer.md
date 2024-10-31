@@ -285,7 +285,8 @@ class Weather
 ## Property Observer
 
 Use `INotifyPropertyChanged` for watching properties.
-`PropertyChangedEventArgs` takes only `PropertyName`
+**`INotifyPropertyChanged` implies the object implementing this interface should have a ability to be informed when certain property changed.**
+The event handler generated takes `PropertyChangedEventArgs` which has only a property named as `PropertyName`.
 
 ```cs
 using System.ComponentModel;
@@ -449,5 +450,100 @@ class BidirectionalBinding<TFirst, TSecond>
             }
         }
     }
+}
+```
+
+> [!NOTE]
+> `BidirectionalBinding` should actually be a `IDisposable`, but I failed to find a way to deleted the event handlers.
+
+## Property Dependencies (WIP)
+
+On problem of property observer is, multiple property tracking is possible unless they have dependencies among.
+
+Given a example of a property for conditional status `IsDying` which is dependent on  property `Health`.
+
+Once `Health` changed, `IsDying` might changed too, but would need a extra check to make sure it doesn't notify on each change of `Health`.
+**But this will explode when you have many many dependent properties.**
+
+```cs
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+Player p = new();
+p.Health -= 99; // [!code highlight] 
+// Property Health changed
+// Property IsDying changed
+
+class Player : INotifyPropertyChanged
+{
+    private int health = 100;
+
+    public int Health
+    {
+        get => health;
+        set
+        {
+            if (value == health) return;
+            var isDying = IsDying; // [!code highlight] 
+            health = value;
+            OnPropertyChanged();
+            if (isDying != IsDying) // [!code highlight] 
+                OnPropertyChanged(nameof(IsDying)); // [!code highlight] 
+        }
+    }
+
+    public bool IsDying => Health < 5; // [!code highlight] 
+
+    public Player()
+    {
+        PropertyChanged += (sender, args) =>
+            Console.WriteLine($"Property {args.PropertyName} changed.");
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new(propertyName));
+    }
+}
+```
+
+We'll have to use a base class to handle the default behaviors.
+Each property might have multiple dependencies and each dependency should be unique since they're inside the same class.
+So a map as `Dictionary<string, HashSet<string>>` appears here and the `OnPropertyChanged` should walk each property recursively.
+
+```cs
+abstract class PropertyNotificationSupport : INotifyPropertyChanged
+{
+    private readonly Dictionary<string, HashSet<string>> _depedendcyMap = []; // stores property name and its dependent properties. // [!code highlight] 
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new(propertyName));
+        foreach (var prop in _depedendcyMap.Keys)
+        {
+            // for props relied on the coming property
+            // notify them recursively
+            if (_depedendcyMap[propertyName].Contains(prop))
+                OnPropertyChanged(prop); // recursive call on other property dependencies // [!code highlight] 
+        }
+    }
+}
+```
+
+Yet another target is not only tracking the single property name but also sending with which property change causes the change of another property.
+Which means the literal property dependency graph.
+
+The solution is using `Expression`, to assign both evaluation logic and name of the property with one shot. We should have a method inside base class to do that.
+
+```cs
+private readonly Func<bool> _isDying; // [!code highlight] 
+public bool IsDying => _isDying();
+public Player()
+{
+    // implement `Property` method in the base class.
+    IsDying = Property(nameof(IsDying), () => Health < 5); // [!code highlight] 
 }
 ```

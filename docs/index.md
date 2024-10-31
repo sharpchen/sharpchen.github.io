@@ -15,7 +15,6 @@ alt: sharpchen
 <VPFeatures :features="features" />
 
 <script lang="ts" setup>
-import Enumerable from 'linq';
 import VPFeatures, { type Feature } from 'vitepress/dist/client/theme-default/components/VPFeatures.vue';
 import VPHero from 'vitepress/dist/client/theme-default/components/VPHero.vue';
 import { ref } from 'vue';
