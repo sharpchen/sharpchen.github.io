@@ -227,6 +227,8 @@ public abstract class CompositeCommand<T> : List<T>, ICommand where T : class?, 
 }
 ```
 
+Then we can try a deletion with count that exceeds the current content length, which should rollback the content to initial `hello`.
+
 ```cs
 var editor = new Editor(content: "hello");
 
@@ -240,8 +242,6 @@ var combined = new EditorCompositeCommand() { commandInsert, commandDelete, wron
 
 combined.Execute();
 
-class EditorCompositeCommand : CompositeCommand<EditorCommand>
-{
-
-}
+// default implementations are just fine for this.
+class EditorCompositeCommand : CompositeCommand<EditorCommand>;
 ```
