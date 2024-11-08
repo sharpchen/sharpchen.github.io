@@ -20,6 +20,9 @@ Examples using Interpreter pattern:
 Lexing means extracting textual content into different parts by certain rules.
 Lexing results are called **tokens**.
 
+> [!NOTE]
+> This solution only lex integers.
+
 ```cs
 using System.Text;
 
@@ -120,7 +123,10 @@ class Number<TValue> : INumericExpressionElement<TValue> where TValue : INumber<
 ```
 
 Sub-Expression can have many kinds, like binary operation, unary operation and more...
-**In this example we only handles the binary operation.**
+An operation should also act like an evaluable object as numeric literal did.
+
+> [!NOTE]
+> **In this example we only handles the binary operation for integers.**
 
 ```cs
 enum BinaryOperationType { Addition, Substraction }
@@ -128,7 +134,7 @@ class BinaryOperation<TValue>(
         INumericExpressionElement<TValue> left,
         INumericExpressionElement<TValue> right,
         BinaryOperationType type)
-    : INumericExpressionElement<TValue> where TValue : INumber<TValue>
+    : INumericExpressionElement<TValue> where TValue : INumber<TValue> // [!code highlight] 
 {
 
     public BinaryOperation() : this(default!, default!, default) { }
@@ -203,3 +209,12 @@ static INumericExpressionElement<TValue> Parse<TValue>(ReadOnlySpan<Token> token
     return operation;
 }
 ```
+
+Finally we can test it out.
+
+```cs
+var tokens = Lex("(1 + 3) - (5 + 2)");
+var operation = Parse<int>(CollectionsMarshal.AsSpan(tokens));
+Console.WriteLine(operation.Value); // -3
+```
+## ANTLR
