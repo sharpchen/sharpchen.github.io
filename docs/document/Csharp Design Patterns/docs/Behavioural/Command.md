@@ -8,12 +8,13 @@ Actions and assignments can't be serialized generally, a Command pattern solves 
 
 - provides a way to store information of actions.
 - can undo base on the kept command information.
+- can be serialized, logged.
 
 It's heavily used by cli implementations and GUI development.
 
 ## ICommand
 
-A simple command implementation is a `ICommand` interface + an object can be applied on by commands.
+A simple command implementation is an `ICommand` interface + an object can be applied on by commands.
 
 A Command should be a immutable object which we will represent it as a record.
 
@@ -210,7 +211,7 @@ public abstract class CompositeCommand<T> : List<T>, ICommand where T : class?, 
                 reverse.Reverse(); // [!code highlight] 
                 foreach (var c in reverse) // [!code highlight] 
                     c.Undo(); // [!code highlight] 
-// [!code highlight] 
+            // [!code highlight] 
                 return; // [!code highlight] 
             } // [!code highlight] 
         }
@@ -245,3 +246,6 @@ combined.Execute();
 // default implementations are just fine for this.
 class EditorCompositeCommand : CompositeCommand<EditorCommand>;
 ```
+
+> [!TIP]
+> Macros in vim can be implemented using composite commands.
