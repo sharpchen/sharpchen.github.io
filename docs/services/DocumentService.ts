@@ -19,15 +19,16 @@ export const documentMap = {
   // VBA: { icon: '💩', description: 'VBA for excel' },
   // Vue3: { icon: '⚡', description: '' },
   'Unsafe CSharp': { icon: '😎', description: 'Entering the danger zone...' },
-  'NeoVim ColorScheme Development': {
-    icon: '🎨',
-    description: 'Make your own nvim color scheme using lua.',
-  },
+  // 'NeoVim ColorScheme Development': {
+  //   icon: '🎨',
+  //   description: 'Make your own nvim color scheme using lua.',
+  // },
   Bash: { icon: '🐢', description: 'Shebang!' },
   'Regular Expression': { icon: '🐫', description: 'Memory lossss for every 6 months' },
   Nix: { icon: '❄', description: 'Reproduce freedom' },
   'Entity Framework Core': { icon: '🗿', description: '' },
   'HTML & CSS': { icon: '😬', description: '' },
+  Powershell: { icon: '🐚', description: '...' },
 } as const satisfies DocumentInfo;
 
 export type DocumentName = keyof typeof documentMap;

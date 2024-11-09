@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process';
-import path from 'node:path';
+import path = require('node:path');
 import type { DefaultTheme } from 'vitepress';
 import { type DirectoryInfo, type FileInfo, Path, documentRoot } from '../shared/FileSystem';
 import { type DocumentName, documentMap, documentService } from './DocumentService';
