@@ -28,9 +28,6 @@ Style template ships with a portion for previewer where you can add testing cont
 A style starts with a `Selector` which is the rule of target matching, for figuring out which control should have those contained styling.
 Contained styling is some key-value pair on properties.
 
-> [!NOTE]
-> See [selector syntax]()
-
 ```xml
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
