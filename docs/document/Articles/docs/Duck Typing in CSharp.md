@@ -23,3 +23,11 @@ static class FooExtension
     public static void Deconstruct(this Foo self, out object? a, out object? b) => a = b = null;
 }
 ```
+
+If you do want the type has an overall solution for enumeration, just implement a `GetEnumerator` method.
+`foreach` and `GetEnumerator` now supports duck typing, meaning that:
+
+- An object implemented `GetEnumerator` can be enumerated by `foreach`
+- The return type of `GetEnumerator` can be valid as long as it satisfies the shape of `IEnumerator<T>`
+
+This feature is typically for `ref struct`.
