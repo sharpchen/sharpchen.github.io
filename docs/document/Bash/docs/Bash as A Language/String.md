@@ -1,6 +1,6 @@
 # String
 
-# Native String
+## Native String
 
 Strings in bash can be native without any quote.
 

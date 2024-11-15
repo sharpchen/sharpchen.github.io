@@ -58,3 +58,6 @@ alias gl='git log' # fine
 New-Alias gl 'git log' # not allowed! # [!code error] 
 ```
 
+> [!TIP]
+> Use functions to do alias with predetermined parameters in your profile.
+
