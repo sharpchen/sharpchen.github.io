@@ -1,1 +1,111 @@
 # Select
+
+`Select-Object` is a combination of `Select`, `Take`, `TakeLast` in dotnet LINQ.
+It can be appiled on singular object and any collection.
+
+> [!TIP]
+> Use `select` alias for `Select-Object`.
+
+## Select as an Object
+
+`Select-Object` wraps selected properties as an `PSCustomObject`
+
+```ps1
+gps | Select-Object -Property Name # gets an object[] instead of string[]
+(gps | select Name -First).GetType().Name # PSCustomObject
+```
+
+You can select multiple properties:
+
+```console
+$ gps | select Name, Id -First 1 | gm
+
+   TypeName: Selected.System.Diagnostics.Process
+
+Name        MemberType   Definition
+----        ----------   ----------
+Equals      Method       bool Equals(System.Object obj)
+GetHashCode Method       int GetHashCode()
+GetType     Method       type GetType()
+ToString    Method       string ToString()
+Id          NoteProperty int Id=12588
+Name        NoteProperty string Name=ABDownloadManager
+```
+
+### Nested Property and Custom Property
+
+`-Property` accepts a **Script Block** to calculate the **nested** property you'd like to select.
+
+```console
+$ gps | select Name, { $_.StartTime.DayOfWeek } -First 1
+
+Name               $_.StartTime.DayOfWeek
+----              ------------------------
+ABDownloadManager                 Thursday
+```
+
+You can even define a custom calculation with a HashTable shaped as:
+- `lable: string`: name of the property
+- `expression: ScriptBlock`: an procedure returns the calculated property value.
+
+```console
+$ gci -File | select Name, @{ label = 'Size(KB)'; expression = { $_.Length / 1KB } }
+
+Name         Size(KB)
+----         --------
+.gitignore       0.01
+dotfiles.ps1     1.69
+flake.lock       1.64
+flake.nix        1.02
+home.nix         0.63
+install.ps1      1.49
+make_vs.ps1      2.06
+README.md        0.85
+```
+
+## Select Value Only
+
+To select value of a property instead of being wrapped as an object, use `-ExpandProperty`.
+The return type is still an `object[]` since there's no generic resolution on Powershell.
+But each memeber should be string indeed in the following snippet.
+
+```ps1
+gps | select -ExpandProperty Name
+(gps | select -ExpandProperty Name).GetType().Name # object[]
+(gps | select -ExpandProperty Name -First 1) -is [string] # True
+```
+
+> [!NOTE]
+> `-ExpandProperty` can only take one property.
+
+## Take a Count
+
+`Select-Object` can also take specific count of items from a collection, from start or end.
+
+```ps1
+gps | select -First 5
+gps | select -Last 5
+```
+
+## Skip a Count
+
+```ps1
+gps | select -Skip 5
+gps | select -SkipLast 5
+```
+
+## Cherry Pick 
+
+```ps1
+$dir = ls -Directory
+$dir | select -Index 1, ($dir.Length - 1) # Pick first and last item
+```
+
+## Distinct
+
+```ps1
+# might have duplicated entries since file extensions should ignore casing.
+ls | select Extension -Unique
+# list all extensions appeared in current directory
+ls | select Extension -Unique -CaseInsensitive
+```

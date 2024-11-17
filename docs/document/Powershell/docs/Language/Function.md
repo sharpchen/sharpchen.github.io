@@ -1,5 +1,40 @@
 # Function
 
+## Return
+
+Powershell allows implicit return, and multiple implicit returns.
+
+> [!NOTE]
+> Implicit returns are auto-collected as an array or single value.
+> And it does not print out anything.
+
+```ps1
+[int] function Sum {
+    param([int]$l, [int]$r)
+    $l + $r # implicit return # [!code highlight] 
+}
+
+# You won't need to declare an array and append it on each loop!
+# they're collected automatically as they're implicit returns
+function Foo {
+   for($i = 0; $i -lt 10; $i = $i + 1)  {
+        $i
+   }
+}
+
+(Foo).GetType().Name # object[] # [!code highlight] 
+```
+
+Explicit return is surely supported, but more like a necessity to exit inside a flow.
+
+```ps1
+[int] function Sum {
+    param([int]$l, [int]$r)
+    return $l + $r # explicit return # [!code highlight] 
+    $r + $l # not reachable  # [!code warning] 
+}
+```
+
 ## Parameter
 
 Parameters are wrapped inside a function block with `param(...)`

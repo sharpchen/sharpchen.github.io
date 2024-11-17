@@ -1,5 +1,7 @@
 # Compare Objects
 
+## Overview
+
 > [!TIP]
 > Use `diff` or `compare` alias for `Compare-Object`
 
@@ -46,4 +48,4 @@ diff @('abc', 'dfg') @('fg', 'abc') -Property Length # compare on string.Length
 - `ToString()` and compare on string
 
 > [!TIP]
-> If the object to be compared doesn't implement `IComparable`, you should use `-Property`.
+> If the object to be compared doesn't implement `IComparable`, you should use `-Property` unless it's a primitive type.
