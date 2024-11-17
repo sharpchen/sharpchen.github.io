@@ -46,6 +46,9 @@ Get-Alias | Where-Object { $_.Options -match 'ReadOnly|Constant' }
 > [!note]
 > Do not use custom aliases for public repository.
 
+> [!CAUTION]
+> Not all builtin aliases are available in all system. See [removed aliases](https://learn.microsoft.com/en-us/powershell/scripting/whats-new/unix-support?view=powershell-7.4#aliases-not-available-on-linux-or-macos) 
+
 ## Differ from Bash
 
 Alias in powershell is only a name alias for a command, it can never take any predetermined parameters or flags like in bash.
