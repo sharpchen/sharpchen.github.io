@@ -6,14 +6,20 @@
 New-Alias <alias> <cmd_name>
 ```
 
+> [!TIP]
+> Use `nal` alias for `New-Alias`.
+
 > [!note]
-> `New-Alias` throws when the alias already exist while `Set-Alias` will overrides it.
+> `New-Alias` throws when the alias already exist while `Set-Alias` will override it.
 
 ## Override an Alias
 
 ```ps1
 Set-Alias <alias> <cmd_name>
 ```
+
+> [!TIP]
+> Use `sal` alias for `Set-Alias`.
 
 ## Checkout Alias
 
@@ -22,6 +28,9 @@ Set-Alias <alias> <cmd_name>
 ```ps1
 Get-Alias <alias>
 ```
+
+> [!TIP]
+> Use `gal` alias for `Get-Alias`.
 
 Or use `Get-Command`
 
@@ -61,6 +70,10 @@ alias gl='git log' # fine
 New-Alias gl 'git log' # not allowed! # [!code error] 
 ```
 
-> [!TIP]
-> Use functions to do alias with predetermined parameters in your profile.
+Should use function instead.
 
+```ps1
+function gl {
+    git log
+}
+```

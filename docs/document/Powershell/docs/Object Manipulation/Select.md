@@ -63,9 +63,11 @@ make_vs.ps1      2.06
 README.md        0.85
 ```
 
-## Select Value Only
+## Expand a Property
 
-To select value of a property instead of being wrapped as an object, use `-ExpandProperty`.
+### Select Value Only
+
+To select single value of a property instead of being wrapped as an object, use `-ExpandProperty`.
 The return type is still an `object[]` since there's no generic resolution on Powershell.
 But each memeber should be string indeed in the following snippet.
 
@@ -74,6 +76,36 @@ gps | select -ExpandProperty Name
 (gps | select -ExpandProperty Name).GetType().Name # object[]
 (gps | select -ExpandProperty Name -First 1) -is [string] # True
 ```
+
+> [!NOTE]
+>  `Foreach-Object` can achieve the same thing
+```ps1
+gps | foreach Name
+# or use another alias of Foreach-Object %
+gps | % Name
+```
+
+### Append Extra NoteProperty
+
+`-ExpandProperty` can be used together with `-Property`, selected properties by `-Property` will be added as **NoteProperty** to the selected `-ExpandProperty`.
+
+> [!WARNING]
+> This approach mutates the selected property instead of generating a new object.
+
+```ps1
+$john = @{
+    Name = 'John Smith'
+    Age = 30
+    Pet = @{
+        Name = 'Max'
+        Age = 6
+    }
+}
+
+$john | select Name, Age -ExpandProperty Pet
+```
+
+
 
 > [!NOTE]
 > `-ExpandProperty` can only take one property.
@@ -101,7 +133,7 @@ $dir = ls -Directory
 $dir | select -Index 1, ($dir.Length - 1) # Pick first and last item
 ```
 
-## Distinct
+## Distinction
 
 ```ps1
 # might have duplicated entries since file extensions should ignore casing.
