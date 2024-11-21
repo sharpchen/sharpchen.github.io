@@ -28,3 +28,5 @@ If you do want a `$null` return, use `Out-Null` to swallow the value.
 (gci | foreach { $_.Name | Out-Null }) -eq $null # True
 ```
 
+
+

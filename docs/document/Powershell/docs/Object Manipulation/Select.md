@@ -79,11 +79,11 @@ gps | select -ExpandProperty Name
 
 > [!NOTE]
 >  `Foreach-Object` can achieve the same thing
-```ps1
-gps | foreach Name
-# or use another alias of Foreach-Object %
-gps | % Name
-```
+> ```ps1
+> gps | foreach Name
+> # or use another alias of Foreach-Object %
+> gps | % Name
+> ```
 
 ### Append Extra NoteProperty
 
@@ -104,8 +104,6 @@ $john = @{
 
 $john | select Name, Age -ExpandProperty Pet
 ```
-
-
 
 > [!NOTE]
 > `-ExpandProperty` can only take one property.

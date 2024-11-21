@@ -26,4 +26,14 @@ The functionality of ETS achieved benifits:
 
 ## ETS Members
 
+To represent meta of ETS members, Powershell has an abstract class called `PSMemberInfo`, each concrete member info type is derived from it.
 
+```cs
+public abstract class PSMemberInfo { }
+```
+
+
+The facts of ETS members:
+- each member has a type inherited from `PSMemberInfo`.
+
+## PSObject
