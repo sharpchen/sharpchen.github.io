@@ -64,10 +64,6 @@ Use `@'...'@` or `@"..."@` to present Verbatim Here String or Interpolated Here 
 > [!NOTE]
 > You can have quotation mark `"` in `@"..."@` and for `'` respectively.
 
-## String Concatenation
-
-Use `+`
-
 ## Character Escaping
 
 ### Quotation Mark
@@ -98,6 +94,14 @@ Use double `'` to escape `'` in a verbatim string.
 ## Split & Join
 
 ## Format String
+
+## Repetition
+
+Use `*` to repeat a string.
+
+```ps1
+'abc' * 2 # abcabc
+```
 
 ## String Evaluation in Interpolation
 

@@ -12,3 +12,5 @@ echo $var
 ```
 
 ## Scope
+
+

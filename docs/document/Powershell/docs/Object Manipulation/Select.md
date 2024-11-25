@@ -81,7 +81,7 @@ gps | select -ExpandProperty Name
 >  `Foreach-Object` can achieve the same thing
 > ```ps1
 > gps | foreach Name
-> # or use another alias of Foreach-Object %
+> # or use another alias of ForEach-Object %
 > gps | % Name
 > ```
 
@@ -93,16 +93,26 @@ gps | select -ExpandProperty Name
 > This approach mutates the selected property instead of generating a new object.
 
 ```ps1
-$john = @{
-    Name = 'John Smith'
-    Age = 30
-    Pet = @{
-        Name = 'Max'
-        Age = 6
+$player = @{
+    Id = 123
+    Level = 15
+    Status = 'Empowered'
+    Partner = @{
+        Id = 234
+        Level = 12
+        Status = 'Poisoned'
     }
 }
 
-$john | select Name, Age -ExpandProperty Pet
+# Adds a NoteProperty `Status` with the same value from $player to $player.Partner
+$partner = $john | select Status -ExpandProperty Partner
+
+[object]::ReferenceEquals($partner, $john.Child) # True
+
+$child | gm -MemberType NoteProperty # Status
+
+$partner.Status # Empowered # . accessor prefers ETS property
+$partner['Status'] # Poisoned
 ```
 
 > [!NOTE]

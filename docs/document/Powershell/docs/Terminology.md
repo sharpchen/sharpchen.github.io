@@ -1,0 +1,25 @@
+# Terminology
+
+Powershell has its own terminologies besides other shells like bash.
+It's a shell integrated with .NET, it's not a independent platform.
+
+- `cmdlet`: builtin utils inside powershell, implemented using other languages like `C#`.
+- `function`: a command implemented using powershell language itself.
+- `application`: external executable.
+
+## Session
+
+Session is an environment state created on Powershell instance starts.
+A session is not a scope, all environment of sessions are isolated.
+The scope of the session is the top scope.
+
+## Runspace
+
+Runspace is a customized instance of Powershell by powershell code.
+In general, you can't control how powershell loads Providers and builtin member and so on.
+So Powershell exposes such api to create a customized object to represent the truncated or enhanced instance of the Powershell environment.
+By this approach, you can expose minimal privileges and custom utilities to users for certain tasks.
+
+Each Runspace creates isolated session state just like a normal powershell instance.
+
+A normal powershell can be referred as a Runspace too.
