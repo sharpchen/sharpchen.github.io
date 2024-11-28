@@ -23,10 +23,10 @@ And lastly the target type can be arbitrary since we don't need it, all we need 
 
 ```ts twoslash
 const foo = {
-    bar = 123,
-    baz = '123',
-    goo = [1, 2, 3],
-    foo = { foo = {} }
+    bar: 123,
+    baz: '123',
+    goo: [1, 2, 3],
+    foo: { foo: {} }
 }
 
 type KeyOfSingularTypedProperty<T> = keyof {
