@@ -14,7 +14,7 @@ export const documentMap = {
   Docker: { icon: '🐳', description: 'Ultimate Docker' },
   Git: { icon: '😸', description: 'Git mastery' },
   JavaScript: { icon: '😅', description: '' },
-  SQL: { icon: '🦭', description: '' },
+  // SQL: { icon: '🦭', description: '' },
   TypeScript: { icon: '🤯', description: '' },
   // VBA: { icon: '💩', description: 'VBA for excel' },
   // Vue3: { icon: '⚡', description: '' },

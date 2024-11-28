@@ -53,7 +53,7 @@ class SidebarService implements ISidebarService {
       if (Object.prototype.hasOwnProperty.call(subs, index)) {
         const sub = subs[index];
         const currentSidebarItem: DefaultTheme.SidebarItem = {
-          collapsed: false,
+          collapsed: true,
           text: solveSharpSign(sub.name.replace(/^\d+\.\s*/, '')), // remove leading index
           items: this.transformFolderToSidebarItem(sub, `${base}/${folder.name}`),
         };
