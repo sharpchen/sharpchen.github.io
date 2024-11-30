@@ -15,7 +15,13 @@ New-Alias <alias> <cmd_name>
 ## Override an Alias
 
 ```ps1
-Set-Alias <alias> <cmd_name>
+Set-Alias vim 'nvim --clean -c "source ~/.vimrc"'
+```
+
+Or use `Set-Item` to manipulate the alias provider directly:
+
+```ps1
+si alias:vim 'nvim --clean -c "source ~/.vimrc"'
 ```
 
 > [!TIP]

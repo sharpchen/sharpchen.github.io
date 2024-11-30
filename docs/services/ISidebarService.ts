@@ -8,6 +8,6 @@ export interface ISidebarService {
   getSidebarOfDocument(name: DocumentName): DefaultTheme.SidebarItem[];
   transformFolderToSidebarItem(
     folder: File.DirectoryInfo,
-    baseLink: string
+    baseLink: string,
   ): DefaultTheme.SidebarItem[];
 }

@@ -53,7 +53,12 @@ So it can be another way to spread out arrays into one.
 
 ## Access an Item
 
-Powershell allows 
+Powershell allows indexer syntax to access one or more items at a time.
+
+```ps1
+@(1,2,3)[0] # 1
+@(1,2,3)[0, 2] # 1, 3
+```
 
 ## Concatenation
 
