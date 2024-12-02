@@ -9,11 +9,11 @@ Call operator `&` can be used for invoking one of the following:
 
 - Command without any option.
 - A `.ps1` script file
+- External executable
 - Script block
 
-**`&` is awared of the context of current session, it does not start a new process.**
-
-It's more like a system execution 
+> [!NOTE]
+> **`&` is awared of the context of current session, it does not start a new process when executing.**
 
 ```ps1
 & 'gps'

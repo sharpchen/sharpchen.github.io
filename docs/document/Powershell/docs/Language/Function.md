@@ -101,16 +101,6 @@ Foo -Foo foo -Bar bar
 Foo foo bar # it's the same # [!code highlight] 
 ```
 
-### Default Parameter
-
-```ps1
-function Foo {
-    param (
-        [string]$foo = "foo"
-    )
-}
-```
-
 ### Flags
 
 Defining flags that represents a toggle needs a special type called `switch`.
@@ -134,6 +124,32 @@ Manual assignment is also available:
 ```ps1
 Foo -f:$false -b $true
 ```
+
+### Default Parameter
+
+- Explicitly typed parameters can have implicit default value.
+    - `switch` and `bool` is `$false` by default.
+    - `string` is `[string]::Empty` by default.
+    - Numeric types are zero value by default.
+- Parameters without type annotation are always typed as `object` which has the default value `$null`.
+- Can override default value by `=` in declaration.
+
+```ps1
+
+& { param([string]$name) $name -eq [string]::Empty } # True
+& { param($name) $name -eq $null } # True
+& { param([int]$age) $age -eq 0 } # True
+& { param([switch]$is) $is -eq $false } # True
+
+function Foo {
+    param (
+        [string]$foo = "foo"
+    )
+}
+```
+
+> [!NOTE]
+> For overriding default parameter outside the function, see [$PSDefaultParameterValues](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parameters_default_values?view=powershell-7.4#long-description) 
 
 ### Required Parameter
 
@@ -196,14 +212,49 @@ But things will explode when we're dealing with a pipeline input which might bri
 The pipeline mechanism is essentially based on the `Enumerator` so if we collect all items into a new collection as parameter value, it can be a huge performance issue.
 So named blocks are essentially to defined a shared process logic for each object in the pipeline input, and other logic like initializationa and finalization.
 
-> [!NOTE]
-> When no named block were specified, `end` block is used to represent the whole logic of a simple function.
+- `begin`: state initializationa for the pipeline iteration.
+- `process`: logic for each pipeline iteration.
+- `end`: final action for the completed pipeline iteration.
+- `clean`: a `finally` block to execute clean up no matter what happens.(PowerShell 7.3+)
 
 ```ps1
 function Foo {
     begin {}
     process {}
     end {}
+    clean {}
+}
+```
+
+> [!NOTE]
+> When no named block were specified, `end` block is used to represent the whole logic of a simple function.
+>```ps1
+>function Foo {
+>    end {
+>        echo hello
+>    }
+>}
+># equivalent to 
+>function Foo {
+>    echo hello
+>}
+>```
+
+## Filter Function
+
+Filter is a special kind of function that implicitly accepts pipeline to perform transformation(select) or filtering(where).
+Filter is useful when you need to reuse the same logic for unknown pipeline manipulations, reducing hard coding.
+
+```ps1
+filter Foo {
+    "$_" # can transform
+}
+
+# equivalent to
+function Foo {
+    process {
+        "$_"
+    }
 }
 ```
 

@@ -118,6 +118,26 @@ $partner['Status'] # Poisoned
 > [!NOTE]
 > `-ExpandProperty` can only take one property.
 
+### Calculated Property
+
+`Select-Object` can generate new NoteProperty to the `PSCustomObject` returned by specifying a HashTable with following shape:
+- `Name`(or `N`, `Lable`, `L`): the name of the new property.
+- `Expression`(`E`): the calculation logic for the new property represented as a script block.
+
+```ps1
+$person = @{
+    FirstName = 'John'
+    LastName = 'Smith'
+}
+
+# return a new PSCustomObject that has FirstName, LastName and FullName.
+$person | select *, @{ Name = 'FullName'; Expression = { "$($_.FirstName) $($_.LastName)" } }
+```
+
+> [!NOTE]
+> All selected properties from a HashTable will be regenerated as `NoteProperty`.
+> Those selected properties are essentially `Keys` of the HashTable, not real properties.
+
 ## Take a Count
 
 `Select-Object` can also take specific count of items from a collection, from start or end.

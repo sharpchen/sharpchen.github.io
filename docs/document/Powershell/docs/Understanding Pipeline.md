@@ -1,4 +1,4 @@
-#
+# Understanding Pipeline
 
 Overview of pipeline in powershell:
 
@@ -7,6 +7,7 @@ Overview of pipeline in powershell:
 - PowerShell prioritizes by value over by property name.
 
 ## Pipeline Parameter Binding
+
 
 
 ## How Cmdlet Accept Pipeline Input
@@ -29,10 +30,6 @@ spps -Name (gci -File | foreach Name)
 gci -File | spps
 ```
 
-
-> [!WARNING]
-> If multiple matches exist on ByPropertyName solution, powershell throws an error since these paramters might not be allowed to be used together.
-
 ByValue is always tried first, and then use ByPropertyName, or it finally throws.
 A parameter accepts pipeline input does not necessarily have both solutions, it can have at least one of them.
 
@@ -53,4 +50,100 @@ $table = @{ Name = 'foo'; Age = 18 }
 ```
 
 This is simply because these types are more likely to be treated as a whole object, even when dictionaries are `IEnumerable<KeyValuePair<,>>`.
+
+
+## Enumerate Pipeline Items
+
+You can use `$input` to refer to the enumerator passed to the function. This is another way to access pipeline input items but with more control.
+Another option is use `$_` to represent the current item in `process` block, this is way more limited but commonly used.
+
+- `$input` represents a enumerator for pipeline input in `process` block.
+- `$input` represents the whole collection for pipeline input in `end` block.
+- `$input` will be consumed after being used once in either `process` or `end`. Use `Reset` to get it back.
+- You can't use `$input` in both `process` and `end`.
+
+### Access Current Item
+
+`$input.Current` have to manually invoke `MoveNext` before you access `Current` in `process` block since it's not a `while` loop.
+
+```ps1
+function Test {
+    begin {
+        $input -is [System.Collections.IEnumerator] # True
+    }
+
+    process {
+        # $input.Current before MoveNext in each iteration is always $null
+        # How weird!
+        $input.Current -eq $null # True because we haven't start the enumeration!
+        $input.MoveNext() | Out-Null # [!code highlight] 
+        $input.Current -eq $null # False
+    }
+}
+
+1,2,3 | Test
+```
+
+> [!WARNING]
+> Before you read the following content, please keep in mind that `$input` behaves slightly different from general `IEnumerator` for `Reset`.
+
+`$input` itself is a wrapper of current item in `process` block, invoke `Reset` to get it back to current value.
+
+```ps1
+function Test {
+    process {
+
+    }
+}
+
+1,2,3 | Test
+```
+
+## Implicit Pipeline Input
+
+Function can accepts pipeline input without any specific parameter.
+Inside the `process` block, `$_` represents the current object from the pipeline input.
+
+```ps1
+function Test {
+    process {
+        $_ -is [System.IO.FileInfo] # True
+    }
+}
+
+gci -file | Test
+```
+
+> [!NOTE]
+> `$_` is only available in `process` block.
+
+## Explicit Pipeline Input
+
+If you write a custom function that have one or more parameters accept pipeline input, what is going on inside?
+
+- In `begin` block, there's no value assigned to each `ByPropertyName` parameter, they remain default.
+- In `process` block, each 
+
+```ps1
+function Foo {
+    param (
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Name
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]$Length
+    )
+
+    begin {
+        $Name -eq [string]::Empty # True
+        $Length -eq 0 # True
+    }
+
+    process {
+        $Name
+        $Length
+    }
+}
+
+gci -file | Foo
+```
 

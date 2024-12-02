@@ -31,11 +31,11 @@ gci `
 > [!TIP]
 > Stop using backticks! They're ugly! Use hashtable splatting instead.
 >```ps1
->$table = {
+>$table = @{
 >  Filter = '*.mp4';
 >  File = $true
 >}
->gci -file @table
+>gci @table
 >```
 
 ## Multi-Line Piping

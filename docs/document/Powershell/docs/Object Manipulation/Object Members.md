@@ -2,35 +2,35 @@
 
 ## Member Inspection
 
+### Inspect from Pipeline
+
+`Get-Member` can insepct objects from a pipeline input, which means by iterating them one by one.
+
 > [!TIP]
 > Use `gm` alias for `Get-Member`.
 
-```ps1
-ls | Get-Member
-```
-
-When inspecting an array of objects, `gm` only returns members for distinct types.
+**Only members from a unique type in that pipeline input enumeration will be collected as the result.**
 
 ```ps1
-@(123, '123') | gm | select -ExpandProperty TypeName -Unique
-# System.Int32
-# System.String
-
-(@('123', 123) | Get-Member).Length # 82
-(@('123', 123, 123) | Get-Member).Length # still 82
-
+(gci -file | select -first 1 | gm).Length # 53
+(gci -dir | select -first 1 | gm).Length # 47
+# assuming current directory has both directory and file
+(gci | gm).Length # 53 + 47 = 100
 ```
 
-`Get-Member` returns a `MemberDefinition[]` or a `MemberDefinition` with following properties.
+The whole array returned from `Get-Member` is `object[]`, each item inside is a `MemberDefinition`
 
-```cs
-class MemberDefinition
-{
-    public string Definition { get; } // expression or value or signature of the member
-    public System.Management.Automation.PSMemberTypes MemberType { get; } // type of member
-    public string Name { get; } // member name
-    public string TypeName { get; } // fullname of type or return type of the member
-}
+```ps1
+(gci | gm) -is [object[]] # True
+(gci | gm | select -first 1) -is [MemberDefinition] # True
+```
+
+### Inspect from Object
+
+To treat a whole collection as the object to be inspected, do not pipe it, pass it to `-InputObject` instead.
+
+```ps1
+gm -InputObject (gci -file) # TypeName: System.Object[]
 ```
 
 ## Member Types
