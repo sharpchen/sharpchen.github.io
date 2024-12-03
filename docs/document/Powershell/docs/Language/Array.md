@@ -184,11 +184,13 @@ using namespace System.Collections.Generic
 
 Keyword operators has special functionalities on collections.
 `-match`, `-notmatch`, `-replace`, `-split` handles for all items in the left operand collection, the result is always an array.
+If the item is not a string, Powershell evaluates it to string by certain strategy.
 
 ```ps1
 # Returns items that matches the regex
 @('John', 'Jane', 'Janet') -match 'Jane' # Jane, Janet.
-(@('John', 'Jane', 'Janet') -notmatch 'Jane') -is [array] # True, only John matches and still an array.
+(gci -file) -match '.*txt$' # FileInfo[], files with FullName matches to the pattern
+(@('John', 'Jane', 'Janet') -notmatch 'Jane') -is [Array] # True, only John matches and still an array.
 
 @('John', 'Jane', 'Janet') -replace 'J','K' # Kohn Kane Kanet
 '1,2,3','1,2,3' -split ',' # 1 2 3 1 2 3, strings

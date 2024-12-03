@@ -7,6 +7,7 @@
 - Empty string
 - Numeric zeros
 - Empty collections implemented `IList`.
+- Single-item collection that contains falsy value, `@(0)`, `@($null)` for example.
 
 > [!NOTE]
 > You can cast falsy values to boolean.
