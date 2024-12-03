@@ -28,9 +28,11 @@ The whole array returned from `Get-Member` is `object[]`, each item inside is a 
 ### Inspect from Object
 
 To treat a whole collection as the object to be inspected, do not pipe it, pass it to `-InputObject` instead.
+Or magically wrap it as a single-item collection.
 
 ```ps1
 gm -InputObject (gci -file) # TypeName: System.Object[]
+,(gci -file) | gm
 ```
 
 ## Member Types

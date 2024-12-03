@@ -91,9 +91,39 @@ Use double `'` to escape `'` in a verbatim string.
 > [!NOTE]
 > See [about_Specical_Characters](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_special_characters?view=powershell-7.4) 
 
+## Arithmetic with Numerics
+
+Powershell will try to convert the string on the right operand to the same type as left operand.
+Exception will be raised if conversion failed.
+
+```ps1
+1 + '2' # 3
+'2' + 1 # '21'
+[DateTime]::Now + '00:00:15:00' # adds 15 minutes
+```
+
 ## Split & Join
 
+```ps1
+'1,2,3' -split ',' # 1 2 3 as strings
+(gci -file) -join ',' # ToString is invoked to evaluated objects to string.
+```
+
+## Match & Replace
+
+```ps1
+'Janet is a girl' -match 'Jane' # True
+'Janet is a girl' -replace '^Janet', 'Jane'
+```
+
 ## Format String
+
+Template string syntax is the same as `C#`.
+Standard numeric format like `:C`, `:X` are supported.
+
+```ps1
+'This is a {0} string' -f 'format'
+```
 
 ## Repetition
 

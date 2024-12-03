@@ -15,8 +15,10 @@ $foo = @() # empty array
 
 > [!NOTE]
 > The default type of a array literal is `object[]`, you can annotate with a type.
+> To create an empty array with fixed size, invoke `new()` constructor, this is also strongly typed.
 > ```ps1
 > [int[]]$foo = 1, 2, 3
+> $bar = [int[]]::new(5)
 > ```
 
 > [!TIP]
@@ -28,6 +30,8 @@ $foo = @() # empty array
 >```ps1
 >(1,2,3).Length # 3
 >
+>$(1,2,3).Length # 3 this has different semantic but with same result
+>
 >(,(1,2,3)).Length # 3 # does spread items # [!code highlight] 
 >
 >(,@(1,2,3)).Length # 1 # does not spread items # [!code highlight] 
@@ -35,10 +39,10 @@ $foo = @() # empty array
 >((gci), (gci ..)).Length # 2 # [!code highlight] 
 > ```
 
-### Collect from Expressions
+### From Expression and Statement
 
-`@()` actually collects from expressions, and all items from expressions will be flattened into a whole array.
-So it can be another way to spread out arrays into one.
+`@()` collects from expressions or statements like control flows that implicitly returns.
+You can choose either flatten items from expressions or treat them as a sub-array.
 
 - Use `;` to separate expressions for flatten arrays from them.
 - Use `,` to separate expressions if you want them to be sub-array.
@@ -49,24 +53,53 @@ So it can be another way to spread out arrays into one.
 
 @((ls), (ls ..)).Length # 2
 @(ls; ls ..).Length # > 0
+
+@(
+    if ($true) {
+        'yield this value to the array'
+        'yield this value again'
+    }
+).Length # 2
 ```
 
-## Access an Item
+### From Enumerator
 
-Powershell allows indexer syntax to access one or more items at a time.
+Similar to expression, you can collect items from a `IEnumerator`.
+
+```ps1
+$foo = @{
+    Name = 'foo'
+    Age = 18
+}
+
+@($foo.GetEnumerator()).Length # 2, System.Collections.DictionaryEntry from the HashTable # [!code highlight] 
+```
+
+## Access Item
+
+Powershell allows indexer syntax to access one or more items at a time or use `Select-Object`.
 
 ```ps1
 @(1,2,3)[0] # 1
-@(1,2,3)[0, 2] # 1, 3
+@(1,2,3) | select -index 1 # 2
+@(1,2,3)[0, 1] # 1, 2 returns an array though
 ```
+
+> [!NOTE]
+> The default value of a array item is `$null`.
+> Since it's a dynamic language, there's no error raised when index is out of the range.
 
 ## Concatenation
 
-Generates new array from two concatenated.
+Generates new array from two concatenated or with new item.
 
 ```ps1
 ((1,2,3) + (1,2,3)).Length # 6
+(1,2,3) + 4 # 1,2,3,4
 ```
+
+> [!NOTE]
+> Can use `+=` when you operate on a array variable.
 
 ## Repetition
 
@@ -74,6 +107,12 @@ Use `*` to repeat the array content for certain times.
 
 ```ps1
 ((1,2,3) * 3).Length # 9
+```
+
+A pratical usage of repetition is initialization with same value to the whole array.
+
+```ps1
+@(255) * 100 # Fill up array sized 100 with 255 to all elements
 ```
 
 ## Slicing
@@ -105,6 +144,54 @@ Separate different ranges by `+` to generate a range union.
 ```ps1
 # Select 1 to 3, 5 to 6, and a single 8
 (1..10)[0..2+4..5+7]
+```
+
+## Substration
+
+To substract a collection from another collection, you can certainly use `LINQ` or use a simple pipeline.
+
+```ps1
+@(1,2,3) | where { @(1, 2) -notcontains $_ } # 3
+```
+
+## Null Checking
+
+Checking null for collections is a quirk in PowerShell, `$arr -eq $null` checks all items instead of the whole array.
+
+```ps1
+$arr = 1,2,3
+
+$arr -eq $null # empty array
+
+$null -eq $arr # False, the result we expected # [!code highlight] 
+
+if ($arr) { 'array is not null and not empty' } # check both empty and null
+```
+
+## To List
+
+PowerShell allows direct casting a array to an `ArrayList` or generic `List<T>`.
+
+```ps1
+using namespace System.Collections.Generic
+
+[List[int]]@(1,2,3)
+
+[System.Collections.ArrayList]@(1,2,3)
+```
+
+## Filtering & Transformation by Keyword Operators
+
+Keyword operators has special functionalities on collections.
+`-match`, `-notmatch`, `-replace`, `-split` handles for all items in the left operand collection, the result is always an array.
+
+```ps1
+# Returns items that matches the regex
+@('John', 'Jane', 'Janet') -match 'Jane' # Jane, Janet.
+(@('John', 'Jane', 'Janet') -notmatch 'Jane') -is [array] # True, only John matches and still an array.
+
+@('John', 'Jane', 'Janet') -replace 'J','K' # Kohn Kane Kanet
+'1,2,3','1,2,3' -split ',' # 1 2 3 1 2 3, strings
 ```
 
 ## Multi-Dim Array
