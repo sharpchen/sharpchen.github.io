@@ -154,6 +154,28 @@ To substract a collection from another collection, you can certainly use `LINQ` 
 @(1,2,3) | where { @(1, 2) -notcontains $_ } # 3
 ```
 
+## Equality Checking
+
+Collections behave differently in Powershell on equality checking, they're not based on reference but the contained items.
+
+- `<arr> -eq <item>`: returns all items in `<arr>` equal to `<item>`.
+- `<arr> -ne <item>`: returns all items in `<arr>` not equal to `<item>`.
+- always returns `object[]` even for single result or no result.
+
+```ps1
+1,1,2,3 -eq 1 # 1,1
+'a','b','c' -ne 'a' # 'b', 'c'
+
+# the whole item is an array so no result is returned.
+1,1,2,3 -eq 1,2 # empty array
+```
+
+> [!TIP]
+> You can use `-ne` to exclude single item from a collection.
+
+> [!NOTE]
+> To do reference checking, use `[object]::ReferenceEquals`.
+
 ## Null Checking
 
 Checking null for collections is a quirk in PowerShell, `$arr -eq $null` checks all items instead of the whole array.
@@ -164,9 +186,10 @@ $arr = 1,2,3
 $arr -eq $null # empty array
 
 $null -eq $arr # False, the result we expected # [!code highlight] 
-
-if ($arr) { 'array is not null and not empty' } # check both empty and null
 ```
+
+> [!TIP]
+> Always leave array as the right operand on null checking.
 
 ## To List
 
@@ -184,17 +207,19 @@ using namespace System.Collections.Generic
 
 Keyword operators has special functionalities on collections.
 `-match`, `-notmatch`, `-replace`, `-split` handles for all items in the left operand collection, the result is always an array.
-If the item is not a string, Powershell evaluates it to string by certain strategy.
 
 ```ps1
 # Returns items that matches the regex
 @('John', 'Jane', 'Janet') -match 'Jane' # Jane, Janet.
-(gci -file) -match '.*txt$' # FileInfo[], files with FullName matches to the pattern
+(gci -file) -match '.*txt$' # FileInfo with FullName matches to the pattern
 (@('John', 'Jane', 'Janet') -notmatch 'Jane') -is [Array] # True, only John matches and still an array.
 
 @('John', 'Jane', 'Janet') -replace 'J','K' # Kohn Kane Kanet
 '1,2,3','1,2,3' -split ',' # 1 2 3 1 2 3, strings
 ```
+
+> [!NOTE]
+> If current item for `-match` or `-notmatch` is not a string, Powershell evaluates it to string by certain strategy.
 
 ## Multi-Dim Array
 

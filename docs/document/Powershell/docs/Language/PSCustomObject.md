@@ -1,8 +1,9 @@
 # PSCustomObject
 
-**PSCustomObject** is similar to object literal that can even have custom methods.
+Differ from HashTable, `[PSCustomObject]` is a representation for object literal.
+It 
 
-## Create a PSCustomObject
+## Creation
 
 PSCustomObject borrows the syntax from HashTable with a casting.
 
@@ -13,7 +14,7 @@ $john = [PSCustomObject] @{
 }
 ```
 
-### From a HashTable
+### From HashTable
 
 You can explicitly convert a HashTable to PSCustomObject
 
@@ -25,7 +26,7 @@ $table = @{
 $obj = [PSCustomObject]$table # [!code highlight] 
 ```
 
-Or use `New-Object`
+Or use `New-Object`, but this might be slower.
 
 ```ps1
 $obj = New-Object -TypeName PSObject -Property $table

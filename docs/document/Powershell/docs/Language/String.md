@@ -116,6 +116,17 @@ Exception will be raised if conversion failed.
 'Janet is a girl' -replace '^Janet', 'Jane'
 ```
 
+All previous matches and captured groups can be accessed in `$matches` builtin variable.
+`$matches` is a HashTable, you can access named capture group by group name and use index for unamed group.
+
+```ps1
+if ('John Smith' -match '^(?<FirstName>\b\w+\b) (\b\w+\b)$') {
+    $matches.FirstName # John
+    $matches[0] # John Smith
+    $matches[1] # Smith
+}
+```
+
 ## Format String
 
 Template string syntax is the same as `C#`.

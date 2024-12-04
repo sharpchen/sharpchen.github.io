@@ -1,11 +1,14 @@
 # HashTable
 
-HashTable is a dynamicly typed data structure in PowerShell, it implements `IDictionary` but is wrapped with the extended types system.
-It's the native type and is unique to PowerShell itself.
+HashTable is essentially `System.Collections.HashTable`, the non-generic version of `Dictionary<,>`.
 
 ```ps1
 @{} -is [System.Collections.IDictionary] # True
+@{} -is [System.Collections.HashTable] # True
 ```
+
+> [!TIP]
+> HashTable serves as more like a dictionary with syntax sugar, if you want it to be more like object literal, use `[pscustomobject]`.
 
 ## Creation
 
@@ -17,6 +20,7 @@ $foo = @{
     Name = 'foo'
     Age = 18
 }
+
 $foo = @{ Name = 'foo'; Age = 18 }
 ```
 
@@ -29,13 +33,13 @@ $foo = @{ Name = 'foo'; Age = 18 }
     C = 'C'
     B = 'B'
     A = 'A'
-}).Keys # C B A
+}).Keys # C B A # [!code highlight] 
 
 @{
     C = 'C'
     B = 'B'
     A = 'A'
-}.Keys # B C A
+}.Keys # B C A # [!code highlight] 
 ```
 
 > [!NOTE]
@@ -47,6 +51,7 @@ $foo = @{ Name = 'foo'; Age = 18 }
 ## Access Values
 
 You can access value of one or more keys by indexer.
+
 ```ps1
 $foo['Name'] # foo
 $foo['Name', 'Age'] # @('foo', 18)
@@ -56,10 +61,16 @@ $foo['Name', 'Age'] # @('foo', 18)
 
 ```ps1
 $foo.Name # foo
+$foo.'Name'
+$name = 'name'
+$foo.$name
 ```
 
 > [!TIP]
 > Always use indexer to access value of a HashTable. `.` will prefer Extended Property that might be unexpected.
+
+> [!NOTE]
+> Key in HashTable can be any type. So if the key is not a singular type, you'll have to extract the key from `Keys` first and then access the value by the key.
 
 ## Merging
 

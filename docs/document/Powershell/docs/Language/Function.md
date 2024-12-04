@@ -204,6 +204,27 @@ param (
 )
 ```
 
+### Pass By Reference
+
+Parameter passed by reference is implemented by a wrapper `System.Management.Automation.PSReference`.
+Value types are passed by value by default, the pass as reference, mark the parameter with `[ref]`.
+Casting to `[ref]` generates a new wrapper containing the value.
+
+```ps1
+function Foo {
+    param ([ref][int]$foo) # [!code highlight] 
+    $foo.Value = 250
+    $foo.Value
+}
+
+$bar = 1
+Foo ([ref]$bar)
+$bar # 250 # [!code highlight] 
+```
+
+> [!NOTE]
+> `[ref]` can only be marked before type annotation.
+
 ## Named Blocks
 
 In a simple function where there's only one series of parameters being taken, we don't have to use any complex logic.
