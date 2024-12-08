@@ -12,7 +12,6 @@ A common example would be `Process` type.
 ```ps1
 (gps | select -First 1).GetType().Name # Process
 (gps | select -First 1) -is [PSObject] # True
-(gps | select -First 1) -is [PSCustomObject] # True
 # -is checks underlying type too
 (gps | select -First 1) -is [System.Diagnostics.Process] # True
 ```
@@ -23,6 +22,8 @@ The functionality of ETS achieved benifits:
 - Dynamic interpreting a `HashTable` to any `PSObject`
 - Accessibility to the underlying object.
 - Manipulation on extended members.
+
+## What's `PSObject`
 
 ## ETS Members
 

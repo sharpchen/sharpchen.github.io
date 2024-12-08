@@ -114,6 +114,7 @@ Exception will be raised if conversion failed.
 ```ps1
 'Janet is a girl' -match 'Jane' # True
 'Janet is a girl' -replace '^Janet', 'Jane'
+'Janet is a girl' -replace '^Janet', 'Jane' -replace 'is', 'is not' # replace multiple times inline.
 ```
 
 All previous matches and captured groups can be accessed in `$matches` builtin variable.
