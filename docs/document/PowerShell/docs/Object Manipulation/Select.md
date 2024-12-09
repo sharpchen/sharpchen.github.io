@@ -75,8 +75,7 @@ README.md        0.85
 ### Select Value Only
 
 To select single value of a property instead of being wrapped as an object, use `-ExpandProperty`.
-The return type is still an `object[]` since there's no generic resolution on Powershell.
-But each memeber should be string indeed in the following snippet.
+The return type is still an `object[]`. But each memeber should be string indeed in the following snippet.
 
 ```ps1
 gps | select -ExpandProperty Name
@@ -85,7 +84,7 @@ gps | select -ExpandProperty Name
 ```
 
 > [!NOTE]
->  `Foreach-Object` can achieve the same thing
+>  `ForEach-Object` can achieve the same thing
 > ```ps1
 > gps | foreach Name
 > # or use another alias of ForEach-Object %
@@ -132,7 +131,7 @@ $partner['Status'] # Poisoned
 - `Expression`(`E`): the calculation logic for the new property represented as a script block.
 
 ```ps1
-$person = @{
+$person = [pscustomobject]@{
     FirstName = 'John'
     LastName = 'Smith'
 }
