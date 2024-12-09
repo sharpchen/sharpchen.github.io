@@ -28,7 +28,7 @@ export const documentMap = {
   Nix: { icon: '❄', description: 'Reproduce freedom' },
   'Entity Framework Core': { icon: '🗿', description: '' },
   'HTML & CSS': { icon: '😬', description: '' },
-  Powershell: { icon: '🐚', description: '...' },
+  PowerShell: { icon: '🐚', description: 'The first strongly-typed shell! Not bad.' },
 } as const satisfies DocumentInfo;
 
 export type DocumentName = keyof typeof documentMap;

@@ -1,7 +1,14 @@
 # Select
 
-`Select-Object` is a combination of `Select`, `Take`, `TakeLast` in dotnet LINQ.
-It can be appiled on singular object and any collection.
+## Overview
+
+- Picking composed object by one or more properties with `-Property`.
+    - select properties reversely by `-ExcludeProperty`.
+- Picking single property value with `-ExpandProperty`.
+- Take a count from start or end with `-First` or `-Last`.
+- Skip a count from start or end `-Skip` or `-SkipLast`.
+- Cherry-Pick one or more items by zero-based index.
+- Distinct items selected from pipline.
 
 > [!TIP]
 > Use `select` alias for `Select-Object`.
@@ -157,7 +164,7 @@ gps | select -SkipLast 5
 ## Cherry Pick 
 
 ```ps1
-$dir = ls -Directory
+$dir = gci -Directory
 $dir | select -Index 1, ($dir.Length - 1) # Pick first and last item
 ```
 
