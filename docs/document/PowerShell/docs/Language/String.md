@@ -21,7 +21,7 @@ Use `$` to interpolate:
 ```
 
 > [!NOTE]
-> `$()` is being called **SubExpression Operator** in Powershell.
+> `$()` is being called **SubExpression Operator** in PowerShell.
 
 ## Verbatim String
 
@@ -36,12 +36,12 @@ Can contains new lines and
 ```
 
 > [!NOTE]
-> Verbatim string does not allow interpolation in Powershell which differs from `C#`.
+> Verbatim string does not allow interpolation in PowerShell which differs from `C#`.
 
 ## Raw String
 
 > [!NOTE]
-> Raw string is being called **Here String** in Powershell.
+> Raw string is being called **Here String** in PowerShell.
 
 **Here String** typically allows string contents starting at the second line and truncates the last newline.
 
@@ -93,7 +93,7 @@ Use double `'` to escape `'` in a verbatim string.
 
 ## Arithmetic with Numerics
 
-Powershell will try to convert the string on the right operand to the same type as left operand.
+PowerShell will try to convert the string on the right operand to the same type as left operand.
 Exception will be raised if conversion failed.
 
 ```ps1
@@ -110,6 +110,15 @@ Exception will be raised if conversion failed.
 ```
 
 ## Match & Replace
+
+PowerShell has two kinds of matching strategy for strings.
+- `-match` for regex matching.
+- `-like` for wildcard matching.
+
+While `-replace` only supports regex.
+
+> [!TIP]
+> Match and replace is case-insensitive by default. Use `-cmatch`, `-cnotmatch`, `-creplace`, `-csplit` for **case-sensitive** scenarios.
 
 ```ps1
 'Janet is a girl' -match 'Jane' # True

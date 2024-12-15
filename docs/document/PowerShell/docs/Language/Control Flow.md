@@ -75,6 +75,25 @@ cd ..; gci -rec -file; echo hello
 
 In PowerShell 7, `&&` and `||` were introduced to do the same command chaining as bash does.
 
+## Null-Conditional Operator <Badge type="info" text="PowerShell 7+" />
+
+This feature is basically the same as in `C#` except a bracing `{}` is required around variable because `?` is valid as part of variable name.
+
+```ps1
+$null.Bar() # exception raised # [!code error] 
+${null}?.Bar() # ok
+
+$null[0] # exception raised here # [!code error] 
+${null}?[0] # ok
+
+$null ?? 'I am not null'
+
+$baz ??= 'I am new value'
+```
+
+## Ternary Operator <Badge type="info" text="PowerShell 7+" />
+
+No need to explain, same as in `C#`.
 
 ## Pattern Matching
 

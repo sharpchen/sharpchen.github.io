@@ -25,8 +25,13 @@ If you do want a `$null` return, use `Out-Null` to swallow the value.
 
 ```ps1
 # doesn't make much sense though
-(gci | foreach { $_.Name | Out-Null }) -eq $null # True
+$null -eq (gci | foreach { $_.Name | Out-Null }) # True
 ```
 
-
+> [!NOTE]
+> One exception is `ForEach-Object` can execute method by name.
+> You might expect delegate objects to be returned, but no, values of the method being executed will be returned.
+>```ps1
+>(1,2,3 | % GetType | select -first 1) -is [System.Type] # True
+>```
 

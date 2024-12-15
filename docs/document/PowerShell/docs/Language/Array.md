@@ -221,6 +221,19 @@ Keyword operators has special functionalities on collections.
 > [!NOTE]
 > If current item for `-match` or `-notmatch` is not a string, Powershell evaluates it to string by certain strategy.
 
+> [!TIP]
+> Match and replace is case-insensitive by default. Use `-cmatch`, `-cnotmatch`, `-creplace`, `-csplit` for **case-sensitive** scenarios.
+
+## Deconstruction
+
+```ps1
+$a, $b, $c = 1,2,3 # $a = 1, $b = 2, $c = 3
+$a, $b = 1,2,3 # $a = 1, $b = 3 This might not be expected # [!code warning] 
+```
+
+> [!WARNING]
+> You should only use deconstruction when **you need the first and the last item returned** or **you're pretty sure there's only two element will be returned**.
+
 ## Multi-Dim Array
 
 You'll have to create Multi-Dim array from .NET type constructor only.

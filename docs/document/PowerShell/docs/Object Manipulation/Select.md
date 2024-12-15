@@ -1,6 +1,8 @@
 # Select
 
-## Overview
+`Select-Object` serves for multiple purposes for object transformation and picking from collection.
+
+The following is a overview:
 
 - Picking composed object by one or more properties with `-Property`.
     - select properties reversely by `-ExcludeProperty`.
