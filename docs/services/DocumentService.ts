@@ -136,4 +136,19 @@ class DocumentService implements IDocumentService {
   }
 }
 
+class Paginater<T> {
+  private page: number = 1;
+  private range: { start: number; end: number };
+  constructor(
+    private readonly items: T[],
+    private readonly count: number,
+  ) {}
+  nextPage(): T[] {
+    // learn to debug
+    this.range.start = (this.page - 1) * this.count;
+    this.range.end = this.range.start + this.count;
+    return this.items.slice(this.range.start, this.range.end);
+  }
+}
+
 export const documentService: IDocumentService = new DocumentService();

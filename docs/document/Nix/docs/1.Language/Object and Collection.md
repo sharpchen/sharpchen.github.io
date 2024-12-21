@@ -10,7 +10,7 @@ Set is similar to object literal in some languages like javascript and lua.
 Properties of a set are called attributes in `nix`
 
 ```nix
-{ username = "john smith"; email = "example@example.com" }
+{ username = "john smith"; email = "example@example.com"; }
 ```
 
 Attribute name can be any string including interpolated string.

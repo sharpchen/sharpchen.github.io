@@ -63,7 +63,7 @@ stdenv.mkDerivation {
 }
 ```
 
-Some editors might support syntax injection for multi-line string. 
+Some editors support syntax injection for multi-line string. 
 Add filetype as comment before the string to inform syntax parser.
 
 ```nix

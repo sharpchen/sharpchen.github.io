@@ -102,6 +102,19 @@ Exception will be raised if conversion failed.
 [DateTime]::Now + '00:00:15:00' # adds 15 minutes
 ```
 
+## Comparison
+
+All comparison operators have its case-sensitive version with leading `-c`
+
+- `-gt` -> `-cgt`
+- `-lt` -> `-clt`
+- ...
+
+```ps1
+'Apple' -eq 'apple' # True
+'Apple' -ceq 'apple' # False
+```
+
 ## Split & Join
 
 ```ps1
