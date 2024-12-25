@@ -4,7 +4,7 @@ Extended Type System(ETS) is for consistent experience with **some** `.NET` type
 
 There's two approaches that PowerShell did for implementing the ETS.
 
-- Intrinsic members for all objects.
+- Intrinsic members for all objects, and intrinsic member for specific type of objects.
 - Dynamic manipulation to members of an object.
 - Potentially wrap an object as `PSObject`.
 
@@ -40,10 +40,15 @@ Intrinsic methods and properties are to mimic singular object and collection in 
 - `Count`
 - `Length`
 
+### Constructor
+
+For all objects of `System.Type`, there's a intrinsic `New` method as constructor.
 
 > [!NOTE]
 >**Intrinsic members are not described as part of certain type definition, they're isolated from the object-oriented type system.**
 > Object views are visible to `Get-Member -Force` while intrinsic methods aren't.
+
+
 
 A common example would be `Process` type.
 

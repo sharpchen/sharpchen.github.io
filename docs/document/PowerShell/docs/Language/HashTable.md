@@ -57,6 +57,9 @@ $foo['Name'] # foo
 $foo['Name', 'Age'] # @('foo', 18)
 ```
 
+> [!NOTE]
+> PowerShell uses `TryGetValue` when accessing value with indexer syntax for `IDictionary` types, so it never throw.
+
 `.` accessor would also works **as long as there's no duplicated Extended Property with the same name of the key you passed.**
 
 ```ps1
