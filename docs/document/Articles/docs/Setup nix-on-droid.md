@@ -23,14 +23,13 @@
     > [!NOTE]
     > You can wrap the same as bash function by `awk` or other text manipulation tools.
 
-
 ## Init
 
 - nix-on-droid may ask for url for certain file, if the url is not accessible on your phone, download it and transfer to your phone. And replace the default url as `file:///sdcard/...`
 - type `yes` when nix prompt for downloads for first init.
 - add and update channels: 
     ```sh
-    nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager && channel
+    nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager && nix-channel --update
     ```
     > [!TIP]
     > If you use the wrapper function mentioned above, would be like this:
@@ -67,14 +66,14 @@ mkdir -p ~/.ssh/ && touch ~/.ssh/authorized_keys && echo <pub> >> ~/.ssh/authori
 - start ssh daemon by `sshd`
 
 ```sh
-sshd -p <port> -h <host_key> -d
+$(which sshd) -p <port> -h <host_key> -d
 ```
 
 `-d` is essential to know whether your port is been taken or not. See details in `man sshd`.
 
 - now connect to nix-on-droid from your computer
 
-```ps1
+```sh
 ssh -l nix-on-droid -p <port> <ipaddr_of_phone>
 ```
 
