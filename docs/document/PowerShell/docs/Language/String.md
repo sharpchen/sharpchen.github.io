@@ -167,6 +167,34 @@ Use `*` to repeat a string.
 'abc' * 2 # abcabc
 ```
 
+## Grep
+
+`Select-String` is a builtin cmdlet that does the similar thing like `grep` in gnu coreutils.
+It can select one or more lines that matches the specified regex.
+
+- Grep single line from pipeline
+
+```ps1
+# -Pattern is positional
+help sls | sls -Pattern 'Position\??\s*\d'
+```
+
+- Grep multiple lines from above and below
+
+```ps1
+# include 3 lines above and 5 lines below the macthed line
+help sls | sls 'Position\??\s*\d+' -Context 3,5
+```
+
+- Grep from pipeline passed by property(`-Path`)
+
+```console
+PS ~> gci /nix/store/ -dir | sls 'roslyn'
+
+/nix/store/m4npcw66155bbi8i7ipp0bbp54wdwwlg-roslyn-ls-4.13.0-3.24577.4
+/nix/store/np6bigb7d3lvpinw0mrdvj38xi67q6sa-roslyn-ls-4.12.0-2.24422.6
+```
+
 ## String Evaluation in Interpolation
 
 ### Collection

@@ -26,16 +26,21 @@
 ## Init
 
 - nix-on-droid may ask for url for certain file, if the url is not accessible on your phone, download it and transfer to your phone. And replace the default url as `file:///sdcard/...`
+> remember to allow file permision for nix-on-droid.
 - type `yes` when nix prompt for downloads for first init.
 - add and update channels: 
     ```sh
-    nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager && nix-channel --update
+    nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs && nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager && nix-channel --update
     ```
     > [!TIP]
     > If you use the wrapper function mentioned above, would be like this:
     >```ps1
     >adbin -Enter 'nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager'
     >```
+- Update nix: default nix is out-dated, might not work with your current config like home-manager or any other.
+    ```sh
+    nix profile install nixpkgs#nix --priority 4
+    ```
 
 ## Connect to nix-on-droid
 
@@ -63,10 +68,16 @@ ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key -N "" # key is generated in pwd
 mkdir -p ~/.ssh/ && touch ~/.ssh/authorized_keys && echo <pub> >> ~/.ssh/authorized_keys
 ```
 
+> [!TIP]
+> Use this instead if you prefer pwsh, replace the pubkey name if needed.
+>```ps1
+>adbin -Enter ('mkdir -p ~/.ssh/ && touch ~/.ssh/authorized_keys && echo ''{0}'' >> ~/.ssh/authorized_keys' -f (gc ~/.ssh/id_ed25519.pub))
+>```
+
 - start ssh daemon by `sshd`
 
 ```sh
-$(which sshd) -p <port> -h <host_key> -d
+$(which sshd) -p 8080 -h ./ssh_host_rsa_key -d
 ```
 
 `-d` is essential to know whether your port is been taken or not. See details in `man sshd`.
