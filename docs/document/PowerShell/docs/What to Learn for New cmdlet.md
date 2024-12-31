@@ -4,7 +4,7 @@
 
 Positional parameter matters for understanding the examples listed on documentations since the example might elide parameter name.
 We can take advantages of `Get-Help` and `Select-String` to capture those parameters that have a explicit order.
-The `-Context` includes 3 lines above and 5 lines below the display the whole info of the parameter.
+The `-Context` includes 3 lines above and 5 lines below the matched line to display the whole info of the parameter.
 
 ```ps1
 help <cmd> | sls 'Position\??\s*\d' -Context 3,5
@@ -37,10 +37,15 @@ $ help sls | sls 'Position\??\s*\d+' -Context 3,5
           Accept wildcard characters?  false
 ```
 
-## Find Parameters Accepts Pipeline
+## Find Parameters Accept Pipeline
 
 Similar to finding position parameter.
 
 ```ps1
 help <cmd> | sls 'Accept pipeline input\??\s*true.*$' -Context 5,4
 ```
+
+## Path Specific Parameter
+
+Commonly named parameters for path are `-Path`, `-FilePath`, `-LiteralPath`.
+So once the cmdlet supports one of them, you should aware it probably supports one or more of others.
