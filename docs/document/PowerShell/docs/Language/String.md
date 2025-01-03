@@ -91,7 +91,21 @@ Use double `'` to escape `'` in a verbatim string.
 > [!NOTE]
 > See [about_Specical_Characters](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_special_characters?view=powershell-7.4) 
 
-## Arithmetic with Numerics
+### Special Characters
+
+Other special characters should only be escaped by `` ` ``, and only available in a double quote string or double quote here string.
+
+```ps1
+"Line with a new line `n"
+
+@"
+`tstarts with tab
+"@
+
+'no escape happened here! `n'
+```
+
+## Arithmetic with Numeric
 
 PowerShell will try to convert the string on the right operand to the same type as left operand.
 Exception will be raised if conversion failed.
@@ -99,7 +113,7 @@ Exception will be raised if conversion failed.
 ```ps1
 1 + '2' # 3
 '2' + 1 # '21'
-[DateTime]::Now + '00:00:15:00' # adds 15 minutes
+[datetime]::Now + '00:00:15:00' # adds 15 minutes
 ```
 
 ## Comparison
@@ -150,6 +164,15 @@ if ('John Smith' -match '^(?<FirstName>\b\w+\b) (\b\w+\b)$') {
 }
 ```
 
+### Enumerate in Replace <Badge type="info" text="PowerShell 6+" />
+
+`-replace` allows access to the macthed object by `$_` typed as `System.Text.RegularExpressions.Match` in a scriptblock to perform a more flexible action when replacing.
+
+```ps1
+# Transform captured group in replace
+'John Smith' -replace 'John', { $_.Value.ToLower() }
+```
+
 ## Format String
 
 Template string syntax is the same as `C#`.
@@ -172,6 +195,20 @@ Use `*` to repeat a string.
 `Select-String` is a builtin cmdlet that does the similar thing like `grep` in gnu coreutils.
 It can select one or more lines that matches the specified regex.
 
+`Select-String` returns one or more `Microsoft.PowerShell.Commands.MatchInfo` that majorly includes:
+- Matches as `System.Text.RegularExpressions.Match[]`
+- Line: content of the matched line
+- LineNumber: line number of the matched line
+
+- `-SimpleMatch`: prevent interpretation of `-Pattern` to a regex.
+- `-NotMatch`: returns lines that doesn't match the `-Pattern`.
+- `-Path`: try match the name of a dir or content of a file
+- `-Raw`: return matched string instead of `MatchInfo`
+- `-Quiet`: return flag that indicates whether the match succeeded(`$true`) or not(`$null`)
+- `-AllMatches`: match all occurrences for each line.
+- `-List`: match first occurrence in file.
+- `-NoEmphasis`: cancel highlighting for matches
+
 - Grep single line from pipeline
 
 ```ps1
@@ -193,6 +230,42 @@ PS ~> gci /nix/store/ -dir | sls 'roslyn'
 
 /nix/store/m4npcw66155bbi8i7ipp0bbp54wdwwlg-roslyn-ls-4.13.0-3.24577.4
 /nix/store/np6bigb7d3lvpinw0mrdvj38xi67q6sa-roslyn-ls-4.12.0-2.24422.6
+```
+
+- Match from a file, `sls` has different format for content from `-Path` which includes line number.
+
+```ps1
+sls -Path ./foo.txt -Pattern 'foo'
+gci *foo.txt | sls 'foo'
+```
+
+- Filter files match certain pattern quickly(doc said it **is the most efficient way**)
+
+```ps1
+gci -file | sls -Pattern 'foo' -List | foreach Path
+```
+
+## Convert to String
+
+There's two way of general string conversion from object.
+
+- formatting by `Out-String`
+- `ToString`
+
+`ToString` is sometimes limited since there might not be always a override available, so it just returns the type fullname.
+While formatting is more generalized as we usually see in console output, especially when pipe it to a cmdlet to do text manipulation.
+That's the reason why we have `Out-String`, which converts object to its formatted representation.
+
+```ps1
+gci | Out-String | sls 'foo'
+```
+
+`Out-String` has a dedicated parameter `-Stream` which allow it to pipe the string single line each time.
+And PowerShell has a builtin function `oss` as an alias for `Out-String -Stream`
+
+```ps1
+gci | Out-String | sls 'foo' # match the entire string
+gci | oss | sls 'foo' # match the matched line only
 ```
 
 ## String Evaluation in Interpolation

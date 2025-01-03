@@ -30,3 +30,8 @@ $job.GetType().Name # ThreadJob
 ```ps1
 1..10 | foreach -Parallel { echo $_ } -AsJob | rcjb -Wait
 ```
+
+## Thread Safety
+
+Do not mutate or access member of a shared variable in thread jobs unless you use thread-safe types!
+

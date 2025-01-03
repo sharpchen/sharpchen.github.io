@@ -1,39 +1,5 @@
 # Function
 
-## Return
-
-Powershell allows implicit return, and multiple implicit returns.
-
-> [!NOTE]
-> Implicit returns are auto-collected as an array or single value.
-> And it does not print out anything.
-
-```ps1
-[int] function Sum {
-    param([int]$l, [int]$r)
-    $l + $r # implicit return # [!code highlight] 
-}
-
-# You won't need to declare an array and append it on each loop!
-# they're collected automatically as they're implicit returns
-function Foo {
-   for($i = 0; $i -lt 10; $i = $i + 1)  {
-        $i
-   }
-}
-
-(Foo).GetType().Name # object[] # [!code highlight] 
-```
-
-Explicit return is surely supported, but more like a necessity to exit inside a flow.
-
-```ps1
-[int] function Sum {
-    param([int]$l, [int]$r)
-    return $l + $r # explicit return # [!code highlight] 
-    $r + $l # not reachable  # [!code warning] 
-}
-```
 
 ## Parameter
 
@@ -199,10 +165,37 @@ Will throw an error if any parameter does not satisfies the condition.
 param (
     [ValidateScript({ ($_ % 2) -ne 0 })]
     [int[]]$Odd
-    [ValidateScript({ $_.Length < 5 })]
+    [ValidateScript({ $_.Length < 5 }, ErrorMessage = "{0} is not valid")] # 0 is the input value
     [string]$Name
 )
 ```
+
+- `ValidateLength(min, max)`
+- `ValidateCount(min, max)`
+- `AllowNull()`
+- `AllowEmptyString()`
+- `AllowEmptyCollection()`
+- `ValidatePattern(regex)`
+- `ValidateRange(min, max)`
+    - or any value of enum `ValidateRangeKind`: `Positive`, `Negative`, `NonNegative`, `NonPositive`
+    ```ps1
+    param(
+        [ValidateRange("Positive")]
+        [int]$Number
+    )
+    ```
+- `ValidateSet(foo, bar, ...)`: provides completion for predefined entries
+- `ValidateNotNull()`
+- `ValidateNotNullOr()`
+- `ValidateNotNullOrEmpty()`: not a empty string or collection or null
+- `ValidateNotNullOrWhiteSpace()`
+- `ValidateDrive(drive, ...)`: check whether specified path is valid from certain PSDrive
+    ```ps1
+    param(
+        [ValidateDrive("C", "D")]
+        [string]$Path
+    )
+    ```
 
 ### Pass By Reference
 
@@ -279,6 +272,139 @@ function Foo {
 }
 ```
 
-## Lifetime
+## Mimicking Cmdlet
 
-- Function should be define before it was called.
+A function would generally not acting a cmdlet unless it was annotated with `CmdletBinding()` attribute.
+
+`CmdletBinding()` can have the following properties:
+
+- `DefaultParameterSetName`: name of implicit Parameter Set
+- `HelpURI`: link to documenetation
+- `SupportsPaging`: implicitly adds parameters `-First`, `-Skip`, `-IncludeTotalCount`, value accessible by `$PSCmdlet.PagingParameters`
+    ```ps1
+    function foo {
+        [CmdletBinding(SupportsPaging)]
+        param()
+        $PSCmdlet.PagingParameters.Skip
+        $PSCmdlet.PagingParameters.First
+        $PSCmdlet.PagingParameters.IncludeTotalCount
+    }
+    ```
+- `SupportsShouldProcess`: implicitly adds `-Confirm` and `-WhatIf`
+- `ConfirmImpact`: specify impact of `-Confirm`
+- `PositionalBinding`: 
+
+<!-- TODO: complete description for ConfirmImpact and PositionalBinding -->
+
+## Parameter Set
+
+How a same cmdlet manage different syntax for different usages? The trick is **Parameter Set**.
+Parameter Set is a classification on paramater to distinguish or limit the use of parameters from scenarios.
+
+- a parameter set must have at least one unique parameter to others to identify the set
+- a parameter can have multiple Parameter Set
+- a parameter can have different roles in different Parameter Set, can be mandatory in one and optional in another
+- a parameter without explicit Parameter Set belongs to all other Parameter Set
+- at least one parameter in the Parameter Set is mandatory
+- only one parameter in set can accept `ValueFromPipeline`
+
+### Parameter Set Idetifier at Runtime
+
+`$PSCmdlet.ParameterSetName` reflects the Parameter Set been chosen when a cmdlet is executing with certain syntax.
+
+
+## Common Parameters
+
+Any function or cmdlet applied with `CmdletBinding()` or `Parameter()` attribute has the following implicit parameters added by PowerShell:
+
+- ErrorAction (ea): specify action on error
+- ErrorVariable (ev): declare **inline** and store the error on the variable instead of `$Error`. Use `-ErrorVariable +var` to append error to the variable
+    ```ps1
+    gcm foo -ev bar # inline declaration for $bar
+    $bar # contains error
+    gcm baz -ev +bar
+    $bar # contains two errors
+    ```
+    > [!NOTE]
+    > The inline variable is an `ArrayList`
+- InformationAction (infa): similar to `ea`
+- InformationVariable (iv): similar to `ev`
+- WarningAction (wa): similar to `ea`
+- WarningVariable (wv): similar to `ev`
+- ProgressAction (proga)
+- OutVariable (ov): declare **inline** and store the output to the variable. Similar to `ev`.
+    It's interesting that `-OutVariable` collects incremnentally.
+    It collects new item from pipeline on iteration.
+    ```ps1
+    1..5 | % { $_ } -OutVariable foo | % { "I am $foo" }
+    # I am 1
+    # I am 1,2
+    # I am 1,2,3
+    # I am 1,2,3,4
+    # I am 1,2,3,4,5
+    ```
+
+- Debug (db): print verbose debug message, overrides `$DebugPreference`
+- OutBuffer (ob)
+- PipelineVariable (pv) <!-- TODO: PipelineVariable -->
+- Verbose (vb): whether display the verbose message from `Write-Verbose`
+
+## Mitigation Parameters
+
+- WhatIf (wi)
+- Confirm (cf)
+
+## Return
+
+Powershell allows implicit return, and multiple implicit returns.
+
+> [!NOTE]
+> Implicit returns are auto-collected as an array or single value.
+> And it does not print out anything.
+
+```ps1
+function Sum {
+    param([int]$l, [int]$r)
+    $l + $r # implicit return # [!code highlight] 
+}
+
+# You won't need to declare an array and append it on each loop!
+# they're collected automatically as they're implicit returns
+function Foo {
+   for($i = 0; $i -lt 10; $i = $i + 1)  {
+        $i
+   }
+}
+
+(Foo).GetType().Name # object[] # [!code highlight] 
+```
+
+Explicit return is surely supported, but more like a necessity to exit inside a flow.
+
+```ps1
+function Sum {
+    param([int]$l, [int]$r)
+    return $l + $r # explicit return # [!code highlight] 
+    $r + $l # not reachable  # [!code warning] 
+}
+```
+
+### Output Type
+
+`OutputTypeAttribute(type: System.Type | System.String, parameterSet?: System.String)` matters when you need auto generated help for the function you write.
+A function can have different return types for different parameter sets.
+PowerShell never do type checking by this attribute, it's just responsible for help generation, write with carefulness!
+
+```ps1
+[CmdletBinding(DefaultParameterSetName = 'ID')]
+[OutputType('System.Int32', ParameterSetName = 'ID')]
+[OutputType([string], ParameterSetName = 'Name')]
+param (
+    [Parameter(Mandatory = $true, ParameterSetName = 'ID')]
+    [int[]]
+    $UserID,
+    [Parameter(Mandatory = $true, ParameterSetName = 'Name')]
+    [string[]]
+    $UserName
+)
+```

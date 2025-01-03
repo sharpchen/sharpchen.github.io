@@ -82,3 +82,16 @@ The return type of job result is not certain. It depends on the action you speci
 - `-Timeout`: wait until timeout were reached
 - `-Force`: wait for `Suspended` and `Disconnected`
 
+### `Wait-Job` or `Receive-Job -Wait`
+
+You may be confused about `Wait-Job` and `Receive-Job -Wait`; They both wait for jobs, but `Wait-Job` respects the order of how jobs were created while `Receive-Job` only collects by order of completion time.
+
+`Wait-Job` waits for all child jobs to complete without collecting anything, so the order remains, finally `Receive-Job` retrieve the result by that order.
+Direct `Receive-Job` collects immediately when each job is completed, so the order is random.
+
+```ps1
+# this is always sorted
+1..10 | foreach -Parallel { echo $_ } -AsJob | wjb | rcjb # 1 2 3 4 5 .. 10
+# this has random order
+1..10 | foreach -Parallel { echo $_ } -AsJob | rcjb -Wait
+```
