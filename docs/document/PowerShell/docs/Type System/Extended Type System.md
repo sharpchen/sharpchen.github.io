@@ -17,26 +17,30 @@ There's two kinds of intrinsic members in PowerShell
 All objects in PowerShell have five **object views** members:
 
 - `psobject`: a `MemberSet` containing reflection source of members.
-```ps1
-$foo = 'I am foo'
-[object]::ReferenceEquals($foo, $foo.psobject.BaseObject) # True
-```
+
+    ```ps1
+    $foo = 'I am foo'
+    [object]::ReferenceEquals($foo, $foo.psobject.BaseObject) # True
+    ```
 - `psbase`: a `MemberSet` containing members of the object being wrapped.
-```ps1
-$foo = 'I am foo'
-[object]::ReferenceEquals($foo.ToString, $foo.psbase.ToString) # True
-```
+
+    ```ps1
+    $foo = 'I am foo'
+    [object]::ReferenceEquals($foo.ToString, $foo.psbase.ToString) # True
+    ```
+
 - `psadapted`: a `MemberSet` containing adapted members added by ETS.
 - `psextended`: a `MemberSet` containing extended members **added at runtime**.
 - `pstypenames`: a `CodeProperty` equivalent to `psobject.TypeNames`. Returns a collection containing the type names of inheritance chain.
-```ps1
-$foo = 'I am foo'
-[object]::ReferenceEquals($foo.psobject.TypeNames, $foo.pstypenames) # True
-```
+
+    ```ps1
+    $foo = 'I am foo'
+    [object]::ReferenceEquals($foo.psobject.TypeNames, $foo.pstypenames) # True
+    ```
 
 Intrinsic methods and properties are to mimic singular object and collection in a same form.
-- `Where`: a method for filtering or slicing by condition. See [Where](../Object Manipulation/Where.md) 
-- `ForEach`: a method to perform iteration with certain logic or perform casting all items to target type. See [ForEach](../Object Manipulation/ForEach.md) 
+- `Where`: a method for filtering or slicing by condition. See [Where](/docs/document/PowerShell/docs/Object%20Manipulation/3.Where.md)
+- `ForEach`: a method to perform iteration with certain logic or perform casting all items to target type. See [ForEach](/docs/document/PowerShell/docs/Object%20Manipulation/4.ForEach.md#intrinsic-foreach)
 - `Count`
 - `Length`
 

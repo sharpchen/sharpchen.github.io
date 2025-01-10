@@ -1,8 +1,5 @@
 # Function
 
-
-## Parameter
-
 Parameters are wrapped inside a function block with `param(...)`
 
 ```ps1
@@ -17,7 +14,7 @@ function Foo {
 > 
 > Default type of a parameter is `System.Object`.
 
-### Implicit Parameter
+## Implicit Parameter
 
 If no parameter name was set, all value passed in will be captured by `$args`, an `object[]`.
 
@@ -31,7 +28,10 @@ function vim {
 vim ./foo.txt
 ```
 
-### Positional Parameter
+> [!NOTE]
+> `$args` is not available when any of `ParameterAttribute` and `CmdletBinding` is applied on the function.
+
+## Positional Parameter
 
 Positional parameters allows passing values with explicit names.
 
@@ -54,9 +54,9 @@ Or use a explicit position argument on attribute.
 ```ps1
 function Foo {
     param (
-        [Parameter(Position=1)] # [!code highlight] 
+        [Parameter(Position = 1)] # [!code highlight] 
         [string] $Bar
-        [Parameter(Position=0)] # [!code highlight] 
+        [Parameter(Position = 0)] # [!code highlight] 
         [string] $Foo,
     )
     
@@ -67,7 +67,14 @@ Foo -Foo foo -Bar bar
 Foo foo bar # it's the same # [!code highlight] 
 ```
 
-### Flags
+PowerShell starts counting the position when there's a value belonging to no explicit parameter name.
+Assuming `-Flag` is a switch, `-Foo` has position `0`, the value `foo` will be assigned to `-Foo`.
+
+```ps1
+Foo -Flag foo
+```
+
+## Flags
 
 Defining flags that represents a toggle needs a special type called `switch`.
 `switch` has the same nature of `bool`, but `bool` parameter requires explicit assignment when the function being called.
@@ -91,7 +98,7 @@ Manual assignment is also available:
 Foo -f:$false -b $true
 ```
 
-### Default Parameter
+## Default Parameter
 
 - Explicitly typed parameters can have implicit default value.
     - `switch` and `bool` is `$false` by default.
@@ -117,7 +124,7 @@ function Foo {
 > [!NOTE]
 > For overriding default parameter outside the function, see [$PSDefaultParameterValues](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parameters_default_values?view=powershell-7.4#long-description) 
 
-### Required Parameter
+## Required Parameter
 
 All parameters are optional by default. Use `[Parameter(Mandatory=$true)]` to mark it as required.
 
@@ -137,7 +144,7 @@ param (
 >)
 >```
 
-### Parameter Alias
+## Parameter Alias
 
 Parameters can have aliases. It's not needed for most of time though since pwsh can distinguish option by leading string.
 
@@ -156,7 +163,7 @@ function Person {
 Person -n "Alice" -a 30 # [!code highlight] 
 ```
 
-### Parameter Validation
+## Parameter Validation
 
 Pass a validation logic as script block to `ValidateScript` attribute, `$_` represents singular value of the parameter or current item of a collection.
 Will throw an error if any parameter does not satisfies the condition.
@@ -197,7 +204,7 @@ param (
     )
     ```
 
-### Pass By Reference
+## Pass By Reference
 
 Parameter passed by reference is implemented by a wrapper `System.Management.Automation.PSReference`.
 Value types are passed by value by default, the pass as reference, mark the parameter with `[ref]`.
@@ -278,7 +285,7 @@ A function would generally not acting a cmdlet unless it was annotated with `Cmd
 
 `CmdletBinding()` can have the following properties:
 
-- `DefaultParameterSetName`: name of implicit Parameter Set
+- `DefaultParameterSetName`: pwsh will prefer this name when there's a ambiguity between syntax provided.
 - `HelpURI`: link to documenetation
 - `SupportsPaging`: implicitly adds parameters `-First`, `-Skip`, `-IncludeTotalCount`, value accessible by `$PSCmdlet.PagingParameters`
     ```ps1
@@ -302,7 +309,7 @@ How a same cmdlet manage different syntax for different usages? The trick is **P
 Parameter Set is a classification on paramater to distinguish or limit the use of parameters from scenarios.
 
 - a parameter set must have at least one unique parameter to others to identify the set
-- a parameter can have multiple Parameter Set
+- a parameter can be member of multiple parameter sets.
 - a parameter can have different roles in different Parameter Set, can be mandatory in one and optional in another
 - a parameter without explicit Parameter Set belongs to all other Parameter Set
 - at least one parameter in the Parameter Set is mandatory
@@ -311,7 +318,6 @@ Parameter Set is a classification on paramater to distinguish or limit the use o
 ### Parameter Set Idetifier at Runtime
 
 `$PSCmdlet.ParameterSetName` reflects the Parameter Set been chosen when a cmdlet is executing with certain syntax.
-
 
 ## Common Parameters
 
@@ -334,7 +340,7 @@ Any function or cmdlet applied with `CmdletBinding()` or `Parameter()` attribute
 - ProgressAction (proga)
 - OutVariable (ov): declare **inline** and store the output to the variable. Similar to `ev`.
     It's interesting that `-OutVariable` collects incremnentally.
-    It collects new item from pipeline on iteration.
+    It collects new item from pipeline on each iteration.
     ```ps1
     1..5 | % { $_ } -OutVariable foo | % { "I am $foo" }
     # I am 1
@@ -349,14 +355,16 @@ Any function or cmdlet applied with `CmdletBinding()` or `Parameter()` attribute
 - PipelineVariable (pv) <!-- TODO: PipelineVariable -->
 - Verbose (vb): whether display the verbose message from `Write-Verbose`
 
-## Mitigation Parameters
+### Mitigation Parameters
 
-- WhatIf (wi)
-- Confirm (cf)
+Mitigation parameters were added when `CmdletBinding(SupportsShouldProcess)` was applied.
+
+- WhatIf (wi): shows explaination for the command without executing it.
+- Confirm (cf): ask for confirmation when executing the command.
 
 ## Return
 
-Powershell allows implicit return, and multiple implicit returns.
+PowerShell allows implicit return, and multiple implicit returns.
 
 > [!NOTE]
 > Implicit returns are auto-collected as an array or single value.
@@ -400,11 +408,9 @@ PowerShell never do type checking by this attribute, it's just responsible for h
 [OutputType('System.Int32', ParameterSetName = 'ID')]
 [OutputType([string], ParameterSetName = 'Name')]
 param (
-    [Parameter(Mandatory = $true, ParameterSetName = 'ID')]
-    [int[]]
-    $UserID,
-    [Parameter(Mandatory = $true, ParameterSetName = 'Name')]
-    [string[]]
-    $UserName
+    [Parameter(Mandatory, ParameterSetName = 'ID')]
+    [int[]]$UserID,
+    [Parameter(Mandatory, ParameterSetName = 'Name')]
+    [string[]]$UserName
 )
 ```

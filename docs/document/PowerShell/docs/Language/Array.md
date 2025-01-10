@@ -75,6 +75,25 @@ $foo = @{
 @($foo.GetEnumerator()).Length # 2, System.Collections.DictionaryEntry from the HashTable # [!code highlight] 
 ```
 
+### From Range
+
+Range operator can create array from integer range and character range inclusively from both sides.
+
+> [!NOTE]
+> character range was added in PowerShell 6 
+
+```ps1
+1..10 # 1 to 10 inclusively
+'a'..'z' # a to z inclusively
+```
+
+If the *end* is less than the *start*, the array counts down from *start* to *end*
+
+```ps1
+5..1 # 5 4 3 2 1
+5..-1 # 5 4 3 2 1 0 -1
+```
+
 ## Access Item
 
 Powershell allows indexer syntax to access one or more items at a time or use `Select-Object`.

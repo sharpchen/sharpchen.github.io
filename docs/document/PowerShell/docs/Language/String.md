@@ -136,6 +136,29 @@ All comparison operators have its case-sensitive version with leading `-c`
 (gci -file) -join ',' # ToString is invoked to evaluated objects to string.
 ```
 
+### Join from Objects
+
+`Join-String` is a more generic solution for joining multiple items as a single string.
+`-join` operator handles only collection while `Join-String` can accept pipeline input **by value**.
+
+- `-Property(0)`: pick one property name or script block to be joined in the result
+    ```ps1
+    gci -file | Join-String FullName
+    gci -file | Join-String { $_.FullName }
+    ```
+- `-Separator(1)`: separator between each two properties
+    ```ps1
+    gci -file | Join-String FullName ', '
+    ```
+- `-DoubleQuote`: optionally surround each item by double quote
+- `-SingleQuote`: optionally surround each item by single quote
+- `-OutputPrefix`: specify a initial leading string for the result
+- `-OutputSuffix`: specify a trailing string for the result
+- `-FormatString`: use string format to reshape the string from `-Property`(you can do the similar in `-Property` too)
+    ```ps1
+    gci -file | Join-String Name "$([Environment]::NewLine)" -FormatString 'File name: {0}'
+    ```
+
 ## Match & Replace
 
 PowerShell has two kinds of matching strategy for strings.
@@ -268,15 +291,17 @@ gci | Out-String | sls 'foo' # match the entire string
 gci | oss | sls 'foo' # match the matched line only
 ```
 
-## String Evaluation in Interpolation
+## String Evaluation
 
 ### Collection
 
-Collections like Array and HashTable are formatted by certain separator defined by `$OFS`(Output Field Separator)
+Collections like Array and HashTable are formatted by separator stored in `$OFS`(Output Field Separator)
 
 ```ps1
 "$(1, 2, 3)" # 1 2 3
+$OFS = ', '
+"$(1, 2, 3)" # 1, 2, 3
 ```
 
 > [!NOTE]
-> `$OFS` is not a builtin variable, you'll have to create it manually or pwsh uses space ` ` as the separator.
+> `$OFS` is not a builtin variable, you'll have to create it manually or pwsh uses space ` ` as the default separator.
