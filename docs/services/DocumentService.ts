@@ -8,7 +8,7 @@ export type DocumentInfo = Record<string, { icon: string; description: string }>
 
 export const documentMap = {
   'Csharp Design Patterns': { icon: '👾', description: 'Design Patterns in C#' },
-  // 'Modern CSharp': { icon: '🦖', description: 'Modernized C# since 2015?' },
+  'Modern CSharp': { icon: '🦖', description: '' },
   Articles: { icon: '📰', description: 'Regular articles' },
   Avalonia: { icon: '😱', description: 'AvaloniaUI' },
   Docker: { icon: '🐳', description: 'Ultimate Docker' },
@@ -28,7 +28,7 @@ export const documentMap = {
   Nix: { icon: '❄', description: 'Reproduce freedom' },
   'Entity Framework Core': { icon: '🗿', description: '' },
   'HTML & CSS': { icon: '😬', description: '' },
-  PowerShell: { icon: '🐚', description: 'The first strongly-typed shell! Not bad.' },
+  PowerShell: { icon: '🐚', description: 'The first strongly-typed shell' },
 } as const satisfies DocumentInfo;
 
 export type DocumentName = keyof typeof documentMap;

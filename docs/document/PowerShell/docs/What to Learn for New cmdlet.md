@@ -49,3 +49,41 @@ help <cmd> | sls 'Accept pipeline input\??\s*true.*$' -Context 5,4
 
 Commonly named parameters for path are `-Path`, `-FilePath`, `-LiteralPath`.
 So once the cmdlet supports one of them, you should aware it probably supports one or more of others.
+
+## Member of ParameterSet
+
+Syntax of a cmdlet is not quite clear sometimes, you might just want to inspect parameters by parameterset name.
+
+```ps1
+$CommonParams = @( 
+    'Verbose', 
+    'Debug',
+    'ErrorAction', 
+    'WarningAction', 
+    'InformationAction', 
+    'ProgressAction',
+    'ErrorVariable',
+    'WarningVariable',
+    'InformationVariable', 
+    'OutVariable', 
+    'OutBuffer',
+    'PipelineVariable',
+    'WhatIf',
+    'Confirm'
+)
+$cmd = Get-Command $Command
+$cmd = $cmd -is [System.Management.Automation.AliasInfo] ? (Get-Command $cmd.Definition) : $cmd
+($cmd.ParameterSets | ForEach-Object {
+    $out = [pscustomobject]@{ 
+        Name = $_.Name
+        Parameters = $_.Parameters | Where-Object Name -NotIn $CommonParams 
+    }
+    $joinParams = @{
+        Property = 'Name'
+        Separator = "$([System.Environment]::NewLine)`t" 
+        OutputPrefix = "$($out.Name):$([System.Environment]::NewLine)`t"
+        OutputSuffix = "`n"
+    }
+    $out.Parameters | Join-String @joinParams
+}) -join "`n"
+```

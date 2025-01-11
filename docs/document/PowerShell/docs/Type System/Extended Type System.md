@@ -39,8 +39,8 @@ All objects in PowerShell have five **object views** members:
     ```
 
 Intrinsic methods and properties are to mimic singular object and collection in a same form.
-- `Where`: a method for filtering or slicing by condition. See [Where](/docs/document/PowerShell/docs/Object%20Manipulation/3.Where.md)
-- `ForEach`: a method to perform iteration with certain logic or perform casting all items to target type. See [ForEach](/docs/document/PowerShell/docs/Object%20Manipulation/4.ForEach.md#intrinsic-foreach)
+- `Where`: a method for filtering or slicing by condition. See [Where](../Object Manipulation/3.Where.md)
+- `ForEach`: a method to perform iteration with certain logic or perform casting all items to target type. See [ForEach](../Object Manipulation/4.ForEach.md#Intrinsic%20ForEach)
 - `Count`
 - `Length`
 
