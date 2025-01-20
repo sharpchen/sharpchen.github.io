@@ -99,15 +99,21 @@ class GithubRepositoryEndPointMethods {
       const split = repo.split('/');
       const owner = split[0];
       const _repo = split[1];
-      return (
-        await octokit.rest.repos.getContent({
-          owner: owner,
-          repo: _repo,
-          path: path,
-        })
-      ).data as RepoFileSystemInfo;
+      try {
+        return (
+          await octokit.rest.repos.getContent({
+            owner: owner,
+            repo: _repo,
+            path: path,
+          })
+        ).data as RepoFileSystemInfo;
+      } catch (error) {
+        console.error(`failed to fetch remote file from github repo: ${repo}/${path}`);
+        console.log(
+          `The path might have been changed, check out: "https://github.com/${repo}/${path}"`,
+        );
+      }
     }
-    throw new Error();
   }
 }
 export class GithubService {

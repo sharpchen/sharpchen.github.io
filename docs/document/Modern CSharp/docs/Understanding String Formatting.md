@@ -20,7 +20,7 @@ You can specify the direction to be left or right.
 
 The second syntax in composite formatting is a optional integer for the interpolation:
 
-- specify direction of padding by `-`(pad spaces on left) and pad on right by default
+- specify direction of padding by `-`(leave interpolated on left) and pad on right by default
 - length of padding
 
 ```cs
@@ -51,5 +51,40 @@ string.Format("{0,-20}", 123);
     - supported for  `Double`, `Single`, `Half` and `BigInteger` only.
     - ensures the converted string represents the exact precision of the number.
 
+#### Arbitrary Format Composition
+
+Composite formatting supports a dedicated syntax to represent any numeric format by following convention
+
+- `0` to fill the unreached length
+- `#` to represent a single digit, does not fill up any or throw error when the `#` does not match the digits
+    ```cs
+    double foo = 123.456;
+    // shorter before decimal point and longer after
+    // but still the same
+    foo.ToString("##.#####################"); // 123.456
+    // rounded
+    foo.ToString("###.##"); // 123.46
+    // if the format does not match the numeric(no decimal point here), will not preceed after
+    foo.ToString("##,##"); // 123
+    ```
+- `.` to represent decimal point
+- `,` as group separator, real representation depends on `NumberFormatInfo.NumberGroupSeparator`, separated by `NumberFormatInfo.NumberGroupSizes`
+- `%` multiply the numeric with 100 and convert it to localized string
+- `‰` multiply the numeric with 1000 and convert it to localized string
+- exponential format fits `[eE][+-]?0+`, see: [documentation](https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings#the-e-and-e-custom-specifiers)
+- `;` to represent conditional solution for negative, zero and positive numeric within on format
+    ```cs
+    // first section for positive value
+    // second section for negative value
+    // third section for zero
+    string fmt = "+#.#;-#.#;I am zero";
+    123.ToString(fmt); // +123 
+    (-123).ToString(fmt); // -123
+    0.ToString(fmt); // I am zero
+    ```
+- `\` to escape any special character above
 
 ## `ToString` & `IFormattable`
+
+
+## Formatting Strategy
