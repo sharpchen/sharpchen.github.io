@@ -23,3 +23,13 @@ By this approach, you can expose minimal privileges and custom utilities to user
 Each Runspace creates isolated session state just like a normal powershell instance.
 
 A normal powershell can be referred as a Runspace too.
+
+## Execution Policy
+
+Execution Policy is dedicated for Windows platform, it restricts the authority to execute a valid PowerShell script or command.
+
+- `AllSigned`: requires scripts to be signed by trusted-publisher
+- `Bypass`: does not block anything
+- `Default`: `Restricted` for Windows personal and `RemoteSigned` for Windows Server
+- `Unrestricted`: default and unchangeable for non-windows platform
+- `Restricted`: no script allowed; command execution allowed
