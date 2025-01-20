@@ -21,8 +21,16 @@ export type RemoteThemeInfo = {
 };
 
 const themeInfos = {
-  'Eva Light': { repo: 'fisheva/Eva-Theme', path: 'themes/Eva-Light.json', branch: 'master' },
-  'Eva Dark': { repo: 'fisheva/Eva-Theme', path: 'themes/Eva-Dark.json', branch: 'master' },
+  'Eva Light': {
+    repo: 'fisheva/Eva-Theme',
+    path: 'VSCode/themes/Eva-Light.json',
+    branch: 'master',
+  },
+  'Eva Dark': {
+    repo: 'fisheva/Eva-Theme',
+    path: 'VSCode/themes/Eva-Dark.json',
+    branch: 'master',
+  },
 } satisfies Record<string, RemoteThemeInfo>;
 
 export type ThemeName = keyof typeof themeInfos;

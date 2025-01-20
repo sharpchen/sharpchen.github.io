@@ -53,3 +53,6 @@ string.Format("{0,-20}", 123);
 
 
 ## `ToString` & `IFormattable`
+
+
+## Formatting Strategy
