@@ -26,7 +26,7 @@ The second syntax in composite formatting is a optional integer for the interpol
 ```cs
 string.Format("{0,20}", 123);
 //                 123
-string.Format("{0,-20}", 123);
+string.Format("{0,-20:G}", 123);
 // 123                ^ ends here
 ```
 
@@ -94,7 +94,54 @@ Composite formatting supports a dedicated syntax to represent any numeric format
 > [!NOTE]
 > See [standard TimeSpan format](https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-timespan-format-strings#the-general-long-g-format-specifier) and [Arbitrary TimeSpan format](https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-timespan-format-strings) 
 
-## How to Support a Custom Format
+### Enum Format
+
+Enum formatting is handled by `Enum.ToString` static methods. They're implicitly called as if they're intrinsic.
+
+There's two scenarios of enum formatting
+- singular value
+    A valid enum value as integer can be directly evaluated as the enum name.
+    More specifically, the format is **G**eneral when there's no format specified.
+    If an integer is not a valid value for the enum, compiler does not yell but the default evaluation for it will be the number itself
+    ```cs
+    Console.WriteLine(((DayOfWeek)0).ToString()); // Sunday
+    Console.WriteLine(((DayOfWeek)0).ToString("G")); // Sunday
+    Console.WriteLine(((DayOfWeek)7).ToString()); // 7, which is not a member of the enum
+    ```
+    However, `Enum.ToString` supports `F` format for a invalid value of enum that can be formatted as a union
+    > [!NOTE]
+    > Respectively you can use `D` and `X` to enforce format a enum or enum union to be decimal numeric and hexadecimal when the enum is a valid flag
+    ```cs
+    Console.WriteLine(((DayOfWeek)7).ToString("F")); // Monday, Saturday
+    Console.WriteLine((Foo.Bar | Foo.Baz).ToString("F")); // Bar, Baz
+    enum Foo
+    {
+        None = 0b0000,
+        Bar  = 0b0001,
+        Baz  = 0b0010,
+        Qux  = 0b0100,
+        Goo  = 0b1000,
+        All  = 0b1111
+    }
+    ```
+- bitwise or
+    As long as the enum was marked with `FlagAttribute` and all member values are in a powered order, the bitwise or result of any distinct combination can be formatted as the names of enum member separated by comma.
+    ```cs
+    var foo = (Foo.Bar | Foo.Baz | Foo.Bar).ToString(); // Bar, Baz
+    [Flags]
+    enum Foo
+    {
+        None = 0b0000,
+        Bar  = 0b0001,
+        Baz  = 0b0010,
+        Qux  = 0b0100,
+        Goo  = 0b1000,
+        All  = 0b1111
+    }
+    ```
+
+
+## Custom Formatting
 
 Before we implement a custom process for our format, we have to understand the common interfaces for formatting.
 
@@ -320,3 +367,33 @@ if (s == null) // if ICustomFormatter.Format returns null // [!code highlight]
 
 > [!NOTE]
 > `ISpanFormattable` is a more advance topic since .NET 6.
+
+## Formatting in Interpolated String
+
+### Use Culture
+
+Interpolated strings are always formatted using `CultureInfo.CurrentCulture` by default.
+
+- .NET 5 and earlier: `FormattableString` can be used as a wrapper of a interpolated string and use `FormattableString.ToString(IFormatProvider)` to format it by certain culture.
+
+    ```cs
+    FormattableString str = $"I am a syntax sugar for {"FormattableString"}";
+    _ = str.ToString(CultureInfo.CreateSpecificCulture("en-US"));
+    ```
+
+- since .NET 6: using `string.Create(IFormatProvider? provider, ref DefaultInterpolatedStringHandler handler)` is a more performance solution.
+    The syntax shorthand is kind of extreme, you don't even have to specify `ref`, compiler will do it for you.
+
+    ```cs
+    _ = string.Create(
+        CultureInfo.CreateSpecificCulture("en-US"),
+        $"I am a syntax sugar for {"DefaultInterpolatedStringHandler"}"
+    );
+    ```
+
+### Interpolated String Handler
+
+<!--TODO:expalin how a Interpolated string handler work, what is a handler pattern-->
+> [!NOTE]
+> See [Interpolated String Handler Pattern](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-10.0/improved-interpolated-strings#the-handler-pattern)
+> and [Custom Interpolated String Handler](https://learn.microsoft.com/en-us/dotnet/csharp/advanced-topics/performance/interpolated-string-handler) 

@@ -18,7 +18,7 @@
 
 ## Part of Path
 
-- `-Path(0, pv)`: get parent path as `PathInfo`
+- `-Path(0, pv)`: get parent path as `string`
     ```ps1
     Split-Path ([System.IO.Path]::GetTempFileName()) # C:\Users\username\AppData\Local\Temp
     ```
@@ -92,6 +92,7 @@
     ```ps1
     Join-Path -Path foo -ChildPath foo -AdditionalChildPath foo, foo, foo # this is how it work formally
     Join-Path foo foo foo foo foo # this is how you could use it in daily life
+    # foo\foo\foo\foo\foo
     ```
 - `-Resolve(switch)`: resolve( and validate) the path and join them, supports wildcard to join multiple matches at one time
     ```ps1

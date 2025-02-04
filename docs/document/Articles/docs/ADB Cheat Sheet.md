@@ -32,7 +32,7 @@ adb sideload /path/to/rom.zip
 
 ## ABI
 
-```ps1
+```sh
 adb shell getprop ro.vendor.product.cpu.abilist64
 adb shell getprop ro.vendor.product.cpu.abilist # all abi
 ```
