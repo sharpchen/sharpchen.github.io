@@ -36,18 +36,17 @@ Console.WriteLine($"{nameof(after),6}: {after:B8}");
 > Left & Right Shifting supports only `int`, `uint`, `long`, `ulong`. If you perform shifting on other integer types, the leftoperand is converted as `int`
 
 > [!NOTE]
-> If shift count exceeds the bit width or is even negative, the count is determined by
+> If shift count exceeds the bit width or it's a negative integer, the count is determined by
 > - if leftoperand is `int` or `uint`: `count = count & 0b_1_1111`
 > - if leftoperand is `long` or `ulong`: `count = count & 0b_11_1111`
 
 > [!NOTE]
-> Left shifting might discard sign of the number when it's signed
+> Left shifting might discard sign of the number when shift count is greater than 0
 >```cs
 >int foo = -0b_0001_0001_0001_0001_0001_0001_0001_0001_01;
 >Console.WriteLine(foo.ToString("B32"));
 >Console.WriteLine((foo << 1).ToString("B32"));
 >Console.WriteLine(int.IsPositive(foo << 1)); 
-
 >// 10111011101110111011101110111011
 >// 01110111011101110111011101110110
 >// True
@@ -134,17 +133,17 @@ The mask can refer to a integer represented as binary, a sequence of integers or
 
 ### Is Bit Set
 
-A common usage of mask is check whether specific bit **is set**
+A common usage of mask is checking whether certain bit **is set**
 
-- when a bit is `1` meaning that it **is set**
-- when a bit is `0` meaning that it **is cleared**
+- a bit **is set** when its value is `1`
+- a bit **is cleared** when its value is `0`
 
 A mask is a predefined number with special layout designated to solve specific problem.
 The following example shows how a mask is generated for the purpose.
 
 `1` is shifted left to the position we would like to compare, and a bitwise AND is performed.
 Only the position matters since other bits are all `0` in the mask.
-So only when the bit on the position is set can the operation returns non-zero value.
+So only when the bit on the position is set can the operation return non-zero value.
 
 ```cs
 uint number = 0b_0101;
@@ -158,7 +157,7 @@ Since each enum member has **only one bit set**, the union in the following exam
 And in fact the operation `(union & flag)` should be equal to the flag itself.
 
 > [!WARNING]
-> You have to make sure the enum member ot integer to be checked is a valid member or it may evaluate to unexpected value.
+> You have to make sure the enum member or integer to be checked is a valid member or it may evaluate to unexpected value.
 
 ```cs
 Foo foo = Foo.Bar | Foo.Qux;
