@@ -97,7 +97,6 @@ Console.WriteLine($"{nameof(after),6}: {after:B}");
 - bitwise AND `&`: returns `1` for each bit as long as all of the two is `1`, else `0`
 - bitwise XOR `^`: returns `1` if the two bits are different, `0` when identical
 
-
 ## Bitwise on Enum
 
 Enum can be flags when the type is marked with `FlagsAttribute` and ordinary enum members are powers of 2(members represent the `All` or `None` are exceptional)
@@ -131,7 +130,7 @@ enum Foo
 Bit mask is a common pattern that works like a filter to include or exclude or test bits.
 The mask can refer to a integer represented as binary, a sequence of integers or a matrix of integers. The classical usage is a singular number.
 
-### Is Bit Set
+## Bit Checking 
 
 A common usage of mask is checking whether certain bit **is set**
 
@@ -152,8 +151,10 @@ int mask = 1 << position; // generate a special number 0100
 bool positionIsSet = (number & mask) != 0;
 ```
 
-This is the particular same case as how we tell whether a union of enum contains a enum flag.
+This is the particularly similar as how we tell whether a union of enum contains a enum flag.
+
 Since each enum member has **only one bit set**, the union in the following example has two bits set, only when the set bit from the flag being checked overlaps with any bit of the union can it evaluate to non-zero.
+
 And in fact the operation `(union & flag)` should be equal to the flag itself.
 
 > [!WARNING]
@@ -177,3 +178,11 @@ enum Foo
     All  = ~(~0 << 4)
 }
 ```
+
+## Set & Unset & Toggle
+
+Similar to checking a bit, setting and unsetting require a same mask but different operation.
+
+- set a bit: `number | (1 << position)`
+- unset a bit: `number & ~(1 << position)`
+- toggle a bit: `number ^ (1 << position)`

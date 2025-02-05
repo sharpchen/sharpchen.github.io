@@ -31,6 +31,11 @@ const themeInfos = {
     path: 'VSCode/themes/Eva-Dark.json',
     branch: 'master',
   },
+  'JetBrains Rider Dark Theme': {
+    repo: 'edsulaiman/jetbrains-rider-dark-theme',
+    path: 'themes/JetBrains Rider Dark Theme-color-theme.json',
+    branch: 'main',
+  },
 } satisfies Record<string, RemoteThemeInfo>;
 
 export type ThemeName = keyof typeof themeInfos;
@@ -44,7 +49,7 @@ class ThemeService implements IThemeService {
       const foo = theme.tokenColors.filter(x => x.scope.startsWith('comment'))[0];
       foo.settings.fontStyle = '';
     }
-    this.innerThemeService.loadTheme(theme);
+    await this.innerThemeService.loadTheme(theme);
   }
   async getTheme(name: ThemeName): Promise<shiki.ThemeRegistration> {
     if (!this.isThemeRegistered(name)) throw new Error(`Theme \`${name}\` not registered.`);
