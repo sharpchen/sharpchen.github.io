@@ -1,0 +1,205 @@
+# Exception Handling
+
+Exceptions are not terminating the program from tasks, and you can't capture any exception from it since they're behind other threads
+
+```cs
+Task task = Task.Run(() =>
+{
+    throw new InvalidCastException { Source = "first task" };
+});
+
+Task task2 = Task.Run(() =>
+{
+    throw new AccessViolationException { Source = "second task" };
+});
+
+// ...
+// program was not terminated
+```
+
+
+## Catch in Statement
+
+Exception can be thrown and catched from a task for the following scenarios:
+- `await task;`
+- `task.Wait();`
+- `task.Result`
+- `task.GetAwaiter().GetResult()`
+
+Exception yield from tasks is **always** a composite exception `AggregateException` **unless the exception is `OperationCancelledException` and the task has cancelled.**
+
+> [!NOTE]
+> See TaskStatus.Cancelled
+
+This particular exception has a property `AggregateException.InnerExceptions` to be enumerated so you can handle all exceptions delicately.
+
+```cs
+Task task = Task.Run(() =>
+{
+    throw new InvalidCastException { Source = "first task" };
+});
+
+Task task2 = Task.Run(() =>
+{
+    throw new AccessViolationException { Source = "second task" };
+});
+
+try // [!code ++] 
+{ // [!code ++] 
+    Task.WaitAll(task, task2); // throws here // [!code ++] 
+} // [!code ++] 
+catch (AggregateException ex) // [!code ++] 
+{ // [!code ++] 
+    foreach (var iex in ex.InnerExceptions) // [!code ++] 
+    { // [!code ++] 
+        if (iex is AccessViolationException) // [!code ++] 
+        { // [!code ++] 
+        } // [!code ++] 
+    } // [!code ++] 
+} // [!code ++] 
+```
+
+Besides enumeration, `AggregateException.Handle` provides another way to do the similar.
+However, unhandled cases would still be propagated and thrown.
+
+So, the common practice is, to handle some of the exceptions must be handled inside a method using `AggregateException.Handle` and leave the remained propagated outward.
+
+```cs
+try
+{
+    task.Wait();
+}
+catch (AggregateException ex)
+{
+    ex.Handle(iex => // [!code ++] 
+    { // [!code ++] 
+        switch (iex) // [!code ++] 
+        { // [!code ++] 
+            case AccessViolationException: // [!code ++] 
+                Console.WriteLine("Handling AccessViolationException..."); // [!code ++] 
+                return true; // true implies the handling succeeded // [!code ++] 
+            case InvalidCastException: // [!code ++] 
+                Console.WriteLine("Handling InvalidCastException..."); // [!code ++] 
+                return true; // true implies the handling succeeded // [!code ++] 
+            default: // [!code ++] 
+                return false; // [!code ++] 
+        } // [!code ++] 
+    }); // [!code ++] 
+}
+```
+
+## Access Exception From Task
+
+Task object itself can hold an `AggregateException` as a property.
+So you may handle them in a continued task or a post operation.
+
+```cs
+_ = Task.Run(() => throw new AccessViolationException()).ContinueWith(prev =>
+{
+    prev.Exception?.Handle(iex =>
+    {
+        if (iex is AccessViolationException)
+        {
+            Console.WriteLine($"handling {nameof(AccessViolationException)}");
+            return true;
+        }
+        return false;
+    });
+});
+```
+
+## Exceptions from Child Tasks
+
+Child tasks are tasks created inside a task, the can nest really deep.
+All exceptions yield from such deep level would make it hard to enumerate the all exceptions from top level `AggregateException` since all child exceptions are a `AggregateException` too.
+
+```cs
+await Task.Run(() =>
+{
+    try // catch the child exception
+    {
+        Task.Run(() => throw new AccessViolationException()) // [!code highlight] 
+            .Wait(); // [!code highlight] 
+    }
+    catch (AggregateException)
+    {
+        throw;
+    }
+    throw new InvalidCastException();
+}).ContinueWith(prev =>
+{
+    prev.Exception?.Handle(iex =>
+    {
+        Console.WriteLine(iex is AggregateException); // True // [!code highlight] 
+        return true;
+    });
+});
+```
+
+That's why `AggregateException.Flatten()` exists to flatten all `AggregateException` from child task into a new `AggregateException` with each spcific exception.
+
+```cs
+try
+{
+    await Task.Factory.StartNew(() =>
+    {
+        try // catch the child exception
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    throw new InvalidCastException();
+                }, TaskCreationOptions.AttachedToParent);
+
+                throw new AccessViolationException();
+
+            }, TaskCreationOptions.AttachedToParent) // [!code highlight] 
+            .Wait(); // [!code highlight] 
+        }
+        catch (AggregateException)
+        {
+            throw;
+        }
+    });
+
+}
+catch (AggregateException ex)
+{
+    _ = ex.InnerExceptions.Count; // 2 since there's 2 child task
+
+    AggregateException flattened = ex.Flatten();
+    _ = flattened.InnerExceptions.Count; // 2 since each child task only yield on exception
+
+    Console.WriteLine( // AccessViolationException, InvalidCastOperation
+        string.Join(
+            ", ",
+            ex.Flatten().InnerExceptions.Select(e => e.GetType().Name).ToArray()
+        )
+    );
+}
+```
+
+### From Detached Tasks
+
+Child tasks are created in a detached way by default, the detached must rethrow its exception using any kind of wait methods or `await` statement.
+
+```cs
+var task = Task.Run(() =>
+{
+    var child = Task.Run( () => throw new Exception("Detached child task faulted."));
+
+    child.Wait(); // throw here // [!code highlight] 
+});
+
+try
+{
+    task.Wait();
+}
+catch (AggregateException ae)
+{
+    foreach (var e in ae.Flatten().InnerExceptions)
+        if (e is Exception)
+            Console.WriteLine(e.Message);
+}
+```
