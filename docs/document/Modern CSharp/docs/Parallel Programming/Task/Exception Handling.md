@@ -17,14 +17,22 @@ Task task2 = Task.Run(() =>
 // program was not terminated
 ```
 
+## What Might be Thrown
+
+<!--TODO:might throw TaskCanceledException in some cases, does OperationCancelledException thrown?-->
+Exception can be thrown and catched from a task for the following scenarios:
+
+- `AggregateException` can be thrown from:
+    - `task.Wait();`
+    - `Task.Wait*`
+    - `task.Result`
+- Direct exception can be thrown from:
+    - `await Task.When*`
+    - `await task`
+    - `task.GetAwaiter().GetResult()`
 
 ## Catch in Statement
 
-Exception can be thrown and catched from a task for the following scenarios:
-- `await task;`
-- `task.Wait();`
-- `task.Result`
-- `task.GetAwaiter().GetResult()`
 
 Exception yield from tasks is **always** a composite exception `AggregateException` **unless the exception is `OperationCancelledException` and the task has cancelled.**
 
@@ -88,13 +96,14 @@ catch (AggregateException ex)
 }
 ```
 
-## Access Exception From Task
+
+## Handle in Continued Tasks
 
 Task object itself can hold an `AggregateException` as a property.
 So you may handle them in a continued task or a post operation.
 
 ```cs
-_ = Task.Run(() => throw new AccessViolationException()).ContinueWith(prev =>
+_ = Task.Factory.StartNew(() => throw new AccessViolationException()).ContinueWith(prev =>
 {
     prev.Exception?.Handle(iex =>
     {

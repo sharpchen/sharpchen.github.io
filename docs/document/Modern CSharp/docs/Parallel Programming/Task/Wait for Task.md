@@ -1,0 +1,108 @@
+# Wait for Task
+
+## Blocking & Non-Blocking Wait
+
+Waiting a task means the execution of code is synchronous but there's a essential difference between Blocking Wait & Non-Blocking Wait
+
+- accessing for `task.Result` causing the blocking wait that blocks the main thread
+    ```cs
+    Task<int> task = new(() => 123);
+
+    task.Start();
+
+    Console.WriteLine(task.Result); // compiler knows it should wait the task blockingly // [!code highlight] 
+    // 123
+    ```
+- `await` operator waits the task without blocking the calling thread.
+    ```cs
+    int foo = await Foo(); // does not block the main thread but still synchronous
+    static async Task<int> Foo 
+    {
+        await Task.Delay(500);
+        return 123;
+    }
+    ```
+
+- `task.Wait`: to wait the task itself.
+- `Task.Wait*`: utils to wait a batch of tasks in a **blocking** manner.
+- `Task.When*`: utils to wait a batch of tasks in a **non-blocking** manner.
+
+
+A task must be started before awaiting, or the thread would be blocked forever.
+A task from `async` method is started implicitly so no worry here.
+
+To wait a task synchronously, use `await` operator before a started task object.
+
+```cs
+var task = new Task(() => Console.WriteLine("hello"));
+task.Start(); // must get it started!!! // [!code highlight] 
+await task;
+```
+
+Starting a simple task manually is quiet trivial so one should prefer `Task.Run` or `Task.Factory.StartNew`
+
+```cs
+await Task.Factory.StartNew((object? foo) =>
+{
+    Console.WriteLine(((dynamic)foo).Foo);
+}, new { Foo = 345 });
+
+await Task.Run(() => { Console.WriteLine("hello"); });
+```
+
+## `WhenAll` vs `WhenAny`
+
+- `WhenAll` waits until all tasks were completed, returns all results in the order of tasks as an array.
+- `WhenAny` waits until one task was completed, returns the task completed first.
+
+> [!IMPORTANT]
+> `WhenAll` and `WhenAny` do not start tasks for you, make sure they're started before waiting.
+
+```cs
+IEnumerable<Task<int>> tasks = Enumerable.Range(1, 10).Select(async x =>
+{
+    await Task.Delay(x * 100);
+    return x;
+});
+
+int[] results = await Task.WhenAll(tasks); // 1, 2, 3 ... 10
+Task<int> first = await Task.WhenAny(tasks);
+Console.WriteLine(first.Result); // should be 1
+```
+
+### Practical Usage
+
+`WhenAny` can be used as a simple countdown with `Task.Delay`
+
+```cs
+using CancellationTokenSource cts = new();
+var token = cts.Token;
+Task task = new Task(() =>
+{
+    int i = Random.Shared.Next(1, 5); // random countdown // [!code highlight] 
+    while (i-- > 0)
+    {
+        token.ThrowIfCancellationRequested();
+        Console.WriteLine("operation...");
+        Thread.Sleep(1000);
+    }
+}, token);
+
+try
+{
+    task.Start(); // [!code highlight] 
+    if (task == await Task.WhenAny(task, Task.Delay(3000))) // to race with the delay // [!code highlight] 
+    {
+        Console.WriteLine("Task succeeded");
+    }
+    else
+    {
+        cts.Cancel();
+        Console.WriteLine("Task canceled for timeout");
+    }
+}
+catch (OperationCanceledException)
+{
+}
+```
+

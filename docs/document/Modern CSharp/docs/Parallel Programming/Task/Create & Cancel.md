@@ -1,4 +1,4 @@
-# Create & Wait & Cancel
+# Start & Cancel
 
 ## Create & Start
 
@@ -6,7 +6,7 @@ Task can be created from the following sources:
 
 - constructors of `Task` and `Task<T>`
 - Task creation methods like `Task.Run` and `TaskFactory.StartNew`
-- `async` methods
+- `async` delegates
 
 ```cs
 var task = new Task(() => Console.WriteLine("hello"));
@@ -28,9 +28,9 @@ _ = Task.Factory.StartNew(() => Console.WriteLine("hello"));
 _ = Task.Run(() => Console.WriteLine("hello"));
 
 
-Foo(); // started automatically
+fooAsync(); // started automatically
 
-static async void Foo()
+ var fooAsync = async () =>
 {
     await Task.Run(() => Console.WriteLine("foo"));
 }
@@ -129,7 +129,7 @@ Task<int> t2 = await Task.Factory.StartNew(async () =>
 ```
 
 > [!TIP]
-> `Task.Run` does not require unwrap.
+> `Task.Run` has a implicit auto-unwrap for some of its overloads
 >```cs
 >Task<int> t = Task.Run(async () =>
 >{
@@ -147,6 +147,21 @@ Such task does not start a new thread and never needed to be awaited.
 ```cs
 Task<int> task = Task.FromResult(42);
 Console.WriteLine(task.Result); // Outputs: 42
+```
+
+### Create as Continued Task
+
+`Task.ContinueWith` creates a task after the previous task has terminated with certain condition, and it starts simultaneously.
+Such condition can be specified by `TaskContinuationOptions` in its overloads.
+
+```cs
+Task.Run(async () =>
+{
+    await Task.Delay(100);
+}).ContinueWith(prev =>
+{
+    Console.WriteLine("Continued task started automatically!");
+}).Wait();
 ```
 
 ### `Task.Run` vs `TaskFactory.StartNew`
@@ -180,57 +195,9 @@ _ = Task.Factory.StartNew(
 );
 ```
 
-## Blocking & Non-Blocking Wait
-
-Waiting a task means the execution of code is synchronous but there's a essential difference between Blocking Wait & Non-Blocking Wait
-
-- accessing for `task.Result` causing the blocking wait that blocks the main thread
-    ```cs
-    Task<int> task = new(() => 123);
-
-    task.Start();
-
-    Console.WriteLine(task.Result); // compiler knows it should wait the task blockingly // [!code highlight] 
-    // 123
-    ```
-- `await` operator waits the task without blocking the calling thread.
-    ```cs
-    int foo = await Foo(); // does not block the main thread but still synchronous
-    static async Task<int> Foo 
-    {
-        await Task.Delay(500);
-        return 123;
-    }
-    ```
-
-- `task.Wait`: to wait the task itself.
-- `Task.Wait*`: utils to wait a batch of tasks in a **blocking** manner.
-- `Task.When*`: utils to wait a batch of tasks in a **non-blocking** manner.
-
-
-A task must be started before awaiting, or the thread would be blocked forever.
-A task from `async` method is started implicitly so no worry here.
-
-To wait a task synchronously, use `await` operator before a started task object.
-
-```cs
-var task = new Task(() => Console.WriteLine("hello"));
-task.Start(); // must get it started!!! // [!code highlight] 
-await task;
-```
-
-Starting a simple task manually is quiet trivial so one should prefer `Task.Run` or `Task.Factory.StartNew`
-
-```cs
-await Task.Factory.StartNew((object? foo) =>
-{
-    Console.WriteLine(((dynamic)foo).Foo);
-}, new { Foo = 345 });
-
-await Task.Run(() => { Console.WriteLine("hello"); });
-```
-
 ## Creation Options
+
+<!--TODO: creation options-->
 
 ## Task Cancellation
 
@@ -265,7 +232,7 @@ Task task = new(() =>
     {
         if (token.IsCancellationRequested)
         {
-            throw new OperationCanceledException(); // does not terminate the whole program // [!code highlight] 
+            throw new OperationCanceledException(token); // does not terminate the whole program // [!code highlight] 
         }
         Console.WriteLine("working with task");
     }
@@ -301,7 +268,27 @@ So this checking on whether cancellation suceeded requires a validation on the t
 <!--TODO: add example-->
 
 ```cs
+using CancellationTokenSource cts = new(5000);
+CancellationToken token = cts.Token;
 
+Task task = Task.Factory.StartNew(() =>
+{
+    while (true)
+    {
+        Console.WriteLine("operation...");
+        token.ThrowIfCancellationRequested();
+        Thread.Sleep(1000);
+    }
+}, cts.Token); // it's oke, all tokens from same source are identical
+
+try
+{
+    task.Wait();
+}
+catch (AggregateException)
+{
+    Console.WriteLine(task.Status); // Canceled
+}
 ```
 
 > [!NOTE]
@@ -364,6 +351,8 @@ Console.WriteLine("task finished");
 
 After cancellation simply means chaining a event after previous task, and allowing access to previous task in the callback so you can do things conditionally.
 
+<!--TODO: faulted example is not right, the task is not canceled correctly-->
+
 ```cs
 var cts = new CancellationTokenSource();
 var token = cts.Token;
@@ -394,6 +383,22 @@ Console.WriteLine("task finished");
 <!--TODO: finish this part -->
 
 You may wanted to combine tokens from different sources to perform a simultaneous cancellation even they're from different sources.
+
+### Common Practice
+
+```cs
+using (CancellationTokenSource cts = new(timeout))
+{
+    try
+    {
+        await task(foo, cts.Token);
+    }
+    catch (OperationCanceledException)
+    {
+        Console.WriteLine("canceled");
+    }
+}
+```
 
 ## Sleeping on Thread
 
