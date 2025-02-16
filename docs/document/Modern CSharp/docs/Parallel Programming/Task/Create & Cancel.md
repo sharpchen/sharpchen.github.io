@@ -27,13 +27,12 @@ To start a job there's multiple approaches to do the same:
 _ = Task.Factory.StartNew(() => Console.WriteLine("hello"));
 _ = Task.Run(() => Console.WriteLine("hello"));
 
-
-fooAsync(); // started automatically
-
- var fooAsync = async () =>
+var fooAsync = async () =>
 {
     await Task.Run(() => Console.WriteLine("foo"));
-}
+};
+
+fooAsync(); // started automatically
 ```
 
 > [!NOTE]
@@ -41,7 +40,7 @@ fooAsync(); // started automatically
 
 ### Create Task with Return
 
-Generic tasks come into play when provided delegate would return a result.
+Generic tasks come into play when provided with delegate would return a result.
 The type parameter is exactly the type of return.
 
 ```cs
@@ -51,7 +50,8 @@ task.Start();
 
 ### Create with Argument
 
-Both `TaskFactory` and `Task` supports an overload to accept **single argument** when the signature contains a parameter
+Both `TaskFactory` and `Task` supports an overload to accept **single argument** when the signature contains a parameter.
+
 Since only single value is supported, you may need an abstraction when to pass multiple values
 
 ```cs
@@ -66,6 +66,9 @@ task.Start();
 
 > [!NOTE]
 > `Task.Run` does not support overloads accept an argument
+
+> [!TIP]
+> One should prefer creating tasks supports arguments using `async` delegate unless you don't want it to begin immediately.
 
 ### Create from Async Delegate
 
@@ -106,6 +109,7 @@ If one need to start a `async` delegate directly using `TaskFactory.StartNew`, `
 That is because, `async` delegate is a factory for dedicated task, so the result for starting the delegate directly would be a task created from the delegate instead of the expected result.
 
 ```cs
+// note: it's a wrapped task
 Task<Task<int>> t = Task.Factory.StartNew(async () =>
 {
     await Task.Delay(1000);
@@ -129,8 +133,9 @@ Task<int> t2 = await Task.Factory.StartNew(async () =>
 ```
 
 > [!TIP]
-> `Task.Run` has a implicit auto-unwrap for some of its overloads
+> `Task.Run` has a implicit auto-unwrap for some of its overloads, you may prefer this over `TaskFactory.StartNew` to start a simple task.
 >```cs
+>// The type is unwraped
 >Task<int> t = Task.Run(async () =>
 >{
 >    await Task.Delay(1000);

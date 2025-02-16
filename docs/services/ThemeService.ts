@@ -36,6 +36,16 @@ const themeInfos = {
     path: 'themes/JetBrains Rider Dark Theme-color-theme.json',
     branch: 'main',
   },
+  'JetBrains Rider New UI theme - Dark': {
+    repo: 'digimezzo/vscode-jetbrains-rider-new-ui-theme',
+    path: 'themes/JetBrains Rider New UI-color-theme-dark.json',
+    brach: 'main',
+  },
+  'JetBrains Rider New UI theme - Light': {
+    repo: 'digimezzo/vscode-jetbrains-rider-new-ui-theme',
+    path: 'themes/JetBrains Rider New UI-color-theme-light.json',
+    brach: 'main',
+  },
 } satisfies Record<string, RemoteThemeInfo>;
 
 export type ThemeName = keyof typeof themeInfos;
@@ -73,9 +83,11 @@ class ThemeService implements IThemeService {
   async initializeRegistration(): Promise<void> {
     await Promise.all(
       (Object.entries(themeInfos) as [ThemeName, RemoteThemeInfo][]).map(async x => {
-        const theme = await this.fetchThemeObject(x[1]);
+        const [themeName, info] = x;
+        const theme = await this.fetchThemeObject(info);
+        if (!theme.name) theme.name = themeName; // in case the theme does not have a name to indentify itself
         await this.register(theme);
-        console.log(`Textmate theme: \`${x[0]}\` has loaded.`);
+        console.log(`Textmate theme: \`${themeName}\` has loaded.`);
       }),
     );
   }
