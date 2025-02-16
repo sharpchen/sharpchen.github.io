@@ -56,8 +56,13 @@ class ThemeService implements IThemeService {
   async register(theme: TextmateTheme): Promise<void> {
     if (this.isThemeRegistered(theme.name as ThemeName)) return;
     if (theme.name.includes('Eva')) {
-      const foo = theme.tokenColors.filter(x => x.scope.startsWith('comment'))[0];
-      foo.settings.fontStyle = '';
+      theme.tokenColors.push({
+        scope: 'comment',
+        settings: {
+          foreground: theme.name.includes('Dark') ? '#676e59' : '#a9a9aa',
+          fontStyle: '',
+        },
+      });
     }
     await this.innerThemeService.loadTheme(theme);
   }
@@ -86,6 +91,12 @@ class ThemeService implements IThemeService {
         const [themeName, info] = x;
         const theme = await this.fetchThemeObject(info);
         if (!theme.name) theme.name = themeName; // in case the theme does not have a name to indentify itself
+        if (themeName === 'JetBrains Rider New UI theme - Dark') {
+          theme.tokenColors.push({
+            scope: 'keyword.operator',
+            settings: { foreground: '#6C95EB' },
+          });
+        }
         await this.register(theme);
         console.log(`Textmate theme: \`${themeName}\` has loaded.`);
       }),
