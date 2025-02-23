@@ -1,0 +1,240 @@
+# Mutex
+
+The term "Mutex" is short for "Mutual Exclusion", which refers to the concept of exclusive access to a shared resource.
+A mutex is a synchronization primitive used to control access to a resource (or a critical section of code) by **multiple threads or processes**.
+It ensures that only one thread or process can access the resource at a time, preventing conflicts and race conditions.
+
+> [!NOTE]
+> `Mutex` is a derived type of `WaitHandle`.
+
+## Local Mutex
+
+A local mutex is mutex used for threads. Such mutex only exists during current process, not visible across the operating system.
+
+> [!NOTE]
+> Local mutex generally don't need a name on creation using constructor unless you need to get it back using `Mutex.OpenExisting(string name)`
+
+- `mutex.WaitOne`: blocks current thread until a signal, possibly with a timeout
+- `mutex.ReleaseMutex`: re-enable access for other threads and processes
+
+One could use `Mutex` as like `Monitor` but this can be more expensive since `Mutex` is heavier that `object`.
+A common way is manage access dedicately from external for a single object.
+
+When a mutex is acquired with `mutex.WaitOne`, meaning that current thread has a *exclusive* access to the shared resource.
+So, it's like all threads are queuing until mutex signals.
+
+And finally `mutex.ReleaseMutex` is required no matter what happens if mutex for current thread is already acquired, **otherwise other threads just waits forever**.
+
+> [!IMPORTANT]
+> If you specified a timeout when waiting for ownership of mutex, the `bool` flag returned indicates whether current thread could have access to the resource, so you should have a conditional check on that value.
+
+:::code-group
+
+```cs[Use this]
+BankAccount account = new();
+
+Mutex mutex = new(); // use one mutex for only one object
+
+var deposits = Enumerable.Range(1, 1000).Select(_ => Task.Run(() =>
+{
+    bool locked = mutex.WaitOne();
+    try
+    {
+        if (locked) account.Deposit(100);
+    }
+    finally
+    {
+        if (locked) mutex.ReleaseMutex();
+    }
+}));
+var withdraws = Enumerable.Range(1, 1000).Select(_ => Task.Run(() =>
+{
+    bool locked = mutex.WaitOne();
+    try
+    {
+        if (locked) account.Withdraw(100);
+    }
+    finally
+    {
+        if (locked) mutex.ReleaseMutex();
+    }
+}));
+```
+
+```cs[Like Monitor]
+public class BankAccount
+{
+    public int Balance { get; private set; }
+    // this is not recommeneded // [!code warning] 
+    private readonly Mutex _mutex = new(); // [!code ++] 
+    public void Deposit(int amount)
+    {
+        _mutex.WaitOne(); // [!code ++] 
+        Balance += amount;
+        _mutex.ReleaseMutex(); // [!code ++] 
+    }
+    public void Withdraw(int amount)
+    {
+        _mutex.WaitOne(); // [!code ++] 
+        Balance -= amount;
+        _mutex.ReleaseMutex(); // [!code ++]
+    }
+}
+```
+:::
+
+> [!NOTE]
+> One can declare `Mutex` as `static` so it can be used to manage multiple resources, but this is generally not recommended.
+> Because only one thread can use the static `Mutex` at a time, other thread has to wait for the release of the mutex.
+
+### Manage Multiple Resources
+
+When one account needs to transfer money to another, two mutex would be required to control the exclusive access from each of them, because there might have deposit or withdraw at the same time.
+And the transfer have to wait until an instance when there's no any deposit and withdraw, this is where `Mutex.WaitAll` comes into play.
+
+Key points to work with multiple mutex:
+
+- if resources protected by multiple mutex were all involved, one has to wait all of these mutex involved before you perform the operation
+- remember to release all of them when the task was done.
+
+
+```cs
+BankAccount from = new();
+BankAccount to = new();
+// use two mutex to manage two shared objects
+Mutex mutexFrom = new(); // [!code highlight] 
+Mutex mutexTo = new(); // [!code highlight] 
+
+var deposits = Enumerable.Range(1, 1000).Select(_ => Task.Run(() =>
+{
+    bool locked = mutexFrom.WaitOne();
+    try
+    {
+        if (locked) from.Deposit(100);
+    }
+    finally
+    {
+        if (locked) mutexFrom.ReleaseMutex();
+    }
+}));
+
+var withdraws = Enumerable.Range(1, 1000).Select(_ => Task.Run(() =>
+{
+    bool locked = mutexTo.WaitOne();
+    try
+    {
+        if (locked) to.Withdraw(100);
+    }
+    finally
+    {
+        if (locked) mutexTo.ReleaseMutex();
+    }
+}));
+
+Task transfer = Task.Run(() =>
+{
+    Thread.Sleep(100); // just make sure transfer happens after Deposit and Withdraw
+    bool locked = Mutex.WaitAll([mutexFrom, mutexTo]); // same as WaitHandle.WaitAll // [!code highlight] 
+    try
+    {
+        if (locked) BankAccount.Transfer(from, to, from.Balance);
+    }
+    finally
+    {
+        if (locked)
+        {
+            // release all of them
+            mutexFrom.ReleaseMutex(); // [!code highlight] 
+            mutexTo.ReleaseMutex(); // [!code highlight] 
+        }
+    }
+});
+
+Task.WaitAll([.. deposits, .. withdraws, transfer]);
+
+Console.WriteLine(from.Balance); // 0
+Console.WriteLine(to.Balance); // 0
+```
+
+## Global Mutex
+
+Global Mutex is created by Mutex constructor with a specified name.
+It's registered by it's name across the operating system.
+
+- Use `Mutex.OpenExisting` to open a registered glbal mutex by its name. 
+    - This always returns a mutex represents the registered one.(the reference might be different)
+    ```cs
+    _ = Mutex.OpenExisting("Global\\..."); 
+    ```
+
+- `WaitHandleCannotBeOpenedException` can be thrown when there's not such global mutex been registered.
+
+The following example shows how to prevent multiple instances being created on a same system.
+
+```cs
+internal class Program
+{
+
+    const string MutexId = "Global\\149b89b4-3bc9-4df5-9064-5d28b4ae8ca4"; // must start with Global\ // [!code highlight] 
+    static Mutex? mutex = null;
+    private static void Main(string[] args)
+    {
+        try
+        {
+            // might throw here when mutex not registered with the name
+            _ = Mutex.OpenExisting(MutexId); 
+            Console.WriteLine($"{MutexId} is running, cannot start another instance.");
+        }
+        catch (WaitHandleCannotBeOpenedException)
+        {
+            mutex = new Mutex(false, MutexId); // register the mutex, `initiallyOwned` doesn't matter here
+            Console.WriteLine("A unique instance is started");
+        }
+
+        Console.ReadKey();
+        mutex?.Dispose();
+    }
+}
+```
+
+> [!NOTE]
+> `Local\` is no required when creating a local mutex
+
+## Abandoned Mutex
+
+If a thread acquired a mutex was terminated without releasing the mutex, such **mutex is said to be abandoned**.
+
+```cs
+Mutex mutex = new();
+BankAccount account = new();
+
+new Thread(() => {
+    bool locked = false;
+    try {
+        locked = mutex.WaitOne();
+        if (locked) account.Deposit(100);
+    } finally {
+        // if (locked) mutex.ReleaseMutex();   // [!code highlight] 
+    }
+}).Start();
+
+Thread.Sleep(1000);
+
+try {
+    _ = mutex.WaitOne(); // acquire again
+} catch (AbandonedMutexException) {
+    // caught here
+    Console.WriteLine($"{nameof(AbandonedMutexException)} was thrown"); // [!code highlight] 
+}
+```
+
+> [!IMPORTANT]
+> Tasks started were managed by `ThreadPool`, so they're not necessarily terminated since the corresponding thread is cached and still active.
+> So a unreleased mutex might not throw `AbandonedMutexException` from a completed task.
+
+## Conclusion
+
+- Use a dedicated `Mutex` for each resource/object.
+    - `Mutex` is not generally needed as a field, one should use it outside the object.
+- `Mutex` can control access from threads and processes, use `Global\` prefix to register a global mutex.
+- `Mutex` is a `IDisposable`, one should dispose it after finishing the work.

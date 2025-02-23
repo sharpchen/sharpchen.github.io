@@ -196,7 +196,7 @@ Child tasks are created in a detached way by default, the detached must rethrow 
 ```cs
 var task = Task.Run(() =>
 {
-    var child = Task.Run( () => throw new Exception("Detached child task faulted."));
+    var child = Task.Run(() => throw new Exception("Detached child task faulted."));
 
     child.Wait(); // throw here // [!code highlight] 
 });
