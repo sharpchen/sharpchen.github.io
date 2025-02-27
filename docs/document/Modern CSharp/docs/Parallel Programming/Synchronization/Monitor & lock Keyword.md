@@ -84,6 +84,40 @@ public class BankAccount
 }
 ```
 
+## Lock Object <Badge type="info" text=".NET 9" />
+
+`.NET 9` introduced a new dedicated `Lock` type as a replacement for normal `object` field.
+
+`Lock` has three kinds of usages to do the same thing as `lock` statement
+
+- `using (_lock.EnterScope) { ... }`
+- `lock` on the `Lock` field just like locking on `object` field.
+- `_lock.Enter & _lock.Exit` like `Monitor`
+
+```cs
+private readonly Lock _lock = new();
+public void Foo() {
+    // auto dispose
+    using (_lock.EnterScope()) { }
+
+    // or
+    _lock.Enter();
+    try {
+        // 
+    } finally {
+        _lock.Exit(); 
+    }
+    // or
+    if (_lock.TryEnter()) {
+        try {
+            // Critical section associated with _lock
+        } finally { 
+            _lock.Exit(); 
+        }
+    }
+}
+```
+
 ## Conclusion
 
 - Use `lock` as shorthand for `Monitor.Enter(obj)` and `Monitor.Exit(obj)`

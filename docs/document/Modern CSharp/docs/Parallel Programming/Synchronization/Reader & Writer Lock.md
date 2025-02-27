@@ -72,9 +72,29 @@ internal class Program {
 }
 ```
 
+## Recursive Lock
+
+When a implementation needs recursive logic within a entrance of lock inside, this is called **recursive lock**.
+`ReaderWriterLockSlim` supports such recursion when `LockRecursionPolicy.SupportsRecursion` is specified on creation.
+
+```cs
+private static readonly ReaderWriterLockSlim _lock = new(LockRecursionPolicy.SupportsRecursion);
+public void Foo() {
+    _lock.EnterReadLock();
+    try {
+        // recursion happens here...
+        if (condition) Foo();
+        // some other operation...
+    } finally {
+        _lock.ExitReadLock();
+    }
+}
+```
+
 ## Conclusion
 
 - Use `ReaderWriterLockSlim` for a more performant experience instead of old `ReaderWriterLock`.
+- `ReaderWriterLockSlim` is `IDisposable`, remember to release it after finishing the work.
 - Reader & Writer Lock allows **exclusive access for writing** but allows **multiple threads for reading**.
 - Do not use `ReaderWriterLockSlim` on dotnet framework projects, use old `ReaderWriterLock`.
-- Use `EnterUpgradeableReadLock` if you need to combine read and write as one atomic operation.
+- Use `EnterUpgradeableReadLock` and `ExitUpgradeableReadLock` if you need to combine read and write as one atomic operation.
