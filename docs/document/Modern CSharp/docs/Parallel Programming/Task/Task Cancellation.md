@@ -1,0 +1,196 @@
+# Task Cancellation
+
+## What Manage it & What Represents it
+
+Two essential types for cancellation are
+
+- `CancellationToken`: a **readonly struct** represents a state of cancellation of a task, it's the only property of its containing class.
+    - `CancellationToken.IsCancellationRequested`: represents the whether cancellation is decided from the source.
+    - a token cannot be reused after cancellation
+    - all tokens from a same source are identical
+        ```cs
+        // checks backing source only
+        public bool Equals(CancellationToken other) => _source == other._source;
+        ```
+- `CancellationTokenSource` itself is responsible for triggering the cancellation, serve as a control center for all tokens generated from it.
+    - `CancellationTokenSource.Token` is a property of type `CancellationToken`, such design allows controlling multiple tokens by single source since token is a readonly struct
+    - inform all containing task of any token generated from source to cancel on `Cancel` or `CancelAfter` or `CancelAsync`
+    - `IDisposable` as well would be disposed after cancellation
+- `OperationCanceledException`: to terminate a task from inside with a Cancelled status.
+    - such exception can be catched on wait to handle after cancellation
+
+`OperationCanceledException` is a special exception type dedicated for terminating task.
+Compiler recognizes it as special case so it doesn't break the whole program but only terminate the task.
+
+```cs
+var cts = new CancellationTokenSource();
+var token = cts.Token;
+Task task = new(() =>
+{
+    while (true)
+    {
+        if (token.IsCancellationRequested)
+        {
+            throw new OperationCanceledException(token); // does not terminate the whole program // [!code highlight] 
+        }
+        Console.WriteLine("working with task");
+    }
+});
+
+task.Start();
+
+cts.Cancel(); // token.IsCancellationRequested changed // [!code highlight] 
+```
+
+A better practice is using `token.ThrowIfCancellationRequested()` as a shorthand.
+
+```cs
+token.ThrowIfCancellationRequested(); // no if statement needed here // [!code highlight] 
+Console.WriteLine("working with task");
+```
+
+## CancellationToken as Parameter
+
+Aforementioned examples capture `token` by closure so you can access it inside the task.
+
+What you would find confusing is, task creation methods like `new Task`, `Task.Run`, `Task.Factory.StartNew` all supports a parameter of type `CancellationToken`.(you may set it as parameter in a async method as well)
+
+What is the purpose for passing (a copy of) the token manually even when we still need to cpature it by closure?
+
+Status of a task is partly dependent on the token passed as parameter, a task can only be in a Canceled status **when all of the following were satisfied**
+- `OperationCanceledException`(or its derived exception type) is thrown
+- `token.IsCancellationRequested` is true
+- `token` in closure passed to `OperationCanceledException` equals `token` as parameter
+
+So this checking on whether cancellation suceeded requires a validation on the token which must be passed as parameter, so that the hidden mechanism inside task can examine.
+
+<!--TODO: add example-->
+
+```cs
+using CancellationTokenSource cts = new(5000);
+CancellationToken token = cts.Token;
+
+Task task = Task.Factory.StartNew(() =>
+{
+    while (true)
+    {
+        Console.WriteLine("operation...");
+        token.ThrowIfCancellationRequested();
+        Thread.Sleep(1000);
+    }
+}, cts.Token); // it's oke, all tokens from same source are identical
+
+try
+{
+    task.Wait();
+}
+catch (AggregateException)
+{
+    Console.WriteLine(task.Status); // Canceled
+}
+```
+
+> [!NOTE]
+> Pass `CancellationToken.None` to represent task is not cancelable.
+
+## On Cancellation
+
+You can register callbacks to be triggered when a token is requested to cancel.
+Callbacks would be triggered before the task is truly terminated.
+
+> [!IMPORTANT]
+> The callbacks registered runs synchronously, `CancellationTokenSource.Cancel` does not finish until all callbacks are finished.
+
+```cs
+token.Register(() => // [!code highlight] 
+{ // [!code highlight] 
+    Console.WriteLine("callback triggered"); // [!code highlight] 
+}); // [!code highlight] 
+
+Task<int> task = new(() =>
+{
+    while (true)
+    {
+        token.ThrowIfCancellationRequested();
+        Console.WriteLine("continuing the task");
+    }
+});
+
+task.Start();
+cts.Cancel();
+Console.WriteLine("task finished");
+// callback triggered // [!code highlight] 
+// task finished
+```
+
+Besides `token.Register`, token itself can wait by blocking another thread created by a new task to achieve the same.
+
+```cs
+Task<int> task = new(() =>
+{
+    while (true)
+    {
+        token.ThrowIfCancellationRequested();
+        Console.WriteLine("continuing the task");
+    }
+});
+
+Task.Run(() =>
+{
+    token.WaitHandle.WaitOne(); // wait until the token received any signal // [!code highlight] 
+    Console.WriteLine("callback triggerd from another task");
+});
+
+task.Start();
+cts.Cancel();
+Console.WriteLine("task finished");
+```
+
+### After Cancellation
+
+After cancellation simply means chaining a event after previous task, and allowing access to previous task in the callback so you can do things conditionally.
+
+<!--TODO: faulted example is not right, the task is not canceled correctly-->
+
+```cs
+var cts = new CancellationTokenSource();
+var token = cts.Token;
+Task<int> task = new(() =>
+{
+    while (true)
+    {
+        token.ThrowIfCancellationRequested();
+        Console.WriteLine("continuing the task");
+    }
+});
+
+task.ContinueWith(prev => // [!code highlight] 
+{ // [!code highlight] 
+    if (prev.Status is TaskStatus.Faulted) // [!code highlight] 
+    { // [!code highlight] 
+        Console.WriteLine("cancelled"); // [!code highlight] 
+    } // [!code highlight] 
+}); // [!code highlight] 
+
+task.Start();
+cts.Cancel();
+Console.WriteLine("task finished");
+```
+
+## Combined Tokens
+
+<!--TODO: finish this part -->
+
+You may wanted to combine tokens from different sources to perform a simultaneous cancellation even they're from different sources.
+
+## Common Practice
+
+```cs
+using (CancellationTokenSource cts = new(timeout)) {
+    try {
+        await task(foo, cts.Token);
+    } catch (OperationCanceledException) {
+        Console.WriteLine("canceled");
+    }
+}
+```

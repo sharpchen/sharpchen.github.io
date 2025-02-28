@@ -1,0 +1,260 @@
+# Task Creation
+
+## Create & Start
+
+Task can be created from the following sources:
+
+- constructors of `Task` and `Task<T>`
+- Task creation methods like `Task.Run` and `TaskFactory.StartNew`
+- `async` delegates
+
+```cs
+var task = new Task(() => Console.WriteLine("hello"));
+task.Start(); // runs on another thread asynchronously
+```
+
+> [!NOTE]
+> Other utils like `Task.Delay` does create task but more specific so they're not been discussed here.
+
+To start a job there's multiple approaches to do the same:
+
+- `task.Start`: a instance method to start the task
+- `Task.Factory.StartNew`: create and start at one go
+- `Task.Run`: create and start at one go but does not support any argument
+- Start from any `async` method: automatically started on invocation.
+
+```cs
+_ = Task.Factory.StartNew(() => Console.WriteLine("hello"));
+_ = Task.Run(() => Console.WriteLine("hello"));
+
+var fooAsync = async () =>
+{
+    await Task.Run(() => Console.WriteLine("foo"));
+};
+
+fooAsync(); // started automatically
+```
+
+> [!NOTE]
+> Continued tasks created by `ContinueWith` cannot `Start()`
+
+### Create Task with Return
+
+Generic tasks come into play when provided with delegate would return a result.
+The type parameter is exactly the type of return.
+
+```cs
+Task<int> task = new Task<int>(() => 123);
+task.Start();
+```
+
+### Create with Argument
+
+Both `TaskFactory` and `Task` supports an overload to accept **single argument** when the signature contains a parameter.
+
+Since only single value is supported, you may need an abstraction when to pass multiple values
+
+```cs
+_ = Task.Factory.StartNew((object foo) => // [!code highlight] 
+{
+    Console.WriteLine(foo.GetType());
+}, 123);
+
+var task = new Task((object foo) => Console.WriteLine(foo.GetType()), 123); // [!code highlight] 
+task.Start();
+```
+
+> [!NOTE]
+> `Task.Run` does not support overloads accept an argument
+
+> [!TIP]
+> One should prefer creating tasks supports arguments using `async` delegate unless you don't want it to begin immediately.
+
+### Create from Async Delegate
+
+`async` is a syntax sugar for creating task from a lambda or `async` method.
+Each `async` delegate is like a factory for it's dedicated action only.
+
+```cs
+Func<Task> foo = async () =>
+{
+    await Task.Delay(100);
+};
+
+await foo();
+
+Func<int, Task<int>> bar = async (int number) =>
+{
+    await Task.Delay(1000);
+    return number;
+};
+
+bar(123).Wait();
+```
+
+And it can be super useful when creating a batch of tasks using LINQ:
+
+```cs
+_ = await Task.WhenAll(Enumerable.Range(1, 10).Select(async x =>
+{
+    await Task.Delay(100);
+    return x;
+}));
+```
+
+#### Unwrap
+
+If one need to start a `async` delegate directly using `TaskFactory.StartNew`, `TaskExtension.Unwrap()` is required to get it work as expected.
+
+That is because, `async` delegate is a factory for dedicated task, so the result for starting the delegate directly would be a task created from the delegate instead of the expected result.
+
+```cs
+// note: it's a wrapped task
+Task<Task<int>> t = Task.Factory.StartNew(async () =>
+{
+    await Task.Delay(1000);
+    return 42;
+});
+
+// use this instead!!
+Task<int> t2 = Task.Factory.StartNew(async () =>
+{
+    await Task.Delay(1000);
+    return 42;
+}).Unwrap();
+
+// functionally you can use await to unwrap but it's definitely not recommended
+Task<int> t2 = await Task.Factory.StartNew(async () =>
+{
+    await Task.Delay(1000);
+    return 42;
+});
+
+```
+
+> [!TIP]
+> `Task.Run` has a implicit auto-unwrap for some of its overloads, you may prefer this over `TaskFactory.StartNew` to start a simple task.
+>```cs
+>// The type is unwraped
+>Task<int> t = Task.Run(async () =>
+>{
+>    await Task.Delay(1000);
+>    return 42;
+>});
+>```
+
+### Create from Value
+
+Sometimes you may want to wrap a already available value within a task just to satisfy the type checking.
+This is called pre-completed task, can be done by `Task.FromResult`
+Such task does not start a new thread and never needed to be awaited.
+
+```cs
+Task<int> task = Task.FromResult(42);
+Console.WriteLine(task.Result); // Outputs: 42
+```
+
+### Create as Continued Task
+
+`Task.ContinueWith` creates a task after the previous task has terminated with certain condition, and it starts simultaneously.
+Such condition can be specified by `TaskContinuationOptions` in its overloads.
+
+```cs
+Task.Run(async () => {
+    await Task.Delay(100);
+}).ContinueWith(prev => {
+    Console.WriteLine("Continued task started automatically!");
+}).Wait();
+```
+
+#### Continue When
+
+```cs
+var task1 = Task.Run(() => {
+    Thread.Sleep(1000);
+});
+
+var task2 = Task.Run(() => {
+    Thread.Sleep(1000);
+});
+
+await Task.Factory.ContinueWhenAny([task1, task2], prev => {
+    Console.WriteLine($"Tasks {prev.Id} completed.");
+});
+
+await Task.Factory.ContinueWhenAll([task1, task2], prev => {
+    Console.WriteLine($"Tasks {string.Join(", ", prev.Select(x => x.Id))} completed.");
+});
+```
+
+#### Continue When with Results
+
+```cs
+var task1 = Task.Run(() => {
+    return 123;
+});
+
+var task2 = Task.FromResult(456);
+
+await Task.Factory.ContinueWhenAny([task1, task2], prev => {
+    Console.WriteLine($"Tasks {prev.Id} completed.");
+    Console.WriteLine($"Result: {prev.Result}");
+});
+
+await Task.Factory.ContinueWhenAll([task1, task2], prev => {
+    Console.WriteLine($"Tasks {string.Join(", ", prev.Select(x => x.Id))} completed.");
+    Console.WriteLine($"Result: {string.Join(", ", prev.Select(x => x.Result))}");
+});
+```
+
+### `Task.Run` vs `TaskFactory.StartNew`
+
+- `Task.Run`
+    - starts with default `TaskCreationOptions.DenyChildAttach` which prevents child tasks, and there's no way to use other option.
+    - recommended for Compute-Bound task
+    - no overload for passing argument to task
+    - uses default scheduler and can not be changed
+    - does not require unwrap to run a `async` delegate
+
+- `TaskFactory.StartNew`
+    - can do everything `Task.Run` can do(allow child tasks)
+    - can have more control on `TaskCreationOptions` and scheduler
+    - require unwrap for `async` delegate
+
+> [!NOTE]
+> A compute-bound task is a task that primarily uses the CPU for calculations rather than waiting on external resources like disk I/O, network requests, or database queries. 
+> These tasks typically involve intensive computations and benefit from parallelism using multiple CPU cores.
+
+```cs
+_ = Task.Run(() => { });
+
+// equivalent to
+
+_ = Task.Factory.StartNew(
+    () => { },
+    CancellationToken.None,
+    TaskCreationOptions.DenyChildAttach,
+    TaskScheduler.Default
+);
+```
+
+## Creation Options
+
+<!--TODO: creation options-->
+
+## Sleeping on Thread
+
+- `Thread.Sleep`: pauses the thread and allows the scheduler to run another thread while sleeping, for the efficiency.
+- `SpinWait.SpinUntil`: pauses the thread until a condition fits. The scheduler are not allowed to run another thread using current resource of this thread.
+    ```cs
+    Task task = new(() =>
+    {
+        SpinWait.SpinUntil(() =>
+        {
+            return true;
+        }, 1000);
+    });
+    ```
+
+- Aforementioned `token.WaitHandle.WaitOne` to work together with a cancellation token.
+
