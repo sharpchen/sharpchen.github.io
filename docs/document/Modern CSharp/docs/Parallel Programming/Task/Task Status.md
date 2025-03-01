@@ -34,33 +34,25 @@ Otherwise it would just remain Faulted.
 
 ```cs
 // compiler would choose a Task.Run(Func<Task> function) here
-var task = Task.Run(() =>
-{
+var task = Task.Run(() => {
     throw new OperationCanceledException(); // [!code highlight] 
 });
 
-try
-{
+try {
     task.Wait();
-}
-catch (AggregateException)
-{
+} catch (AggregateException) {
     Console.WriteLine(task.Status); // Cancelled // [!code highlight] 
 }
 // Explicit unwrap have the same behavior
 // async was marked here because TaskFactory.StartNew does not have such overload resolution like Task.Run
-Task task2 = Task.Factory.StartNew(async () =>
-{
+Task task2 = Task.Factory.StartNew(async () => {
     await Task.Delay(100);
     throw new Exception(); // it's another type of Exception this time // [!code highlight] 
 }).Unwrap();
 
-try
-{
+try {
     task2.Wait();
-}
-catch (AggregateException)
-{
+} catch (AggregateException) {
     Console.WriteLine(task2.Status); // Faulted // [!code highlight] 
 }
 ```
@@ -75,18 +67,14 @@ Faulted happens on one of the scenarios:
 
 
 ```cs
-Task task = Task.Factory.StartNew(async () =>
-{
+Task task = Task.Factory.StartNew(async () => {
     await Task.Delay(100);
     throw new Exception(); // not an OperationCanceledException // [!code highlight] 
 });
 
-try
-{
+try {
     task.Wait();
-}
-catch (AggregateException)
-{
+} catch (AggregateException) {
     Console.WriteLine(task.Status); // Faulted // [!code highlight] 
 }
 ```
