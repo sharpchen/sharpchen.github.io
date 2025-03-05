@@ -49,13 +49,13 @@ List and Table are groups of related elements commonly used together.
 ```html
 <body>
   <ul>
-    <li>foo</li> <!-- [!code highlight]  -->
-    <li>bar</li> <!-- [!code highlight]  -->
+    <li>foo</li> <!-- [!code highlight] -->
+    <li>bar</li> <!-- [!code highlight] -->
     <li>
       <ol>
-        <li>1</li> <!-- [!code highlight]  -->
-        <li>2</li> <!-- [!code highlight]  -->
-        <li>3</li> <!-- [!code highlight]  -->
+        <li>1</li> <!-- [!code highlight] -->
+        <li>2</li> <!-- [!code highlight] -->
+        <li>3</li> <!-- [!code highlight] -->
       </ol>
     </li>
   </ul>

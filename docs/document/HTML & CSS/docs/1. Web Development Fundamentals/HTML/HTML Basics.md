@@ -74,7 +74,7 @@ A common structure of html:
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- [!code highlight]  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- [!code highlight] -->
   <title>I am foo</title>
 </head>
 </html>

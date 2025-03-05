@@ -13,11 +13,11 @@ Style template ships with a portion for previewer where you can add testing cont
 ```xml
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Design.PreviewWith> <!-- [!code highlight]  -->
-    <Border Padding="20"> <!-- [!code highlight]  -->
-      <!-- Add Controls for Previewer Here --> <!-- [!code highlight]  -->
-    </Border> <!-- [!code highlight]  -->
-  </Design.PreviewWith> <!-- [!code highlight]  -->
+  <Design.PreviewWith> <!-- [!code highlight] -->
+    <Border Padding="20"> <!-- [!code highlight] -->
+      <!-- Add Controls for Previewer Here --> <!-- [!code highlight] -->
+    </Border> <!-- [!code highlight] -->
+  </Design.PreviewWith> <!-- [!code highlight] -->
 
   <!-- Add Styles Here -->
 </Styles>
@@ -31,11 +31,11 @@ Contained styling is some key-value pair on properties.
 ```xml
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Design.PreviewWith> <!-- [!code highlight]  -->
-    <Border Padding="20"> <!-- [!code highlight]  -->
-      <!-- Add Controls for Previewer Here --> <!-- [!code highlight]  -->
-    </Border> <!-- [!code highlight]  -->
-  </Design.PreviewWith> <!-- [!code highlight]  -->
+  <Design.PreviewWith> <!-- [!code highlight] -->
+    <Border Padding="20"> <!-- [!code highlight] -->
+      <!-- Add Controls for Previewer Here --> <!-- [!code highlight] -->
+    </Border> <!-- [!code highlight] -->
+  </Design.PreviewWith> <!-- [!code highlight] -->
 
   <!-- Add Styles Here -->
   <Style Selector="TextBlock.h1"> <!-- [!code ++]  -->

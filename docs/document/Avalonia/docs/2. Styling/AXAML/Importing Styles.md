@@ -9,9 +9,9 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AvaloniaApplication.MyUserControl">
 
-    <UserControl.Styles> <!-- [!code highlight]  -->
-        <StyleInclude Source="MyStyles.axaml"></StyleInclude> <!-- [!code highlight]  -->
-    </UserControl.Styles> <!-- [!code highlight]  -->
+    <UserControl.Styles> <!-- [!code highlight] -->
+        <StyleInclude Source="MyStyles.axaml"></StyleInclude> <!-- [!code highlight] -->
+    </UserControl.Styles> <!-- [!code highlight] -->
 
     <TextBlock Text="Hello from template" TextAlignment="Center"  Width="200" Height="20"/>
 
