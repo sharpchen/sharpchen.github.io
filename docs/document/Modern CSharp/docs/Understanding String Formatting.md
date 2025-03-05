@@ -114,8 +114,7 @@ There's two scenarios of enum formatting
     ```cs
     Console.WriteLine(((DayOfWeek)7).ToString("F")); // Monday, Saturday
     Console.WriteLine((Foo.Bar | Foo.Baz).ToString("F")); // Bar, Baz
-    enum Foo
-    {
+    enum Foo {
         None = 0b0000,
         Bar  = 0b0001,
         Baz  = 0b0010,
@@ -129,8 +128,7 @@ There's two scenarios of enum formatting
     ```cs
     var foo = (Foo.Bar | Foo.Baz | Foo.Bar).ToString(); // Bar, Baz
     [Flags]
-    enum Foo
-    {
+    enum Foo {
         None = 0b0000,
         Bar  = 0b0001,
         Baz  = 0b0010,
@@ -152,8 +150,7 @@ The return type is `object` which means the *format* to be returned here can be 
 The *format* object returned may contain some **culture-related information**, such as negative sign for numerics. And the object is usually a `IFormatProvider` too.
 
 ```cs
-public interface IFormatProvider 
-{
+public interface IFormatProvider {
     object? GetFormat(Type? formatType);
 }
 ```
@@ -165,14 +162,11 @@ That is to say, we commonly have a conditional statement inside the implementati
 
 ```cs
 // implementation in CultureInfo
-public virtual object? GetFormat(Type? formatType)
-{
-    if (formatType == typeof(NumberFormatInfo))
-    {
+public virtual object? GetFormat(Type? formatType) {
+    if (formatType == typeof(NumberFormatInfo)) {
         return NumberFormat; // [!code highlight] 
     }
-    if (formatType == typeof(DateTimeFormatInfo))
-    {
+    if (formatType == typeof(DateTimeFormatInfo)) {
         return DateTimeFormat;
     }
 
@@ -180,20 +174,16 @@ public virtual object? GetFormat(Type? formatType)
 }
 
 // where NumberFormat is a process to generate a NumerFormatInfo based on Culture
-public virtual NumberFormatInfo NumberFormat
-{
-    get
-    {
-        if (_numInfo == null)
-        {
+public virtual NumberFormatInfo NumberFormat {
+    get {
+        if (_numInfo == null) {
             NumberFormatInfo temp = new NumberFormatInfo(_cultureData); // [!code highlight] 
             temp._isReadOnly = _isReadOnly;
             Interlocked.CompareExchange(ref _numInfo, temp, null);
         }
         return _numInfo!;
     }
-    set
-    {
+    set {
         ArgumentNullException.ThrowIfNull(value);
 
         VerifyWritable();
@@ -221,8 +211,7 @@ Implementing `ICustomFormatter` means the type can handle formatting for a singl
 - `formatProvider`: provider for formatting
 
 ```cs
-public interface ICustomFormatter
-{
+public interface ICustomFormatter {
     string Format(string? format, object? arg, IFormatProvider? formatProvider);
 }
 ```
@@ -236,8 +225,7 @@ The way to retrieve a `ICustomFormatter` inside a composite formatting method is
 ```cs
 ICustomFormatter? cf = (ICustomFormatter?)provider?.GetFormat(typeof(ICustomFormatter)); // [!code highlight] 
 // .. a super long process to parse the whole format string
-if (cf != null)
-{
+if (cf != null) {
     s = cf.Format(itemFormat, arg, provider); // [!code highlight] 
 }
 ```
@@ -248,27 +236,18 @@ if (cf != null)
 While in the implementation side, the `ICustomFormatter` should be returned in `IFormatProvider.GetFormat` just like
 
 ```cs
-class CustomFormatter : IFormatProvider, ICustomFormatter
-{
-    public object GetFormat(Type? formatType)
-    {
+class CustomFormatter : IFormatProvider, ICustomFormatter {
+    public object GetFormat(Type? formatType) {
       if (formatType == typeof(ICustomFormatter))
          return this; // [!code highlight] 
-      else
-      {
-        // ... handle other types
-      }
+      else { // ... handle other types }
     }
 
-    public string Format(string? format, object? arg, IFormatProvider? formatProvider)
-    {
+    public string Format(string? format, object? arg, IFormatProvider? formatProvider) {
         Type? type = arg?.GetType();
-        if (type == typeof(long))
-        {
+        if (type == typeof(long)) {
             //...
-        }
-        else if (type == typeof(int))
-        {
+        } else if (type == typeof(int)) {
             // ...
         }
     }
@@ -283,23 +262,19 @@ Implementing `IFormattable` means the type itself can handle the formatting for 
 - `formatProvider`: provider used for the formatting
 
 ```cs
-public interface IFormattable
-{
+public interface IFormattable {
     string ToString(string? format, IFormatProvider? formatProvider);
 }
 ```
 
 ```cs
-class CustomObject : IFormattable
-{
+class CustomObject : IFormattable {
     
-   public string ToString(string format, IFormatProvider? provider)
-   {
+   public string ToString(string format, IFormatProvider? provider) {
       if (String.IsNullOrEmpty(format)) format = "G"; // use G as general // [!code highlight] 
       provider ??= CultureInfo.CurrentCulture; // [!code highlight] 
 
-      switch (format.ToUpperInvariant()) // [!code highlight] 
-      {
+      switch (format.ToUpperInvariant()) { // [!code highlight] 
          case "G":
          case "C":
          case "F":
@@ -328,38 +303,26 @@ ICustomFormatter? cf = (ICustomFormatter?)provider?.GetFormat(typeof(ICustomForm
 
 string? s = null;
 
-if (cf != null)
-{
+if (cf != null) {
     if (!itemFormatSpan.IsEmpty)
-    {
         itemFormat = new string(itemFormatSpan);
-    }
     s = cf.Format(itemFormat, arg, provider); // [!code highlight] 
 }
 
-if (s == null) // if ICustomFormatter.Format returns null // [!code highlight] 
-{
+if (s == null) { // if ICustomFormatter.Format returns null // [!code highlight] 
     // If arg is ISpanFormattable and the beginning doesn't need padding,
     // try formatting it into the remaining current chunk.
     if ((leftJustify || width == 0) &&
         arg is ISpanFormattable spanFormattableArg &&
-        spanFormattableArg.TryFormat(_chars.Slice(_pos), out int charsWritten, itemFormatSpan, provider))
-    {
+        spanFormattableArg.TryFormat(_chars.Slice(_pos), out int charsWritten, itemFormatSpan, provider)) {
         // ..
     }
 
-    if (arg is IFormattable formattableArg) // [!code highlight] 
-    {
+    if (arg is IFormattable formattableArg) { // [!code highlight] 
         if (itemFormatSpan.Length != 0)
-        {
             itemFormat ??= new string(itemFormatSpan);
-        }
         s = formattableArg.ToString(itemFormat, provider); // [!code highlight] 
-    }
-    else
-    {
-        s = arg?.ToString();  // object.ToString as the last resort // [!code highlight] 
-    }
+    } else s = arg?.ToString();  // object.ToString as the last resort // [!code highlight] 
 
     s ??= string.Empty; // if all solution were tried but still null // [!code highlight] 
 }
