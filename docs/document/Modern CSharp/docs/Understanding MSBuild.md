@@ -52,22 +52,76 @@
 
 ## Item Section
 
-`<ItemGroup>` section is for specifying files to be included on build, one could use builtin.
+`<ItemGroup>` section is generally for specifying files to be included on build.
+Children under `<ItemGroup>` are not necessarily files, **they can be any list with a name(the tag name) that has items represented as string**.
 Attributes for child items are similar to parameters of item-cmdlet in PowerShell.
-
-- `Include`: include items on declaration
-- `Exclude`: exclude items on declaration
 
 ```xml
 <ItemGroup>
-  <Compile Include="one.cs;three.cs" />
-  <Compile Exclude="*.fs" />
+  <!-- represents a normal list -->
+  <!-- child tag with same name are included within same list -->
+  <FooList Include="foo;bar" />
+  <FooList Include="baz;qux" />
+
+  <MyFile Include="*.cs"/>
 </ItemGroup>
 ```
 
+### Item Attributes
+
+Item attributes are for controlling how items could be initialized, added and removed to a list
+
+- `Include`: include items on declaration
+    - use `KeepMetadata` or `RemoveMetadata` to optionally include or exclude metadata from when **creating items by transforming** from another **within a `<Target>`**
+    ```xml
+    <ItemGroup>
+      <Old Include="*"> <!-- [!code highlight]  -->
+        <Foo>foo</Foo> <!-- [!code highlight]  -->
+        <Bar>bar</Bar> <!-- [!code highlight]  -->
+      </Old> <!-- [!code highlight]  -->
+    </ItemGroup>
+
+    <Target>
+      <ItemGroup>
+        <New Include="@(Old)" RemoveMetadata="Foo"/> <!-- transform from Old --> <!-- [!code highlight]  -->
+      </ItemGroup>
+       <!-- Old.Foo was removed after transformation -->
+      <Message Text="Old.Foo was removed after transformation" <!-- [!code highlight]  -->
+        Condition="%(New.Foo) == ''" <!-- [!code highlight]  -->
+        Importance="high"/> <!-- [!code highlight]  -->
+    </Target>
+    ```
+    - use `KeepDuplicates` when adding new item within a `<Target>` that you expect the new would be added when deplicates exist.
+    > [!WARNING]
+    > The idendity of a item depends on all metadata within it, so as long as one metadata differ, it would not be considered as a duplicate.
+    ```xml
+    <ItemGroup>
+      <FooList Include="foo;bar" />
+      <FooList Include="foo;qux" />
+    </ItemGroup>
+
+    <Target Name="Hello">
+      <ItemGroup>
+        <!-- bar would not be added since it already exists in FooList -->
+        <FooList Include="bar" KeepDuplicates="false" /> <!-- [!code highlight]  -->
+      </ItemGroup>
+         <!-- foo;bar;foo;qux -->
+      <Message Text="@(FooList)" Importance="high"></Message> <!-- [!code highlight]  -->
+    </Target>
+    ```
+- `Exclude`: exclude items on declaration
+    ```xml
+    <ItemGroup>
+      <Compile Include="one.cs;three.cs" />
+      <Compile Exclude="*.fs" />
+    </ItemGroup>
+    ```
 - `Remove`: remove items after declaration, typically inside a `<Target>` section
     - optionally use `MatchOnMetadata` together to delete base on another type of items
-    - optionally use ``
+    - optionally use `MatchOnMetadataOptions` to specify the comparing strategy on match
+        - `CaseInsensitive`: the default when unspecified
+        - `CaseSensitive`
+        - `PathLike`: match paths ignoring separator and trailing slash
     ```xml
     <ItemGroup>
         <CSFile Include="Programs.cs"/>
@@ -88,6 +142,47 @@ Attributes for child items are similar to parameters of item-cmdlet in PowerShel
         <Message Text="Remained cs items: %(CSFile.Identity)" Importance="high"></Message>
     </Target>
     ```
+- `Update`: update metadata **outside a `<Target>`**
+    ```xml
+    <ItemGroup>
+      <FooList Include="foo;bar;baz">
+        <!-- assign FooMetaData to all items in Include -->
+        <FooMetaData>this is a foo metadata</FooMetaData>
+      </FooList>
+      <!-- update FooMetaData for foo and bar -->
+      <FooList Update="foo;bar" FooMetaData="this is a bar metadata now!"/> <!-- [!code highlight]  -->
+    </ItemGroup>
+
+    <Target Name="Hello">
+      <Message Text="%(FooList.Identity): %(FooList.FooMetaData)" Importance="high"/>
+      <!-- foo: this is a bar metadata now!
+           bar: this is a bar metadata now!
+           baz: this is a foo metadata -->
+    </Target>
+    ```
+
+### Item Functions
+
+There's some intrinsic functions to be used to **transform** a item list to another or **get properties** like `Count` of a item list.
+
+> [!NOTE]
+> [Item Functions](https://learn.microsoft.com/en-us/visualstudio/msbuild/item-functions?view=vs-2022)
+
+> [!NOTE]
+> If a expression includes item enumeration `%(itemType)`, item functions that returns a statistics of list would return result for each **distinct item**
+>```xml
+><ItemGroup>
+>    <FooList Include="foo;bar" />
+>    <FooList Include="foo;qux" />
+></ItemGroup>
+>
+><Target Name="Hello">
+>    <Message Text="%(FooList.Identity) @(FooList->Count())" Importance="high" /> <!-- [!code highlight]  -->
+>  <!-- foo 2
+>       bar 1
+>       qux 1 -->
+></Target>
+>```
 
 ### Default Filters
 
@@ -103,6 +198,11 @@ Each item has pre-defined metadata can be accessed.
 > [!NOTE]
 > [Well-Known Item Metadata](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-well-known-item-metadata?view=vs-2022)
 
+> [!NOTE]
+> If a item does not represent a file, the most of intrinsic metadata would be empty.
+
+
+
 ## Expression Syntax
 
 Expression syntax in msbuild has some flavor of Command Prompt and PowerShell.
@@ -115,7 +215,7 @@ Expression syntax in msbuild has some flavor of Command Prompt and PowerShell.
         - access [registry item](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-properties?view=vs-2022#registry-properties) with its path
     - **item accessor** `@(itemType)`
         - use `@(itemType, '<sep>')` to concat items using separator
-        - use `@(itemType->'<metadata_expr>')` to collected transformed values to a list
+        - use `@(itemType->expr)` to collected transformed values generated by `expr` to a list, `expr` can be a string interpolation or [*item function*](https://learn.microsoft.com/en-us/visualstudio/msbuild/item-functions?view=vs-2022)
         ```xml
         <ItemGroup>
             <MyFile Include="Programs.cs"/>
@@ -126,6 +226,8 @@ Expression syntax in msbuild has some flavor of Command Prompt and PowerShell.
          <!-- Collected metadata: Program.cs; ConsoleApp.csproj -->
          <Message Text="Collected metadata: @(MyFile->'%(FileName)%(Extension)')"  <!-- [!code highlight]  -->
                   Importance="high" /> <!-- [!code highlight]  -->
+         <Message Text="Exists: @(MyFile->Count())" <!-- 5 --> <!-- [!code highlight]  -->
+                  Importance="high" /> <!-- [!code highlight]  -->
         </Target>
         ```
 
@@ -135,10 +237,6 @@ For [special characters](https://learn.microsoft.com/en-us/visualstudio/msbuild/
 
 ```ps1
 [System.Uri]::EscapeDataString('"') # %22
-```
-
-```lua
-foo
 ```
 
 > [!TIP]
@@ -167,9 +265,9 @@ So one could include dedicated part of the config for different build scenarios.
 
 ## Builtin Variables
 
-## MSBuild Task
+## Target Section
 
-A task is a pre-defined procedure to be executed in `Target` section in their declared order.
+A task is a pre-defined procedure to be executed in `<Target>` section in their declared order.
 The containing `Target` is like a function which must have a name while a task is just named as its tag.
 MSBuild ships with some builtin task to be used out of box. 
 
@@ -196,6 +294,32 @@ Or you can implement one using [inline task](https://learn.microsoft.com/en-us/v
 
 > [!NOTE]
 > See: [Task Writing](https://learn.microsoft.com/en-us/visualstudio/msbuild/task-writing?view=vs-2022)
+
+### Update Metadata in Target
+
+Such approach seems to only allow updating on all existing items since `Include` could try to add new items and new metadata would result them to be duplicates.
+
+```xml
+  <ItemGroup>
+    <FooList Include="foo;bar;baz">
+      <FooMetaData>this is a foo metadata</FooMetaData>
+    </FooList>
+  </ItemGroup>
+
+  <Target Name="Hello">
+    <ItemGroup>
+      <FooList> <!-- no Include here --> <!-- [!code highlight]  -->
+        <!-- update all existing items from FooList -->
+        <FooMetaData>this is a bar metadata now!</FooMetaData> <!-- [!code highlight]  -->
+      </FooList>
+    </ItemGroup>
+
+    <Message Text="%(FooList.Identity): %(FooList.FooMetaData)" Importance="high"/> <!-- [!code highlight]  -->
+     <!-- foo: this is a bar metadata now!
+          bar: this is a bar metadata now!
+          baz: this is a bar metadata now! -->
+  </Target>
+```
 
 ### Generating Items from Tasks
 
