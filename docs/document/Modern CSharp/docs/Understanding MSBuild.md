@@ -75,20 +75,20 @@ Item attributes are for controlling how items could be initialized, added and re
     - use `KeepMetadata` or `RemoveMetadata` to optionally include or exclude metadata from when **creating items by transforming** from another **within a `<Target>`**
     ```xml
     <ItemGroup>
-      <Old Include="*"> <!-- [!code highlight]  -->
-        <Foo>foo</Foo> <!-- [!code highlight]  -->
-        <Bar>bar</Bar> <!-- [!code highlight]  -->
-      </Old> <!-- [!code highlight]  -->
+      <Old Include="*"> <!-- [!code highlight] -->
+        <Foo>foo</Foo> <!-- [!code highlight] -->
+        <Bar>bar</Bar> <!-- [!code highlight] -->
+      </Old> <!-- [!code highlight] -->
     </ItemGroup>
 
     <Target>
       <ItemGroup>
-        <New Include="@(Old)" RemoveMetadata="Foo"/> <!-- transform from Old --> <!-- [!code highlight]  -->
+        <New Include="@(Old)" RemoveMetadata="Foo"/> <!-- transform from Old --> <!-- [!code highlight] -->
       </ItemGroup>
        <!-- Old.Foo was removed after transformation -->
-      <Message Text="Old.Foo was removed after transformation" <!-- [!code highlight]  -->
-        Condition="%(New.Foo) == ''" <!-- [!code highlight]  -->
-        Importance="high"/> <!-- [!code highlight]  -->
+      <Message Text="Old.Foo was removed after transformation" <!-- [!code highlight] -->
+        Condition="%(New.Foo) == ''" <!-- [!code highlight] -->
+        Importance="high"/> <!-- [!code highlight] -->
     </Target>
     ```
     - use `KeepDuplicates` when adding new item within a `<Target>` that you expect the new would be added when deplicates exist.
@@ -103,10 +103,10 @@ Item attributes are for controlling how items could be initialized, added and re
     <Target Name="Hello">
       <ItemGroup>
         <!-- bar would not be added since it already exists in FooList -->
-        <FooList Include="bar" KeepDuplicates="false" /> <!-- [!code highlight]  -->
+        <FooList Include="bar" KeepDuplicates="false" /> <!-- [!code highlight] -->
       </ItemGroup>
          <!-- foo;bar;foo;qux -->
-      <Message Text="@(FooList)" Importance="high"></Message> <!-- [!code highlight]  -->
+      <Message Text="@(FooList)" Importance="high"></Message> <!-- [!code highlight] -->
     </Target>
     ```
 - `Exclude`: exclude items on declaration
@@ -134,9 +134,9 @@ Item attributes are for controlling how items could be initialized, added and re
     <Target Name="Hello">
         <!-- Proj items are to be matched by metadata FileName -->
         <ItemGroup>
-            <CSFile Remove="@(Proj)" <!-- [!code highlight]  -->
-                MatchOnMetadata="FileName" <!-- [!code highlight]  -->
-                MatchOnMetadataOptions="CaseSensitive" /> <!-- [!code highlight]  -->
+            <CSFile Remove="@(Proj)" <!-- [!code highlight] -->
+                MatchOnMetadata="FileName" <!-- [!code highlight] -->
+                MatchOnMetadataOptions="CaseSensitive" /> <!-- [!code highlight] -->
         </ItemGroup>
         <!-- Remained cs items: Programs.cs -->
         <Message Text="Remained cs items: %(CSFile.Identity)" Importance="high"></Message>
@@ -150,7 +150,7 @@ Item attributes are for controlling how items could be initialized, added and re
         <FooMetaData>this is a foo metadata</FooMetaData>
       </FooList>
       <!-- update FooMetaData for foo and bar -->
-      <FooList Update="foo;bar" FooMetaData="this is a bar metadata now!"/> <!-- [!code highlight]  -->
+      <FooList Update="foo;bar" FooMetaData="this is a bar metadata now!"/> <!-- [!code highlight] -->
     </ItemGroup>
 
     <Target Name="Hello">
@@ -177,7 +177,7 @@ There's some intrinsic functions to be used to **transform** a item list to anot
 ></ItemGroup>
 >
 ><Target Name="Hello">
->    <Message Text="%(FooList.Identity) @(FooList->Count())" Importance="high" /> <!-- [!code highlight]  -->
+>    <Message Text="%(FooList.Identity) @(FooList->Count())" Importance="high" /> <!-- [!code highlight] -->
 >  <!-- foo 2
 >       bar 1
 >       qux 1 -->
@@ -224,10 +224,10 @@ Expression syntax in msbuild has some flavor of Command Prompt and PowerShell.
 
         <Target Name="Hello">
          <!-- Collected metadata: Program.cs; ConsoleApp.csproj -->
-         <Message Text="Collected metadata: @(MyFile->'%(FileName)%(Extension)')"  <!-- [!code highlight]  -->
-                  Importance="high" /> <!-- [!code highlight]  -->
-         <Message Text="Exists: @(MyFile->Count())" <!-- 5 --> <!-- [!code highlight]  -->
-                  Importance="high" /> <!-- [!code highlight]  -->
+         <Message Text="Collected metadata: @(MyFile->'%(FileName)%(Extension)')"  <!-- [!code highlight] -->
+                  Importance="high" /> <!-- [!code highlight] -->
+         <Message Text="Exists: @(MyFile->Count())" <!-- 5 --> <!-- [!code highlight] -->
+                  Importance="high" /> <!-- [!code highlight] -->
         </Target>
         ```
 
@@ -248,14 +248,14 @@ For [special characters](https://learn.microsoft.com/en-us/visualstudio/msbuild/
 So one could include dedicated part of the config for different build scenarios.
 
 ```xml
-<ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'"> <!-- [!code highlight]  -->
+<ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'"> <!-- [!code highlight] -->
     <PackageVersion Include="Microsoft.Build" Version="17.3.4" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="17.3.4" />
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="17.3.4" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.3.4" />
 </ItemGroup>
 
-<ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(TargetFramework)' != 'net472'"> <!-- [!code highlight]  -->
+<ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(TargetFramework)' != 'net472'"> <!-- [!code highlight] -->
   <PackageVersion Include="Microsoft.Build" Version="17.7.2" />
   <PackageVersion Include="Microsoft.Build.Framework" Version="17.7.2" />
   <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="17.7.2" />
@@ -308,20 +308,18 @@ Such approach seems to only allow updating on all existing items since `Include`
 
   <Target Name="Hello">
     <ItemGroup>
-      <FooList> <!-- no Include here --> <!-- [!code highlight]  -->
+      <FooList> <!-- no Include here --> <!-- [!code highlight] -->
         <!-- update all existing items from FooList -->
-        <FooMetaData>this is a bar metadata now!</FooMetaData> <!-- [!code highlight]  -->
+        <FooMetaData>this is a bar metadata now!</FooMetaData> <!-- [!code highlight] -->
       </FooList>
     </ItemGroup>
 
-    <Message Text="%(FooList.Identity): %(FooList.FooMetaData)" Importance="high"/> <!-- [!code highlight]  -->
+    <Message Text="%(FooList.Identity): %(FooList.FooMetaData)" Importance="high"/> <!-- [!code highlight] -->
      <!-- foo: this is a bar metadata now!
           bar: this is a bar metadata now!
           baz: this is a bar metadata now! -->
   </Target>
 ```
-
-### Generating Items from Tasks
 
 ## Importing
 
