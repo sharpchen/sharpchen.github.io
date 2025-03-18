@@ -62,13 +62,12 @@ try {
 Faulted happens on one of the scenarios:
 
 - Any exception besides `OperationCanceledException` was thrown.
-- `OperationCanceledException` is thrown && (`token.IsCancellationRequested` is false || `token` in closure passed to `OperationCanceledException` != `token` as parameter)
+- `OperationCanceledException` is thrown but cancellation failed.
 - Any exception is not `OperationCanceledException` was thrown on task creation. A wait on the task created anyway results Faulted.
 
 
 ```cs
-Task task = Task.Factory.StartNew(async () => {
-    await Task.Delay(100);
+Task task = Task.Factory.StartNew(() => {
     throw new Exception(); // not an OperationCanceledException // [!code highlight] 
 });
 

@@ -99,20 +99,20 @@ Item attributes are for controlling how items could be initialized, added and re
     - use `KeepMetadata` or `RemoveMetadata` to optionally include or exclude metadata from when **creating items by transforming** from another **within a `<Target>`**
     ```xml
     <ItemGroup>
-      <Old Include="*"> <!-- [!code highlight] -->
-        <Foo>foo</Foo> <!-- [!code highlight] -->
-        <Bar>bar</Bar> <!-- [!code highlight] -->
-      </Old> <!-- [!code highlight] -->
+      <Old Include="*">
+        <Foo>foo</Foo>
+        <Bar>bar</Bar>
+      </Old>
     </ItemGroup>
 
     <Target>
       <ItemGroup>
-        <New Include="@(Old)" RemoveMetadata="Foo"/> <!-- transform from Old --> <!-- [!code highlight] -->
+        <New Include="@(Old)" RemoveMetadata="Foo"/> <!-- transform from Old -->
       </ItemGroup>
        <!-- Old.Foo was removed after transformation -->
-      <Message Text="Old.Foo was removed after transformation" <!-- [!code highlight] -->
-        Condition="%(New.Foo) == ''" <!-- [!code highlight] -->
-        Importance="high"/> <!-- [!code highlight] -->
+      <Message Text="Old.Foo was removed after transformation"
+        Condition="%(New.Foo) == ''"
+        Importance="high"/>
     </Target>
     ```
     - use `KeepDuplicates` when adding new item within a `<Target>` that you expect the new would be added when deplicates exist.
@@ -127,10 +127,10 @@ Item attributes are for controlling how items could be initialized, added and re
     <Target Name="Hello">
       <ItemGroup>
         <!-- bar would not be added since it already exists in FooList -->
-        <FooList Include="bar" KeepDuplicates="false" /> <!-- [!code highlight] -->
+        <FooList Include="bar" KeepDuplicates="false" />
       </ItemGroup>
          <!-- foo;bar;foo;qux -->
-      <Message Text="@(FooList)" Importance="high"></Message> <!-- [!code highlight] -->
+      <Message Text="@(FooList)" Importance="high"></Message>
     </Target>
     ```
 - `Exclude`: exclude items on declaration
@@ -158,9 +158,9 @@ Item attributes are for controlling how items could be initialized, added and re
     <Target Name="Hello">
         <!-- Proj items are to be matched by metadata FileName -->
         <ItemGroup>
-            <CSFile Remove="@(Proj)" <!-- [!code highlight] -->
-                MatchOnMetadata="FileName" <!-- [!code highlight] -->
-                MatchOnMetadataOptions="CaseSensitive" /> <!-- [!code highlight] -->
+            <CSFile Remove="@(Proj)"
+                MatchOnMetadata="FileName"
+                MatchOnMetadataOptions="CaseSensitive" />
         </ItemGroup>
         <!-- Remained cs items: Programs.cs -->
         <Message Text="Remained cs items: %(CSFile.Identity)" Importance="high"></Message>
@@ -174,7 +174,7 @@ Item attributes are for controlling how items could be initialized, added and re
         <FooMetaData>this is a foo metadata</FooMetaData>
       </FooList>
       <!-- update FooMetaData for foo and bar -->
-      <FooList Update="foo;bar" FooMetaData="this is a bar metadata now!"/> <!-- [!code highlight] -->
+      <FooList Update="foo;bar" FooMetaData="this is a bar metadata now!"/>
     </ItemGroup>
 
     <Target Name="Hello">
@@ -201,7 +201,7 @@ There's some intrinsic functions to be used to **transform** a item list to anot
 ></ItemGroup>
 >
 ><Target Name="Hello">
->    <Message Text="%(FooList.Identity) @(FooList->Count())" Importance="high" /> <!-- [!code highlight] -->
+>    <Message Text="%(FooList.Identity) @(FooList->Count())" Importance="high" />
 >  <!-- foo 2
 >       bar 1
 >       qux 1 -->
@@ -224,6 +224,25 @@ Each item has pre-defined metadata can be accessed.
 
 > [!NOTE]
 > If a item does not represent a file, the most of intrinsic metadata would be empty.
+
+#### Metadata Mutation
+
+Metadata should be mutated by batching using a `Condition` within a `<Target>`
+
+```xml
+  <ItemGroup>
+    <Foo Include="2" Bar="foo" />
+    <Foo Include="1" Bar="bar" />
+  </ItemGroup>
+
+  <Target Name="Foo">
+    <ItemGroup>
+      <Foo Condition=" '%(Bar)' == 'blue' ">
+        <Bar>baz</Bar>
+      </Foo>
+    </ItemGroup>
+  </Target>
+```
 
 ### Common Items
 

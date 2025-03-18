@@ -20,11 +20,11 @@ ConcurrentDictionary<string, string> dict = [];
 string? val;
 
 // if key is registered, update with the transformed value
-// if key is not registered, callback wouldn't be called
+// if key is not registered, callback wouldn't be called and newValue is added for key
 val = dict.AddOrUpdate("key", "newValue", (key, old) => $"transformed {old} for {key}");
-// add with transformed key 
+// add with transformed key as value
 // or 
-// update with transformed with key and old value.
+// update with transformed with key and old value as new value
 val = dict.AddOrUpdate(
     "key",
     key => $"transformed from {key} on add",

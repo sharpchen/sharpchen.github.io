@@ -100,6 +100,7 @@ Enum formatting is handled by `Enum.ToString` static methods. They're implicitly
 
 There's two scenarios of enum formatting
 - singular value
+
     A valid enum value as integer can be directly evaluated as the enum name.
     More specifically, the format is **G**eneral when there's no format specified.
     If an integer is not a valid value for the enum, compiler does not yell but the default evaluation for it will be the number itself
