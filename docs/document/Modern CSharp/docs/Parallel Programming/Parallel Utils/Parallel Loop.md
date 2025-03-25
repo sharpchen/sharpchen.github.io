@@ -1,14 +1,14 @@
 # Parallel Loop
 
-`Parallel` static class provides utilities based on `Task` to perform parallel enumerations, all parallel operation are shipped with a `Task`
+`Parallel` static class provides utilities based on `Task` to perform parallel enumerations, all parallel operation are shipped within a `Task`
 
 - `Parallel.For`: range based parallel enumerations, an simulation of `for` statement
 - `Parallel.ForEach`: parallel enumerations for `IEnumerable` and `IAsyncEnumerable`
-- async counterpart of `For` and `ForEach`
+- async counterparts of `For` and `ForEach`
 - optionally run with a `ParallelOptions`: to specify cancellation token, paralleism degree and task scheduler.
 - access state of entire loop by a `ParallelLoopState` parameter in callback.
 
-Additionally an `Invoke` exists to run action in parallel.
+Additionally an `Invoke` exists to run actions in parallel.
 
 - `Parallel.Invoke`: invoke multiple actions in parallel
 
@@ -23,8 +23,7 @@ var files = Directory.GetFiles(@"C:/Users/User/Projects/nix-config", "*", Search
 long totalSize = 0;
 
 Parallel.For(0, files.Length, idx => {
-    FileInfo info = new(files[idx]);
-    Interlocked.Add(ref totalSize, info.Length); // [!code highlight] 
+    Interlocked.Add(ref totalSize, new FileInfo(files[idx]).Length); // [!code highlight] 
 });
 
 Console.WriteLine(totalSize);
@@ -33,13 +32,12 @@ Console.WriteLine(totalSize);
 ## ForEach
 
 ```cs
-string[] files = Directory.GetFiles(@"~/projects/", "*", SearchOption.AllDirectories);
+string[] files = Directory.GetFiles(@"C:/Users/User/Projects/nix-config", "*", SearchOption.AllDirectories);
 
 long totalSize = 0;
 
 Parallel.ForEach(files, f => {
-    FileInfo info = new(f);
-    Interlocked.Add(ref totalSize, info.Length); // [!code highlight] 
+    Interlocked.Add(ref totalSize, new FileInfo(f).Length); // [!code highlight] 
 });
 
 Console.WriteLine(totalSize);
@@ -52,7 +50,7 @@ Console.WriteLine(totalSize);
 ```cs
 int[] numbers = [.. Enumerable.Range(1, 10)];
 
-Parallel.ForEach(Range(1,numbers.Length , 2), idx => {
+Parallel.ForEach(Range(1, numbers.Length, 2), idx => {
     _ = numbers[idx]; // [!code highlight] 
 });
 
@@ -117,10 +115,10 @@ dotnet run | sls \b123\b
 ```
 
 > [!NOTE]
-> `ShouldExitCurrentIteration` would be true after `Stop()` or `Break()` or any exception was thrown.
+> `state.ShouldExitCurrentIteration` would be true after `state.Stop()` or `state.Break()` or any exception was thrown.
 
 > [!TIP]
-> Additionally you could use `IsStopped` and `IsExceptional` to coordinate in other running iterations when `Stop()` was called or any exception was thrown from any iteration.
+> Additionally you could use `state.IsStopped` and `state.IsExceptional` to coordinate in other running iterations when `state.Stop()` was called or any exception was thrown from any iteration.
 
 ## Exception Handling
 
@@ -134,11 +132,11 @@ try {
         Console.WriteLine(n);
 
         if (int.IsOddInteger(n))
-            throw new Exception(); // multiple thread would throw this
+            throw new Exception(); // multiple threads would throw this // [!code highlight] 
     });
 } catch (AggregateException ex) {
     ex.Handle(iex => {
-        Console.WriteLine(iex.Message); // write this for multiple times for thrown from multiple threads
+        Console.WriteLine(iex.Message); // write this for multiple times for thrown from multiple threads // [!code highlight] 
         return true;
     });
 }
@@ -174,29 +172,29 @@ try {
         _ => { // [!code highlight] 
             while (true) // [!code highlight] 
                 cts.Token.ThrowIfCancellationRequested(); // [!code highlight] 
-        }
-    ); // [!code highlight] 
+        } // [!code highlight] 
+    );
 } catch (AggregateException ex) {
     ex.Handle(iex => {
-        if (iex is OperationCanceledException) {
-            // not reachable 
-            Console.WriteLine($"{nameof(OperationCanceledException)} was caught by {nameof(AggregateException)}");
-            return true;
-        }
+        if (iex is OperationCanceledException) { // [!code warning] 
+            // not reachable because the cancellation would succeeded anyway // [!code warning] 
+            Console.WriteLine($"{nameof(OperationCanceledException)} was caught by {nameof(AggregateException)}"); // [!code warning] 
+            return true; // [!code warning] 
+        } // [!code warning] 
         return false;
     });
-} catch (OperationCanceledException) { // [!code highlight] 
+} catch (OperationCanceledException) {
     // would hit here since cancellation should be succeeded // [!code highlight] 
     Console.WriteLine($"{nameof(OperationCanceledException)} was propagated directly"); // [!code highlight] 
-} // [!code highlight] 
+}
 ```
 
 ## Performance Enhancement
 
 ### Thread-Local Storage
 
-If one could calculate partially on **each worker thread**(the thread manages a batch of iterations), and finally add up all partial results to the target variable, it could be much more efficient than contenting one single variable from threads.
-Such approach is call **Thread-Local Storage**, a dedicated storage target for each worker thread.
+If one could calculate partially on **each worker thread**(the thread manages a batch of iterations), and finally add up all partial results to the target variable, it could be much more efficient than contenting one single variable from each iteration.
+Such approach is called **Thread-Local Storage**, a dedicated storage target for each worker thread.
 The design is pretty similar to `Enumerable.Aggregate` that folds calculation base on a given initial value on each iteration.
 
 ```cs
@@ -221,7 +219,7 @@ Console.WriteLine(size);
 ### Partitioning
 
 Partitioning is a trade-off solution when **invoking callback delegates in parallel loop is way too expensive** and **the operation within the delegate body is relatively fast enough**.
-So one can partition items from source with specified count into **ranges** and process each range **within a same thread**(because each operation is fast enough), so this reduces the cost of involing delegate callback by reducing the thread count started by the loop.
+So one can partition items from source with specified count into **ranges** and process each range **within a same thread**(because each operation is fast enough), so this reduces the cost of invoking delegate callback by reducing the thread count started by the loop.
 
 > [!NOTE]
 >`Partitioner` requires collections **with indexer** to work with, it's the only way to represent a range.
@@ -230,7 +228,7 @@ So one can partition items from source with specified count into **ranges** and 
 // calculating sum of a large array is a good example for partitioning
 // for it has simple operation on adding up
 // and to avoid callback on each iteration
-// optionally you could avoid resource contention by Thread-Local storage
+// optionally you could reduce resource contention by Thread-Local storage
 
 int[] source = Enumerable.Range(1, 1000 * 1000).ToArray();
 
@@ -243,9 +241,10 @@ Parallel.ForEach(
     () => 0L,
     (range, _, sum) => {
         var (start, end) = range; // unpack the tuple // [!code highlight] 
-        for (int i = start; i < end; i++) {
-            sum = checked(sum + source[i]);
-        }
+
+        for (int i = start; i < end; i++) // synchronous loop on range instead
+            sum = checked(sum + source[i]); // a fairly simple operation  // [!code highlight] 
+
         return sum;
     },
     sum => Interlocked.Add(ref sumOfArray, sum)
@@ -253,15 +252,15 @@ Parallel.ForEach(
 
 Console.WriteLine(sumOfArray);
 
-// you can direct sum this using linq // [!code error] 
-// because it returns int which might overflow for such a large // [!code error] 
+// you can't directly sum this using linq // [!code error] 
+// because it returns int which might overflow for such a large collection // [!code error] 
 Console.WriteLine(source.Sum() is int);  // System.OverflowException // [!code error] 
 ```
 
 ## Invoke
 
 `Parallel.Invoke` is not really a loop, but I can't find a appropriate place to introduce it.
-It simply run multiple actions in a parallel manner as an blocking operation, no async counterpart exist.
+It simply run multiple actions in a parallel manner as an blocking operation, no async counterpart exists.
 
 ```cs
 // blocking operation
@@ -270,5 +269,11 @@ Parallel.Invoke(
     () => Console.WriteLine(2),
     () => Console.WriteLine(3),
     () => Console.WriteLine(4)
-); //  order is not guaranteed
+); 
+
+// order is not guaranteed
+// 1
+// 3
+// 2
+// 4
 ```
