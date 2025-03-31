@@ -22,7 +22,7 @@ local text = '<tag>content</tag>'
 
 -- find range of first occurrence
 -- and its captured groups, kind of useless though
-local start, tail, tag, content = text:find('abc<(%w+)>(%w+)</%w+>')
+local start, tail, tag, content = text:find('<(%w+)>(%w+)</%w+>')
 ```
 
 ### Replace

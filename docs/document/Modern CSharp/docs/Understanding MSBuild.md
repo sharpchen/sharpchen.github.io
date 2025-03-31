@@ -5,7 +5,7 @@
 - `.*proj`: project identifier file for each project
 - `.props`: shared config to be imported at the beginning of the project file
 - `.targets`: shared config to be imported at the end of the project file
-- `*.rsp`: [msbuild response file](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-response-files?view=vs-2022), default options for msbuild cli so you don't have to repeat them on each build
+- `.rsp`: [msbuild response file](https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-response-files?view=vs-2022), default options for msbuild cli so you don't have to repeat them on each build
 
 ## File Structure
 

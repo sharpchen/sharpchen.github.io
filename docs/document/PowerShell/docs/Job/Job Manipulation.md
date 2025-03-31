@@ -32,7 +32,7 @@ $job.ChildJobs
 - `-ChildJobState`: filter by child job state
 - `-Command`: get all jobs that executes a command satisfies the pattern in literal.
     ```ps1
-    gkb -Command 'gps *'
+    gjb -Command 'gps *'
     ```
 - `-State`: get all jobs with specific state.
     ```ps1
