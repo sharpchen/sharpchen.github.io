@@ -18,9 +18,9 @@ const vitepressConfig = defineConfig({
     lineNumbers: true,
     theme: {
       light: await themeService.getTheme('Eva Light'),
-      dark: await themeService.getTheme('Eva Dark'),
+      // dark: await themeService.getTheme('Eva Dark'),
       // light: await themeService.getTheme('JetBrains Rider New UI theme - Light'),
-      // dark: await themeService.getTheme('JetBrains Rider New UI theme - Dark'),
+      dark: await themeService.getTheme('JetBrains Rider New UI theme - Dark'),
     },
     codeTransformers: [transformerTwoslash()],
   },
