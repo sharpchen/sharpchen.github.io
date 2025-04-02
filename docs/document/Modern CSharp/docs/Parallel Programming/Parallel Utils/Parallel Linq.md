@@ -28,6 +28,16 @@ public class ParallelQuery<TSource> : ParallelQuery, IEnumerable<TSource> { /* .
 - `ParallelEnumerable.AsEnumerable()` is a common extension on `IEnumerable<T>`, however `ParallelEnumerable.AsEnumerable` exists to unwrap the backing enumerable when working with `ParallelQuery<T>`
     - identical to `ParallelEnumerable.AsSequential()`
 
+```cs
+_ = Enumerable.Range(1, 100)
+   .AsParallel()
+   .Select(x => x)  // ParallelEnumerable.Select // [!code highlight] 
+   .AsEnumerable()
+   .Select(x => x) // Enumerable.Select // [!code highlight] 
+   .AsSequential()
+   .Select(x => x) // Enumerable.Select // [!code highlight] 
+```
+
 > [!NOTE]
 > They're all deferred execution
 
@@ -154,6 +164,7 @@ foreach (var _ in query) {
 // ...
 // consumed
 ```
+:::
 
 ## Performance Enhancement
 

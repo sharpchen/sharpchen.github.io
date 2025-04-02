@@ -29,7 +29,7 @@ export const documentMap = {
   'Entity Framework Core': { icon: '🗿', description: '' },
   'HTML & CSS': { icon: '😬', description: '' },
   PowerShell: { icon: '🐚', description: '' },
-  Lua: { icon: '🌝' },
+  Lua: { icon: '🌝', description: '' },
 } as const satisfies DocumentInfo;
 
 export type DocumentName = keyof typeof documentMap;
