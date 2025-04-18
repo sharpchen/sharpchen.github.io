@@ -33,7 +33,7 @@ local start, tail, tag, content = text:find('<(%w+)>(%w+)</%w+>')
     - `pattern: string | number`: pattern to replace
     - `repl: string | number | function | table`
         - `string`: may use `%n` to reference capture groups by index `n` to transform from groups
-        - `fun(match: string): string`: to replace the occurrence by tranformed string from the match(`match` parameter is just the first match)
+        - `fun(...matches: string): string`: to replace the occurrence by tranformed string from the match
         - `table<string, string>`: a finite pairs for match(key) and replacement(value)
     - `n?: int`: max count of substitutions could be made
 
@@ -62,6 +62,24 @@ local sub, count = text:gsub('%l+', {
 }) -- python_case_is_awful, 4
 -- because the table were tried anyway and got nil when key is not registered
 ```
+
+#### Matches on Callback
+
+One can access one or more captured groups in callback function of `string.gsub`
+
+```lua
+local foo = 'abc efg'
+local p = '(%w+) (%w+)'
+
+_, _ = foo:gsub(p, function(match1, match2) -- arbitrary count of matches
+  print(match1) -- abc
+  print(match2) -- efg
+  return 'foo'
+end)
+```
+
+> [!CAUTION]
+> Do not include `^` in any capture group, it stops matching.
 
 ### Get Captured Groups
 

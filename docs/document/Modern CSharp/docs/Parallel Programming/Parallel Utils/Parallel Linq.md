@@ -112,7 +112,7 @@ try {
 
 Parallel iterations were scheduled as groups, so buffering is enabled by default and the size of group is dependent on the system.
 
-- `ParallelMergeOptions.AutoBuffered`
+- `ParallelMergeOptions.AutoBuffered`: the default option, buffering made by internal design
 - `ParallelMergeOptions.Default`: alias to `AutoBuffered`
 - `ParallelMergeOptions.FullyBuffered`: source not available until all iteration were finished
 - `ParallelMergeOptions.NotBuffered`: yield item immediately whenever available
