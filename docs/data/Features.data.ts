@@ -5,14 +5,20 @@ const featuresItems: Feature[] = Enumerable.from(await featureService.getFeature
   .orderBy(_x => Math.random())
   .toArray();
 const articleFeature: Feature[] = await featureService.getArticleFeature();
+const readingFeature: Feature[] = await featureService.getReadingFeatures();
 const loader = {
-  load: (): FeatureCompose => ({ features: featuresItems, articleFeature: articleFeature }),
+  load: (): FeatureCompose => ({
+    features: featuresItems,
+    articleFeature: articleFeature,
+    readingFeature: readingFeature,
+  }),
 };
 
 export default loader;
 type FeatureCompose = {
   features: Feature[];
   articleFeature: Feature[];
+  readingFeature: Feature[];
 };
 
 export declare const data: FeatureCompose;

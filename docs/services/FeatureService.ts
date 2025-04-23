@@ -12,7 +12,7 @@ class FeatureService implements IFeatureService {
     return matter.stringify('', { features: this.getArticleFeature() });
   }
   async getArticleFeature(): Promise<Feature[]> {
-    const info = documentService.documentInfo['Articles' as DocumentName];
+    const info = documentService.skillDocInfo['Articles' as DocumentName];
     return [
       {
         title: 'Articles' as DocumentName,
@@ -22,16 +22,30 @@ class FeatureService implements IFeatureService {
       },
     ];
   }
+  async getReadingFeatures(): Promise<Feature[]> {
+    return await Promise.all(
+      Object.keys(documentService.readingDocInfo).map(async key => {
+        const info = documentService.readingDocInfo[key];
+        return {
+          title: documentService.tryGetFormulaNameOfDocument(key as DocumentName),
+          details: info.description,
+          icon: { src: await emojiService.getIconUrl(info.icon) },
+          link: documentService.tryGetIndexLinkOfDocument(key as DocumentName),
+          linkText: this.linkText,
+        };
+      }),
+    );
+  }
   async getFeatures(): Promise<Feature[]> {
     return await Promise.all(
-      Object.keys(documentService.documentInfo)
+      Object.keys(documentService.skillDocInfo)
         .filter(key => key !== ('Articles' as DocumentName))
         .map(async key => {
-          const documentInfo = documentService.documentInfo[key];
+          const info = documentService.skillDocInfo[key];
           return {
             title: documentService.tryGetFormulaNameOfDocument(key as DocumentName),
-            details: documentInfo.description,
-            icon: { src: await emojiService.getIconUrl(documentInfo.icon) },
+            details: info.description,
+            icon: { src: await emojiService.getIconUrl(info.icon) },
             link: documentService.tryGetIndexLinkOfDocument(key as DocumentName),
             linkText: this.linkText,
           };

@@ -5,4 +5,5 @@ export interface IFeatureService {
   getArticleFeatureAsYaml(): string;
   getFeatures(): Promise<Feature[]>;
   getArticleFeature(): Promise<Feature[]>;
+  getReadingFeatures(): Promise<Feature[]>;
 }

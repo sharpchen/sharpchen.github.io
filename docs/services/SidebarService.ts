@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import path from 'node:path';
 import type { DefaultTheme } from 'vitepress';
 import { type DirectoryInfo, type FileInfo, Path, documentRoot } from '../shared/FileSystem';
-import { type DocumentName, documentMap, documentService } from './DocumentService';
+import { type DocumentName, skillDocMap, documentService } from './DocumentService';
 import type { IDocumentService } from './IDocumentService';
 import type { ISidebarService } from './ISidebarService';
 const solveSharpSign = (text: string) => {
@@ -15,7 +15,7 @@ class SidebarService implements ISidebarService {
   readonly documentService: IDocumentService = documentService;
   getMultipleSidebar(): DefaultTheme.SidebarMulti {
     const sidebar: DefaultTheme.SidebarMulti = {};
-    for (const name of Object.keys(documentMap)) {
+    for (const name of Object.keys(skillDocMap)) {
       sidebar[`${this.base}/${name}/docs/`] = this.getSidebarOfDocument(name as DocumentName);
     }
     return sidebar;

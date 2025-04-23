@@ -1,12 +1,12 @@
 // import { DocumentName, documentMap } from '../services/IDocumentService';
 import fg from 'fast-glob';
 import Enumerable from 'linq';
-import * as File from '../shared/FileSystem';
+import * as FileSystem from '../shared/FileSystem';
 import type { IDocumentService } from './IDocumentService';
 
 export type DocumentInfo = Record<string, { icon: string; description: string }>;
 
-export const documentMap = {
+export const skillDocMap = {
   'Csharp Design Patterns': { icon: '👾', description: 'Design Patterns in C#' },
   'Modern CSharp': { icon: '🦖', description: '' },
   Articles: { icon: '📰', description: 'Regular articles' },
@@ -32,13 +32,45 @@ export const documentMap = {
   Lua: { icon: '🌝', description: '' },
 } as const satisfies DocumentInfo;
 
-export type DocumentName = keyof typeof documentMap;
+const readingDocMap = {} as const satisfies DocumentInfo;
 
-export type DocumentIcon = (typeof documentMap)[DocumentName]['icon'];
+export type DocumentName = keyof typeof skillDocMap | keyof typeof readingDocMap;
 
-export type DocumentDescription = (typeof documentMap)[DocumentName]['description'];
+export type DocumentIcon =
+  | (typeof skillDocMap)[keyof typeof skillDocMap]['icon']
+  | (typeof readingDocMap)[keyof typeof readingDocMap]['icon'];
 
 class DocumentService implements IDocumentService {
+  readonly skillDocInfo: DocumentInfo = skillDocMap;
+  readonly readingDocInfo: DocumentInfo = readingDocMap;
+
+  get skillDocParent(): FileSystem.DirectoryInfo {
+    const doc = FileSystem.projectRoot()
+      .getDirectories()
+      .find(x => x.name === 'document');
+    const ret = doc.getDirectories().find(x => x.name === 'Skill');
+    if (!ret) throw new Error('Skill Document source not found.');
+    return ret;
+  }
+
+  get readingDocParent(): FileSystem.DirectoryInfo {
+    const doc = FileSystem.projectRoot()
+      .getDirectories()
+      .find(x => x.name === 'document');
+    const ret = doc.getDirectories().find(x => x.name === 'Reading');
+    if (!ret) throw new Error('Reading Document source not found.');
+    return ret;
+  }
+
+  get articleDocParent(): FileSystem.DirectoryInfo {
+    const doc = FileSystem.projectRoot()
+      .getDirectories()
+      .find(x => x.name === 'document');
+    const ret = doc.getDirectories().find(x => x.name === 'Articles');
+    if (!ret) throw new Error('Articles Document source not found.');
+    return ret;
+  }
+
   isEmptyDocument(name: DocumentName): boolean {
     try {
       const entry = this.getMarkdownEntryFolder(name);
@@ -47,78 +79,75 @@ class DocumentService implements IDocumentService {
       return true;
     }
   }
-  readonly documentInfo: DocumentInfo = documentMap;
-  getDocumentEntryFolder(name: DocumentName): File.DirectoryInfo {
+
+  getDocumentEntryFolder(name: DocumentName): FileSystem.DirectoryInfo {
+    if (name === 'Articles') {
+      return this.articleDocParent;
+    }
     const ret = this.registeredDocumentFolders().find(x => x.name === name);
     if (!ret) throw new Error(`Document entry of "${name}" not found.`);
     return ret;
   }
-  registeredDocumentFolders(): File.DirectoryInfo[] {
-    return this.documentSrc.getDirectories().filter(x => Object.keys(documentMap).includes(x.name));
+
+  registeredDocumentFolders(): FileSystem.DirectoryInfo[] {
+    return this.skillDocParent
+      .getDirectories()
+      .filter(x => Object.keys(skillDocMap).includes(x.name));
   }
-  physicalDocumentFolders(): File.DirectoryInfo[] {
-    return this.documentSrc.getDirectories();
-  }
-  getMarkdownEntryFolder(name: DocumentName): File.DirectoryInfo {
+
+  getMarkdownEntryFolder(name: DocumentName): FileSystem.DirectoryInfo {
     const ret = this.getDocumentEntryFolder(name)
       .getDirectories()
       .find(x => x.name === 'docs');
     if (!ret) throw new Error(`Markdown entry of "${name}" not found.`);
     return ret;
   }
-  registeredCount(): number {
-    return Object.keys(documentMap).length;
-  }
-  physicalCount(): number {
-    return this.documentSrc.getDirectories().length;
-  }
-  physicalCountBy(f: (x: File.DirectoryInfo) => boolean): number {
-    return this.documentSrc.getDirectories().filter(x => f(x)).length;
-  }
+
   tryGetIndexLinkOfDocument(name: DocumentName): string {
     if (this.isEmptyDocument(name)) return '/';
+
     const solveSharpSign = (link: string) => {
       if (link.includes('Csharp')) return link.replace('#', 'Csharp');
       return link.replace('#', 'Sharp');
     };
+
     const shouldSolveSharpSign = (name: DocumentName) => name.includes('#');
     const markdownEntry = this.getMarkdownEntryFolder(name);
-    let linkContext = `${this.documentSrc.name}/${name}/`;
+    let linkContext = `${this.skillDocParent.name}/${name}/`;
+
     if (markdownEntry.getFiles().length) {
       const file = Enumerable.from(markdownEntry.getFiles())
         .orderBy(x => x.name)
         .first();
-      const link = `${linkContext}/docs/${File.Path.GetFileNameWithoutExtension(file?.name!)}`;
+      const link = `${linkContext}/docs/${FileSystem.Path.GetFileNameWithoutExtension(file?.name!)}`;
       return shouldSolveSharpSign(name) ? solveSharpSign(link) : link;
     }
+
     const { firstFolder, depth } = this.tryGetFirstChapterFolderOfDocument(name);
     const file = firstFolder?.getFiles()[0];
+
     for (let i = depth - 1; i > 0; i--) {
       linkContext += `${file?.directory.up(i)?.name}/`;
     }
-    const link = `${linkContext}${firstFolder?.name}/${File.Path.GetFileNameWithoutExtension(
+
+    const link = `${linkContext}${firstFolder?.name}/${FileSystem.Path.GetFileNameWithoutExtension(
       file?.name!,
     )}`;
+
     return shouldSolveSharpSign(name) ? solveSharpSign(link) : link;
   }
-  get documentSrc(): File.DirectoryInfo {
-    const ret = File.projectRoot()
-      .getDirectories()
-      .find(x => x.name === 'document');
-    if (!ret) throw new Error('Document source not found.');
-    return ret;
-  }
+
   tryGetFirstChapterFolderOfDocument(name: DocumentName): {
-    firstFolder: File.DirectoryInfo;
+    firstFolder: FileSystem.DirectoryInfo;
     depth: number;
   } {
     const markdownEntry = this.getMarkdownEntryFolder(name);
     return getFirst(markdownEntry);
 
     function getFirst(
-      current: File.DirectoryInfo,
+      current: FileSystem.DirectoryInfo,
       depth: number = 1,
-    ): { firstFolder: File.DirectoryInfo; depth: number } {
+    ): { firstFolder: FileSystem.DirectoryInfo; depth: number } {
       const nextLevelsSorted = Enumerable.from(
         current
           .getDirectories()
@@ -130,25 +159,11 @@ class DocumentService implements IDocumentService {
       return getFirst(nextLevelsSorted.first(), depth + 1);
     }
   }
+
   tryGetFormulaNameOfDocument(name: DocumentName): string {
     if (name.includes('Csharp')) return name.replace('Csharp', 'C#');
     if (name.includes('Sharp')) return name.replace('Sharp', '#');
     return name;
-  }
-}
-
-class Paginater<T> {
-  private page: number = 1;
-  private range: { start: number; end: number };
-  constructor(
-    private readonly items: T[],
-    private readonly count: number,
-  ) {}
-  nextPage(): T[] {
-    // learn to debug
-    this.range.start = (this.page - 1) * this.count;
-    this.range.end = this.range.start + this.count;
-    return this.items.slice(this.range.start, this.range.end);
   }
 }
 

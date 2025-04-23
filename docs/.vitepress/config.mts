@@ -38,13 +38,20 @@ const vitepressConfig = defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       {
-        text: 'Documents',
-        items: Object.keys(documentService.documentInfo)
+        text: 'Skill',
+        items: Object.keys(documentService.skillDocInfo)
           .filter((x): x is DocumentName => x !== 'Articles')
           .map(key => ({
-            text: `${documentService.documentInfo[key].icon} ${key}`,
+            text: `${documentService.skillDocInfo[key].icon} ${key}`,
             link: documentService.tryGetIndexLinkOfDocument(key),
           })),
+      },
+      {
+        text: 'Reading',
+        items: Object.keys(documentService.readingDocInfo).map(key => ({
+          text: `${documentService.readingDocInfo[key].icon} ${key}`,
+          link: documentService.tryGetIndexLinkOfDocument(key as DocumentName),
+        })),
       },
       {
         text: 'Articles',
@@ -76,10 +83,12 @@ const vitepressConfig = defineConfig({
     },
   },
 });
+
 type MermaidPluginConfig = {
   mermaid: MermaidConfig;
   mermaidPlugin: {
     class: '';
   };
 };
+
 export default withMermaid({ ...({} as MermaidPluginConfig), ...vitepressConfig });
