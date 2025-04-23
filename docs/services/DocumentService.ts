@@ -11,11 +11,11 @@ export const skillDocMap = {
   'Modern CSharp': { icon: '🦖', description: '' },
   Articles: { icon: '📰', description: 'Regular articles' },
   Avalonia: { icon: '😱', description: 'AvaloniaUI' },
-  Docker: { icon: '🐳', description: 'Ultimate Docker' },
+  Docker: { icon: '🐳', description: '' },
   Git: { icon: '😸', description: 'Git mastery' },
-  JavaScript: { icon: '😅', description: '' },
+  JavaScript: { icon: '😅', description: 'Not funny' },
   // SQL: { icon: '🦭', description: '' },
-  TypeScript: { icon: '🤯', description: '' },
+  TypeScript: { icon: '🤯', description: 'Type wizard I will become...' },
   // VBA: { icon: '💩', description: 'VBA for excel' },
   // Vue3: { icon: '⚡', description: '' },
   'Unsafe CSharp': { icon: '😎', description: 'Entering the danger zone...' },
@@ -24,15 +24,17 @@ export const skillDocMap = {
   //   description: 'Make your own nvim color scheme using lua.',
   // },
   Bash: { icon: '🐢', description: 'Shebang!' },
-  'Regular Expression': { icon: '🐫', description: 'Memory lossss for every 6 months' },
+  'Regular Expression': { icon: '🐫', description: "Can't remember it for 2 days" },
   Nix: { icon: '❄', description: 'Reproduce freedom' },
   'Entity Framework Core': { icon: '🗿', description: '' },
   'HTML & CSS': { icon: '😬', description: '' },
-  PowerShell: { icon: '🐚', description: '' },
-  Lua: { icon: '🌝', description: '' },
+  PowerShell: { icon: '🐚', description: 'A pretty solid shell' },
+  Lua: { icon: '🌝', description: 'I wish lua could have JavaScript syntax' },
 } as const satisfies DocumentInfo;
 
-const readingDocMap = {} as const satisfies DocumentInfo;
+const readingDocMap = {
+  Test: { icon: '🚗', description: 'this is a test' },
+} as const satisfies DocumentInfo;
 
 export type DocumentName = keyof typeof skillDocMap | keyof typeof readingDocMap;
 
@@ -80,21 +82,32 @@ class DocumentService implements IDocumentService {
     }
   }
 
+  /**
+   * @param name - nameof document
+   * @returns the very parent folder of the document
+   */
   getDocumentEntryFolder(name: DocumentName): FileSystem.DirectoryInfo {
     if (name === 'Articles') {
       return this.articleDocParent;
     }
-    const ret = this.registeredDocumentFolders().find(x => x.name === name);
+
+    let src: FileSystem.DirectoryInfo;
+
+    if (Object.keys(skillDocMap).includes(name)) {
+      src = this.skillDocParent;
+    } else if (Object.keys(readingDocMap).includes(name)) {
+      src = this.readingDocParent;
+    }
+
+    const ret = src.getDirectories().find(x => x.name === name);
     if (!ret) throw new Error(`Document entry of "${name}" not found.`);
     return ret;
   }
 
-  registeredDocumentFolders(): FileSystem.DirectoryInfo[] {
-    return this.skillDocParent
-      .getDirectories()
-      .filter(x => Object.keys(skillDocMap).includes(x.name));
-  }
-
+  /**
+   * @param name - nameof the document
+   * @returns docs folder of the document
+   */
   getMarkdownEntryFolder(name: DocumentName): FileSystem.DirectoryInfo {
     const ret = this.getDocumentEntryFolder(name)
       .getDirectories()
@@ -103,6 +116,11 @@ class DocumentService implements IDocumentService {
     return ret;
   }
 
+  /**
+   * find a entry file location for given document name
+   * @param name - nameof document
+   * @returns relative path to the document file
+   */
   tryGetIndexLinkOfDocument(name: DocumentName): string {
     if (this.isEmptyDocument(name)) return '/';
 
@@ -112,8 +130,15 @@ class DocumentService implements IDocumentService {
     };
 
     const shouldSolveSharpSign = (name: DocumentName) => name.includes('#');
+
+    let src: FileSystem.DirectoryInfo;
+    if (Object.keys(skillDocMap).includes(name)) {
+      src = this.skillDocParent;
+    } else if (Object.keys(readingDocMap).includes(name)) {
+      src = this.readingDocParent;
+    }
     const markdownEntry = this.getMarkdownEntryFolder(name);
-    let linkContext = `${this.skillDocParent.name}/${name}/`;
+    let linkContext = `document/${src.name}/${name}/`;
 
     if (markdownEntry.getFiles().length) {
       const file = Enumerable.from(markdownEntry.getFiles())
