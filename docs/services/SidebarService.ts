@@ -12,15 +12,25 @@ const solveSharpSign = (text: string) => {
 };
 
 class SidebarService implements ISidebarService {
-  private readonly base: string = `/${documentRoot().name}`;
+  private getBase(name: DocumentName): string {
+    if (documentService.skillDocInfo.hasOwnProperty(name) && name !== 'Articles') {
+      return `/${documentRoot().name}/Skill`;
+    }
+    if (documentService.readingDocInfo.hasOwnProperty(name)) {
+      return `/${documentRoot().name}/Reading`;
+    }
+    return `/${documentRoot().name}`;
+  }
   readonly documentService: IDocumentService = documentService;
   getMultipleSidebar(): DefaultTheme.SidebarMulti {
     const sidebar: DefaultTheme.SidebarMulti = {};
     for (const name of Object.keys(documentService.skillDocInfo)) {
-      sidebar[`${this.base}/Skill/${name}/docs/`] = this.getSidebarOfDocument(name as DocumentName);
+      sidebar[`${this.getBase(name as DocumentName)}/${name}/docs/`] = this.getSidebarOfDocument(
+        name as DocumentName,
+      );
     }
     for (const name of Object.keys(documentService.readingDocInfo)) {
-      sidebar[`${this.base}/Reading/${name}/docs/`] = this.getSidebarOfDocument(
+      sidebar[`${this.getBase(name as DocumentName)}/${name}/docs/`] = this.getSidebarOfDocument(
         name as DocumentName,
       );
     }
@@ -33,10 +43,11 @@ class SidebarService implements ISidebarService {
         text: solveSharpSign(name),
         items:
           name === 'Articles'
-            ? this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`).sort(
-                (a, b) => gitTrackedDate(a.link!) - gitTrackedDate(b.link!),
-              )
-            : this.transformFolderToSidebarItem(markdownEntry, `${this.base}/${name}`),
+            ? this.transformFolderToSidebarItem(
+                markdownEntry,
+                `${this.getBase(name)}/${name}`,
+              ).sort((a, b) => gitTrackedDate(a.link!) - gitTrackedDate(b.link!))
+            : this.transformFolderToSidebarItem(markdownEntry, `${this.getBase(name)}/${name}`),
       },
     ];
     function gitTrackedDate(file: string): number {

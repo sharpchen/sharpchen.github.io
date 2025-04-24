@@ -47,27 +47,21 @@ class DocumentService implements IDocumentService {
   readonly readingDocInfo: DocumentInfo = readingDocMap;
 
   get skillDocParent(): FileSystem.DirectoryInfo {
-    const doc = FileSystem.projectRoot()
-      .getDirectories()
-      .find(x => x.name === 'document');
+    const doc = FileSystem.documentRoot();
     const ret = doc.getDirectories().find(x => x.name === 'Skill');
     if (!ret) throw new Error('Skill Document source not found.');
     return ret;
   }
 
   get readingDocParent(): FileSystem.DirectoryInfo {
-    const doc = FileSystem.projectRoot()
-      .getDirectories()
-      .find(x => x.name === 'document');
+    const doc = FileSystem.documentRoot();
     const ret = doc.getDirectories().find(x => x.name === 'Reading');
     if (!ret) throw new Error('Reading Document source not found.');
     return ret;
   }
 
   get articleDocParent(): FileSystem.DirectoryInfo {
-    const doc = FileSystem.projectRoot()
-      .getDirectories()
-      .find(x => x.name === 'document');
+    const doc = FileSystem.documentRoot();
     const ret = doc.getDirectories().find(x => x.name === 'Articles');
     if (!ret) throw new Error('Articles Document source not found.');
     return ret;
@@ -93,9 +87,9 @@ class DocumentService implements IDocumentService {
 
     let src: FileSystem.DirectoryInfo;
 
-    if (Object.keys(skillDocMap).includes(name)) {
+    if (Object.prototype.hasOwnProperty.call(skillDocMap, name)) {
       src = this.skillDocParent;
-    } else if (Object.keys(readingDocMap).includes(name)) {
+    } else if (Object.prototype.hasOwnProperty.call(readingDocMap, name)) {
       src = this.readingDocParent;
     }
 
@@ -132,14 +126,18 @@ class DocumentService implements IDocumentService {
     const shouldSolveSharpSign = (name: DocumentName) => name.includes('#');
 
     let src: FileSystem.DirectoryInfo;
-    if (Object.keys(skillDocMap).includes(name)) {
+    if (name === 'Articles') src = this.articleDocParent;
+    else if (Object.prototype.hasOwnProperty.call(skillDocMap, name)) {
       src = this.skillDocParent;
-    } else if (Object.keys(readingDocMap).includes(name)) {
+    } else if (Object.prototype.hasOwnProperty.call(readingDocMap, name)) {
       src = this.readingDocParent;
     }
-    const markdownEntry = this.getMarkdownEntryFolder(name);
-    let linkContext = `document/${src.name}/${name}/`;
 
+    const markdownEntry = this.getMarkdownEntryFolder(name);
+    let linkContext =
+      name === 'Articles' ? `document/${src.name}` : `document/${src.name}/${name}/`;
+
+    // any md presented at first level
     if (markdownEntry.getFiles().length) {
       const file = Enumerable.from(markdownEntry.getFiles())
         .orderBy(x => x.name)

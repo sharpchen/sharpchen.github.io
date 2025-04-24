@@ -124,5 +124,5 @@ export function projectRoot(): DirectoryInfo {
 export function documentRoot(): DirectoryInfo {
   return projectRoot()
     .getDirectories()
-    .filter(x => x.name === 'document')[0];
+    .find(x => x.name === 'document');
 }
