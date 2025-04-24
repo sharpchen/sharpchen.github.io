@@ -10,6 +10,7 @@ image:
 alt: sharpchen
 ---
 
+<VPHero name="Article" />
 <VPFeatures :features="articleFeature" />
 <VPHero name="Skill" />
 <VPFeatures :features="features" />

@@ -15,6 +15,7 @@ const loader = {
 };
 
 export default loader;
+
 type FeatureCompose = {
   features: Feature[];
   articleFeature: Feature[];
