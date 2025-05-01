@@ -5,6 +5,7 @@ import { withMermaid } from 'vitepress-plugin-mermaid';
 import { type DocumentName, documentService } from '../services/DocumentService';
 import { sidebarService } from '../services/SidebarService';
 import { themeService } from '../services/ThemeService';
+import wikilinks from 'markdown-it-wikilinks';
 type VitepressThemeType = Exclude<
   Exclude<Parameters<typeof defineConfig>[0]['markdown'], undefined>['theme'],
   undefined
@@ -23,6 +24,14 @@ const vitepressConfig = defineConfig({
       dark: await themeService.getTheme('JetBrains Rider New UI theme - Dark'),
     },
     codeTransformers: [transformerTwoslash()],
+    config: md => {
+      md.use(
+        wikilinks({
+          baseURL: '/document/', // Your base path
+          makeAllLinksAbsolute: true, // Converts [[Page]] to /Page
+        }),
+      );
+    },
   },
   locales: {
     root: {

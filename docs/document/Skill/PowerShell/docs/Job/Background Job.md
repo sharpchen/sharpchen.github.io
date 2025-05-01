@@ -24,13 +24,13 @@ A background job is a job running on another PowerShell process(sub-shell) creat
 Start-Job -ScriptBlock { foo }
 ```
 
-### Using `&` <Badge type="info" text="PowerShell 6+" />
+### Background Operator `&` <Badge type="info" text="PowerShell 6+" />
 
 Using `&` to create a background job is only equivalent to `Start-Job -ScriptBlock { ... }`
 
 ```ps1
 $job = gps pwsh &
-# equivalent to 
+# equivalent to
 $job = sajb { gps pwsh }
 ```
 
@@ -38,7 +38,7 @@ $job = sajb { gps pwsh }
 
 ```ps1
 gps pwsh &; rcjb $job -Wait
-gps pwsh & rcjb $job -Wait # ; can be elided # [!code highlight] 
+gps pwsh & rcjb $job -Wait # ; can be elided # [!code highlight]
 ```
 
 ### Passing Arguments
