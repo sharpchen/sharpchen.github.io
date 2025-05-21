@@ -305,3 +305,12 @@ $OFS = ', '
 
 > [!NOTE]
 > `$OFS` is not a builtin variable, you'll have to create it manually or pwsh uses space ` ` as the default separator.
+
+### Parameter
+
+Any value passed to parameter marked as `[string]` would be evaluated using `ToString()`
+
+```ps1
+$foo = New-TemporaryFile # type: FileInfo
+ri -Path $foo # -Path is [string], $foo would be eval to string using ToString
+```

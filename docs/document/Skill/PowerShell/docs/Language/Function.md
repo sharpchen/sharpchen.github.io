@@ -11,7 +11,6 @@ function Foo {
 ```
 
 > [!NOTE]
-> 
 > Default type of a parameter is `System.Object`.
 
 ## Implicit Parameter
@@ -41,12 +40,12 @@ function Foo {
         [string] $Foo,
         [string] $Bar
     )
-    
+
     Write-Output "$Foo $Bar"
 }
 
 Foo -Foo foo -Bar bar
-Foo foo bar # it's the same # [!code highlight] 
+Foo foo bar # it's the same # [!code highlight]
 ```
 
 Or use a explicit position argument on attribute.
@@ -54,17 +53,17 @@ Or use a explicit position argument on attribute.
 ```ps1
 function Foo {
     param (
-        [Parameter(Position = 1)] # [!code highlight] 
+        [Parameter(Position = 1)] # [!code highlight]
         [string] $Bar
-        [Parameter(Position = 0)] # [!code highlight] 
+        [Parameter(Position = 0)] # [!code highlight]
         [string] $Foo,
     )
-    
+
     Write-Output "$Foo $Bar"
 }
 
 Foo -Foo foo -Bar bar
-Foo foo bar # it's the same # [!code highlight] 
+Foo foo bar # it's the same # [!code highlight]
 ```
 
 PowerShell starts counting the position when there's a value belonging to no explicit parameter name.
@@ -122,7 +121,7 @@ function Foo {
 ```
 
 > [!NOTE]
-> For overriding default parameter outside the function, see [$PSDefaultParameterValues](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parameters_default_values?view=powershell-7.4#long-description) 
+> For overriding default parameter outside the function, see [$PSDefaultParameterValues](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parameters_default_values?view=powershell-7.4#long-description)
 
 ## Required Parameter
 
@@ -139,7 +138,7 @@ param (
 > You can omit assignment for boolean attribute parameter.
 >```ps1
 >param (
->    [Parameter(Mandatory)] # Mandatory is true now # [!code highlight] 
+>    [Parameter(Mandatory)] # Mandatory is true now # [!code highlight]
 >    [string]$RequiredName
 >)
 >```
@@ -151,16 +150,16 @@ Parameters can have aliases. It's not needed for most of time though since pwsh 
 ```ps1
 function Person {
     param (
-        [Alias('n')] # [!code highlight] 
+        [Alias('n')] # [!code highlight]
         [string]$Name,
 
-        [Alias('a', 'yearsold')] # can have multiple aliases! # [!code highlight] 
+        [Alias('a', 'yearsold')] # can have multiple aliases! # [!code highlight]
         [int]$Age
     )
     Write-Host "Name: $Name, Age: $Age"
 }
 
-Person -n "Alice" -a 30 # [!code highlight] 
+Person -n "Alice" -a 30 # [!code highlight]
 ```
 
 ## Parameter Validation
@@ -204,6 +203,68 @@ param (
     )
     ```
 
+## Parameter Auto-Conversion
+
+For flexibility, PowerShell has no strict type checking on parameter, but it handles implicit conversion on arguments.
+Any argument cannot be converted to the target type specified would cease the execution.
+
+Such auto-conversion is quite exhaustive:
+
+- string evaluation by `ToString`
+```ps1
+& { param([string]$foo) $foo.GetType().Name } -foo 123 # String
+```
+- number parsing from string such as `[int]::Parse`
+```ps1
+& { param([int]$foo) $foo.GetType().Name } -foo "123" # Int32
+```
+- boolean conversion from integer(positive is true, 0 is false)
+```ps1
+& { param([boolean]$foo) $foo } -foo 0 # False
+& { param([boolean]$foo) $foo } -foo 123 # True
+```
+- argument passed to constructor
+```ps1
+# directly passed to ctor since argument type matched with parameter type of ctor
+& { param([System.IO.FileInfo]$foo) $foo.FullName } -foo "foo" # ~/foo
+# eval 123 to string on ctor
+& { param([System.IO.FileInfo]$foo) $foo.FullName } -foo 123 # ~/123
+```
+
+## Bounded Parameters
+
+Parameters having **manually** specified value would be recorded into an dictionary `$PSBoundParameters`.
+Such key-value pairs only stores **initially specified** value of those parameters.
+
+## Closure & Currying
+
+Closure in PowerShell requires a `[scriptblock]` with `GetNewClosure` being called, you can't play it directly with a normal function.
+
+As [documentation](https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.scriptblock.getnewclosure?view=powershellsdk-7.4.0) described:
+> `GetNewClosure` returns a new scriptblock bound to a module. **Any local variables in the callers context will be copied into the module**.
+
+```ps1
+$bar = 123;
+$closure = {
+    param ($foo)
+    $bar + $foo
+}.GetNewClosure()
+
+& $closure 1 # 124
+```
+
+Now we've understand how closure work, we could implement a simple currying like so:
+
+```ps1
+function Currying {
+    param ($prev)
+    { param($final) $prev + $final }.GetNewClosure()
+}
+
+$currying = Currying -prev 1
+$result = & $currying -final 2 # 3
+```
+
 ## Pass By Reference
 
 Parameter passed by reference is implemented by a wrapper `System.Management.Automation.PSReference`.
@@ -212,14 +273,14 @@ Casting to `[ref]` generates a new wrapper containing the value.
 
 ```ps1
 function Foo {
-    param ([ref][int]$foo) # [!code highlight] 
+    param ([ref][int]$foo) # [!code highlight]
     $foo.Value = 250
     $foo.Value
 }
 
 $bar = 1
 Foo ([ref]$bar)
-$bar # 250 # [!code highlight] 
+$bar # 250 # [!code highlight]
 ```
 
 > [!NOTE]
@@ -231,9 +292,9 @@ In a simple function where there's only one series of parameters being taken, we
 But things will explode when we're dealing with a pipeline input which might bring multiple objects.
 
 The pipeline mechanism is essentially based on the `Enumerator` so if we collect all items into a new collection as parameter value, it can be a huge performance issue.
-So named blocks are essentially to defined a shared process logic for each object in the pipeline input, and other logic like initializationa and finalization.
+So named blocks are essentially to defined a shared process logic for each object in the pipeline input, and other logic like initialization and finalization.
 
-- `begin`: state initializationa for the pipeline iteration.
+- `begin`: state initialization for the pipeline iteration.
 - `process`: logic for each pipeline iteration.
 - `end`: final action for the completed pipeline iteration.
 - `clean`: a `finally` block to execute clean up no matter what happens.(PowerShell 7.3+)
@@ -255,7 +316,7 @@ function Foo {
 >        echo hello
 >    }
 >}
-># equivalent to 
+># equivalent to
 >function Foo {
 >    echo hello
 >}
@@ -286,7 +347,7 @@ A function would generally not acting a cmdlet unless it was annotated with `Cmd
 `CmdletBinding()` can have the following properties:
 
 - `DefaultParameterSetName`: pwsh will prefer this name when there's a ambiguity between syntax provided.
-- `HelpURI`: link to documenetation
+- `HelpURI`: link to documentation
 - `SupportsPaging`: implicitly adds parameters `-First`, `-Skip`, `-IncludeTotalCount`, value accessible by `$PSCmdlet.PagingParameters`
     ```ps1
     function foo {
@@ -299,14 +360,14 @@ A function would generally not acting a cmdlet unless it was annotated with `Cmd
     ```
 - `SupportsShouldProcess`: implicitly adds `-Confirm` and `-WhatIf`
 - `ConfirmImpact`: specify impact of `-Confirm`
-- `PositionalBinding`: 
+- `PositionalBinding`:
 
 <!-- TODO: complete description for ConfirmImpact and PositionalBinding -->
 
 ## Parameter Set
 
 How a same cmdlet manage different syntax for different usages? The trick is **Parameter Set**.
-Parameter Set is a classification on paramater to distinguish or limit the use of parameters from scenarios.
+Parameter Set is a classification on parameter to distinguish or limit the use of parameters from scenarios.
 
 - a parameter set must have at least one unique parameter to others to identify the set
 - a parameter can be member of multiple parameter sets.
@@ -315,7 +376,7 @@ Parameter Set is a classification on paramater to distinguish or limit the use o
 - at least one parameter in the Parameter Set is mandatory
 - only one parameter in set can accept `ValueFromPipeline`
 
-### Parameter Set Idetifier at Runtime
+### Parameter Set Identifier at Runtime
 
 `$PSCmdlet.ParameterSetName` reflects the Parameter Set been chosen when a cmdlet is executing with certain syntax.
 
@@ -339,7 +400,7 @@ Any function or cmdlet applied with `CmdletBinding()` or `Parameter()` attribute
 - WarningVariable (wv): similar to `ev`
 - ProgressAction (proga)
 - OutVariable (ov): declare **inline** and store the output to the variable. Similar to `ev`.
-    It's interesting that `-OutVariable` collects incremnentally.
+    It's interesting that `-OutVariable` collects incrementally.
     It collects new item from pipeline on each iteration.
     ```ps1
     1..5 | % { $_ } -OutVariable foo | % { "I am $foo" }
@@ -359,7 +420,7 @@ Any function or cmdlet applied with `CmdletBinding()` or `Parameter()` attribute
 
 Mitigation parameters were added when `CmdletBinding(SupportsShouldProcess)` was applied.
 
-- WhatIf (wi): shows explaination for the command without executing it.
+- WhatIf (wi): shows explanation for the command without executing it.
 - Confirm (cf): ask for confirmation when executing the command.
 
 ## Return
@@ -373,7 +434,7 @@ PowerShell allows implicit return, and multiple implicit returns.
 ```ps1
 function Sum {
     param([int]$l, [int]$r)
-    $l + $r # implicit return # [!code highlight] 
+    $l + $r # implicit return # [!code highlight]
 }
 
 # You won't need to declare an array and append it on each loop!
@@ -384,7 +445,7 @@ function Foo {
    }
 }
 
-(Foo).GetType().Name # object[] # [!code highlight] 
+(Foo).GetType().Name # object[] # [!code highlight]
 ```
 
 Explicit return is surely supported, but more like a necessity to exit inside a flow.
@@ -392,8 +453,8 @@ Explicit return is surely supported, but more like a necessity to exit inside a 
 ```ps1
 function Sum {
     param([int]$l, [int]$r)
-    return $l + $r # explicit return # [!code highlight] 
-    $r + $l # not reachable  # [!code warning] 
+    return $l + $r # explicit return # [!code highlight]
+    $r + $l # not reachable  # [!code warning]
 }
 ```
 

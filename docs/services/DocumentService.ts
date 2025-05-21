@@ -3,7 +3,6 @@ import fg from 'fast-glob';
 import Enumerable from 'linq';
 import * as FileSystem from '../shared/FileSystem';
 import type { IDocumentService } from './IDocumentService';
-import InstallLuaMd from '../document/Skill/NeoVim ColorScheme Development/docs/1. Prerequisite/1. Install lua.md';
 
 export type DocumentInfo = Record<string, { icon: string; description: string }>;
 

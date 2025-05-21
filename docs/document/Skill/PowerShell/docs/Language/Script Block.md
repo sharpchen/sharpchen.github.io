@@ -23,7 +23,11 @@ $script = [scriptblock]::Create('echo hello')
 & $script # hello
 ```
 
-## Invoke a Script Block
+> [!IMPORTANT]
+> scriptblock created in literal `{}` is always aware of current caller context(SessionState) while `[scriptblock]::Create` returns a **unbound scriptblock** which only reads the SessionState from where it was called.
+> See [this post](https://mdgrs.hashnode.dev/scriptblock-and-sessionstate-in-powershell)
+
+## Invoke Script Block
 
 ```ps1
 & { 1, 2 }

@@ -3,7 +3,7 @@
 Powershell has its own terminologies besides other shells like bash.
 It's a shell integrated with .NET, it's not a independent platform.
 
-- `cmdlet`: precompiled .NET assemblies work for PowerShell, implemented using other languages typically in `C#`.
+- `cmdlet`: pre-compiled .NET assemblies work for PowerShell, implemented using other languages typically in `C#`.
 - `function`: a command implemented using powershell language itself.
 - `application`: external executable.
 
@@ -12,6 +12,12 @@ It's a shell integrated with .NET, it's not a independent platform.
 Session is an environment state created on Powershell instance starts.
 A session is not a scope, all environment of sessions are isolated.
 The scope of the session is the top scope.
+
+### SessionState
+
+A SessionState object holds the state of a PowerShell session or a module.
+Most importantly, the SessionState manages variables, functions and cmdlets by holding a stack of Scopes.
+**`[scriptblock]` uses the SessionState object to look for variables and functions based on the scoping rule**.
 
 ## Runspace
 
