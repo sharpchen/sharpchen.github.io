@@ -16,3 +16,25 @@ end
 
 _ = cond and fn() or canbe_nil -- canbe_nil might be picked when fn() returns falsy value which is unexpected
 ```
+
+## Safe Call
+
+- `pcall(fn: function, args: ...any): boolean, ...any`
+
+```lua
+if pcall(function() error('foo') end) then
+  print('not reachable here')
+end
+```
+
+## Local Scope
+
+Use `do .. end` to create a isolated scope for certain operations.
+
+```lua
+do
+  local foo = 'foo'
+end
+
+print(foo) -- Undefined global foo -- [!code warning]
+```
