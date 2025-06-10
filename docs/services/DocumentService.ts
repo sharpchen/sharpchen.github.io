@@ -29,7 +29,7 @@ export const skillDocMap = {
   'Entity Framework Core': { icon: '🗿', description: '' },
   // 'HTML & CSS': { icon: '😬', description: '' },
   PowerShell: { icon: '🐚', description: 'A pretty solid shell' },
-  Lua: { icon: '🌝', description: 'I wish lua could have JavaScript syntax' },
+  Lua: { icon: '🌝', description: '' },
 } as const satisfies DocumentInfo;
 
 const readingDocMap = {

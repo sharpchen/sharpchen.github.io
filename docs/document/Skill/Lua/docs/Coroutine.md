@@ -23,6 +23,8 @@ Thusly, one should never use words such as *thread* or *multi-threading* when in
     - returns `boolean` indicating whether resume succeeded and `...any` returned from the resumed coroutine by `coroutine.yield`.
     - supports passing args to the wrapped function of the coroutine
 - `coroutine.wrap(fn: function): function`: wrap resumption as a capsulated function for simplicity.
+- `coroutine.running(): thread, boolean`: returns current running coroutine object, particularly used to re-access self reference of a coroutine inside the function body.
+    - `boolean` indicates the returned thread is main thread or not
 
 ## Coordination
 
@@ -137,3 +139,5 @@ nxt = consume()
 >  end
 >end
 >```
+
+
