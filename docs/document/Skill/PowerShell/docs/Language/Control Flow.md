@@ -48,7 +48,7 @@ In multiple piping, we can use trailing `|` to indicate the new line, PowerShell
 ```ps1
 gps |
   foreach CPU |
-  sort -desc 
+  sort -desc
 ```
 
 ### Leading Piper <Badge type="info" text="PowerShell 7+" />
@@ -57,7 +57,7 @@ Starting with PowerShell 7, `|` is allowed as the first non-space chacracter in 
 
 ```ps1
 gps | foreach CPU
-  | sort -desc # [!code highlight] 
+  | sort -desc # [!code highlight]
 ```
 
 ## Command Chaining
@@ -80,10 +80,10 @@ In PowerShell 7, `&&` and `||` were introduced to do the same command chaining a
 This feature is basically the same as in `C#` except a bracing `{}` is required around variable because `?` is valid as part of variable name.
 
 ```ps1
-$null.Bar() # exception raised # [!code error] 
+$null.Bar() # exception raised # [!code error]
 ${null}?.Bar() # ok
 
-$null[0] # exception raised here # [!code error] 
+$null[0] # exception raised here # [!code error]
 ${null}?[0] # ok
 
 $null ?? 'I am not null'
@@ -105,7 +105,7 @@ It has a few different patterns available:
 - Regex: matching by regex string, specifically for `string`.
 - Wildcard: matching by wildcard string, specifically for `string`.
 
-### Synopsis
+### Overview
 
 `switch` in PowerShell differs from c-like languages in:
 - condition can be a procedure(scriptblock) so you can perform more nested and complex determine
@@ -132,7 +132,7 @@ It has a few different patterns available:
     } # aha
     ```
 
-There's three options available `switch`(specifically for `string` macthing):
+There's options available for `switch`(specifically for `string` macthing):
 - `-Exact`: the default option that matches the string by literal, can be elided
 - `-Regex`: match by regex condition
 - `-Wildcard`: match by wildcard condition
@@ -151,15 +151,15 @@ $bar = switch -Exact ($foo) {
     1 { "one" }
     2 { "two" }
     3 { "three" }
-    1 { "one" }  # reachable # [!code warning] 
-    '1' { "stringified one" } # matched too! # [!code highlight] 
+    1 { "one" }  # reachable # [!code warning]
+    '1' { "stringified one" } # matched too! # [!code highlight]
 }
 
-$bar = switch ($foo) { # -Exact can be elided # [!code highlight] 
+$bar = switch ($foo) { # -Exact can be elided # [!code highlight]
     1 { "one"; break }
     2 { "two" }
     3 { "three" }
-    1 { "one" }  # not reachable  # [!code highlight] 
+    1 { "one" }  # not reachable  # [!code highlight]
     default { "ok I am the last resort" }
 }
 ```
@@ -188,7 +188,7 @@ switch -Regex -CaseSensetive ("hello") {
 
 ## Trap
 
-`trap` is been called as a statement in PowerShell worlatchedd, but this is more like a `trap` block, for it:
+`trap` is called as a statement in PowerShell, but it's more like a `trap` block
 - serve as a isolated process for handling any error raised in the script or function
 - can be defined anywhere inside the script or function
 
@@ -223,10 +223,57 @@ trap {
     break
 }
 
-ErrorHere
+ErrorHere # breaks the execution
 
-Write-Host "Not reachable here" # [!code warning] 
+Write-Host "Not reachable here" # [!code warning]
 ```
 
 > [!NOTE]
 > `continue` is also available in `trap`, the only difference is it does not write the error to error stream
+
+## Yielding
+
+## Return vs Implicit Yielding
+
+- `return`: terminates current execution, should use it only on `function`, `script` or `scriptblock` level.
+- use implicit yielding in control flow or in scriptblock in pipeline
+
+### Multiple Yielding
+
+You can yield multiple items at the same time, each item in the yielded collection would be interpreted as splattered, the interpretation happens for all `ICollection` object.
+
+```ps1
+$foo = foreach ($i in 1..4) {
+    1, 2
+    # @(1, 2)
+}
+
+$foo.Length # 8
+```
+
+## Error Handling
+
+### Protected Call
+
+Cmdlet or functions with *Common Parameters* can perform a **protected call** that can be used as condition indicating whether the operation succeeded or not, while does not terminates the execution.
+This does not involve `try..catch`, which is very similar to a value based error handling in some other languages.
+You may store the error to a specified variable(an `ArrayList`) by `-ErrorVariable` to re-throw the message later if needed.
+
+```ps1
+if (Get-Command foo -ErrorAction SilentlyContinue) {
+    # do something
+} else {
+    $Error[-1] # access latest error by automatic variable
+}
+if (Get-Command foo -ErrorAction SilentlyContinue -ErrorVariable err) {
+    # do something
+} else {
+    $err[-1] # access latest error caught
+}
+```
+
+> [!NOTE]
+> See: [Common Parameters](./Function.md#common-parameters)
+
+> [!NOTE]
+> If you're not interested in error at all, you can use `-ErrorAction Ignore` which never even register err to variable.

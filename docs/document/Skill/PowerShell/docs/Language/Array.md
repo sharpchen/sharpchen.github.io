@@ -32,11 +32,11 @@ $foo = @() # empty array
 >
 >$(1,2,3).Length # 3 this has different semantic but with same result
 >
->(,(1,2,3)).Length # 3 # does spread items # [!code highlight] 
+>(,(1,2,3)).Length # 3 # does spread items # [!code highlight]
 >
->(,@(1,2,3)).Length # 1 # does not spread items # [!code highlight] 
+>(,@(1,2,3)).Length # 1 # does not spread items # [!code highlight]
 >
->((gci), (gci ..)).Length # 2 # [!code highlight] 
+>((gci), (gci ..)).Length # 2 # [!code highlight]
 > ```
 
 ### From Expression and Statement
@@ -72,7 +72,7 @@ $foo = @{
     Age = 18
 }
 
-@($foo.GetEnumerator()).Length # 2, System.Collections.DictionaryEntry from the HashTable # [!code highlight] 
+@($foo.GetEnumerator()).Length # 2, System.Collections.DictionaryEntry from the HashTable # [!code highlight]
 ```
 
 ### From Range
@@ -80,7 +80,7 @@ $foo = @{
 Range operator can create array from integer range and character range inclusively from both sides.
 
 > [!NOTE]
-> character range was added in PowerShell 6 
+> character range was added in PowerShell 6
 
 ```ps1
 1..10 # 1 to 10 inclusively
@@ -128,7 +128,7 @@ Use `*` to repeat the array content for certain times.
 ((1,2,3) * 3).Length # 9
 ```
 
-A pratical usage of repetition is initialization with same value to the whole array.
+A practical usage of repetition is initialization with same value to the whole array.
 
 ```ps1
 @(255) * 100 # Fill up array sized 100 with 255 to all elements
@@ -165,9 +165,9 @@ Separate different ranges by `+` to generate a range union.
 (1..10)[0..2+4..5+7]
 ```
 
-## Substration
+## Subtraction
 
-To substract a collection from another collection, you can certainly use `LINQ` or use a simple pipeline.
+To subtract a collection from another collection, you can certainly use `LINQ` or use a simple pipeline.
 
 ```ps1
 @(1,2,3) | where { @(1, 2) -notcontains $_ } # 3
@@ -204,7 +204,7 @@ $arr = 1,2,3
 
 $arr -eq $null # empty array
 
-$null -eq $arr # False, the result we expected # [!code highlight] 
+$null -eq $arr # False, the result we expected # [!code highlight]
 ```
 
 > [!TIP]
@@ -247,7 +247,7 @@ Keyword operators has special functionalities on collections.
 
 ```ps1
 $a, $b, $c = 1,2,3 # $a = 1, $b = 2, $c = 3
-$a, $b = 1,2,3 # $a = 1, $b = 3 This might not be expected # [!code warning] 
+$a, $b = 1,2,3 # $a = 1, $b = 3 This might not be expected # [!code warning]
 ```
 
 > [!WARNING]
