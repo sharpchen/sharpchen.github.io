@@ -27,10 +27,10 @@ gci `
 
 > [!warning]
 > **A space is required before the backtick.**
-> **And no any chacracter is allowed after the backtick.**
+> **And no any character is allowed after the backtick.**
 
 > [!TIP]
-> Stop using backticks! They're ugly! Use hashtable splatting instead.
+> Stop using backticks! They're ugly! Use HashTable splatting instead.
 >```ps1
 >$table = @{
 >  Filter = '*.mp4';
@@ -43,7 +43,7 @@ gci `
 
 ### Trailing Piper
 
-In multiple piping, we can use trailing `|` to indicate the new line, PowerShell regconizes these lines as a whole command piping.
+In multiple piping, we can use trailing `|` to indicate the new line, PowerShell recognizes these lines as a whole command piping.
 
 ```ps1
 gps |
@@ -53,7 +53,7 @@ gps |
 
 ### Leading Piper <Badge type="info" text="PowerShell 7+" />
 
-Starting with PowerShell 7, `|` is allowed as the first non-space chacracter in a new line.
+Starting with PowerShell 7, `|` is allowed as the first non-space character in a new line.
 
 ```ps1
 gps | foreach CPU
@@ -127,16 +127,19 @@ It has a few different patterns available:
 - use `continue` to skip current enumeration
     ```ps1
     switch (1, 2) {
-        1 { continue } # I don't want to preceed with this value 1, next!
+        1 { continue } # I don't want to proceed with this value 1, next!
         2 { "aha" }
     } # aha
     ```
 
-There's options available for `switch`(specifically for `string` macthing):
+There's options available for `switch`(specifically for `string` matching):
 - `-Exact`: the default option that matches the string by literal, can be elided
 - `-Regex`: match by regex condition
 - `-Wildcard`: match by wildcard condition
 - `-CaseSensetive`: case-sensitive matching, can be combined with any of other three options
+
+> [!NOTE]
+> `-File` and `-Parallel` flag are not mentioned here because they're more specific to other topics.
 
 ### Constant Pattern
 
@@ -277,3 +280,22 @@ if (Get-Command foo -ErrorAction SilentlyContinue -ErrorVariable err) {
 
 > [!NOTE]
 > If you're not interested in error at all, you can use `-ErrorAction Ignore` which never even register err to variable.
+
+## Named/Labeled Loop
+
+Named loop allows you to break any parent level of loops including `for`, `foreach`, `while`, `do..until` and `switch`
+
+```ps1
+:fileList foreach($path in $logs) {
+    :logFile switch -Wildcard -File $path {
+        'Error*' {
+            break filelist # break the whole foreach loop labeled as fileList
+        }
+        'Warning*' {
+            break logFile # redundant label break, simply use break
+        }
+        default {
+        }
+    }
+}
+```

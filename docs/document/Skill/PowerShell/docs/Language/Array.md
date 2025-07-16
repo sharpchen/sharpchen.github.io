@@ -1,6 +1,6 @@
-# Array
+# Collection
 
-## Creation
+## Array Creation
 
 ```ps1
 $foo = 1,2,3
@@ -94,7 +94,7 @@ If the *end* is less than the *start*, the array counts down from *start* to *en
 5..-1 # 5 4 3 2 1 0 -1
 ```
 
-## Access Item
+## Item Accessor
 
 Powershell allows indexer syntax to access one or more items at a time or use `Select-Object`.
 
@@ -107,6 +107,24 @@ Powershell allows indexer syntax to access one or more items at a time or use `S
 > [!NOTE]
 > The default value of a array item is `$null`.
 > Since it's a dynamic language, there's no error raised when index is out of the range.
+
+### Singular as Collection
+
+Variables storing singular value are intrinsically collections in PowerShell, so you don't have to check on the length when an return might be singular or a collection.
+Value at index `0` is the value stored by variable itself, otherwise it returns `$null`.
+
+```ps1
+$foo = 1
+$foo[0] # 1
+$foo[1] # $null
+
+if (Get-Command foo -OutVariable exe) {
+    # Get-Command might return one or more instances,
+    # but we don't need to check on length.
+    # everything is an collection!
+    & $exe[0]
+}
+```
 
 ## Concatenation
 
