@@ -17,7 +17,7 @@ The must-know is **`[PSCustomObject]` maps to the same type as `[psobject]`, `Sy
 The only valid usage is marking one HashTable as `System.Management.Automation.PSCustomObject`. Other possible usages of `[PSCustomObject]` is bascially pointless.
 
 > [!WARNING]
-> Do not use `PSCustomObject` case-sensitive keys matters, name of extended properties are not case-sensitive, use `HashTable` instead.
+> Do not use `PSCustomObject` if case-sensitive keys matter, name of extended properties are not case-sensitive, use `HashTable` instead.
 
 ## Creation
 
@@ -25,7 +25,7 @@ PSCustomObject borrows the syntax from HashTable with a casting.
 
 ```ps1
 $john = [PSCustomObject] @{
-    Name = 'John Smith' 
+    Name = 'John Smith'
     Age = 18
 }
 ```
@@ -39,7 +39,7 @@ $table = @{
     Foo = 'foo'
 }
 
-$obj = [PSCustomObject]$table # [!code highlight] 
+$obj = [PSCustomObject]$table # [!code highlight]
 ```
 
 Or use `New-Object`, but this might be slower.
@@ -52,9 +52,28 @@ $obj = New-Object -TypeName PSObject -Property $table
 
 ```ps1
 $john = [PSCustomObject] @{
-    Name = 'John Smith' 
+    Name = 'John Smith'
     Age = 18
 }
 
 $smith = $john.psobject.Copy()
 ```
+
+## Add New Members
+
+You can't directly add new properties after declaration using dot accessor.
+One should use `Add-Member` to append new members.
+
+```ps1
+$obj | Add-Member -MemberType NoteProperty -Name PropName -Value Value
+```
+
+> [!NOTE]
+> All members of a `[pscustomobject]` should be *extended properties*, you can inspect them using `$obj.psextended`
+
+## Enumerating Properties
+
+```ps1
+$obj.psobject.properties | foreach { $_.Value = 0 }
+```
+

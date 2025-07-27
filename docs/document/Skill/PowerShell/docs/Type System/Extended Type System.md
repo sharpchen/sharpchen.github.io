@@ -14,29 +14,45 @@ There's two kinds of intrinsic members in PowerShell
 - Object views: the mapping of a certain object.
 - Property and methods: intrinsic properties and methods.
 
-All objects in PowerShell have five **object views** members:
+### Object Views
+
+Powershell distributes members to three parts for each object: *extended*, *adapted* and *base*.
 
 - `psobject`: a `MemberSet` containing reflection source of members.
-
+    - `psobject.baseobject`: a reference of the object itself.
+    - `psobject.properties`: all properties from all sources(extended, adapted and base)
+    - `psobject.members`: all members(including properties) from all sources(extended, adapted and base)
+    - `psobject.methods`: all methods from type definition(such as `.NET` type), including raw methods of properties and indexers.
     ```ps1
     $foo = 'I am foo'
     [object]::ReferenceEquals($foo, $foo.psobject.BaseObject) # True
     ```
-- `psbase`: a `MemberSet` containing members of the object being wrapped.
-
-    ```ps1
-    $foo = 'I am foo'
-    [object]::ReferenceEquals($foo.ToString, $foo.psbase.ToString) # True
-    ```
-
+- `psbase`: a `MemberSet` containing members of the **original object**.
+    - the base members are defined ahead of time such as `.NET` types.
 - `psadapted`: a `MemberSet` containing adapted members added by ETS.
+    - members appended dedicatedly for a type **by all means**.
+    ```ps1
+    $x = [System.Xml.XmlDocument]::new()
+    $x.LoadXml("<foo><bar>123</bar></foo>")
+    $x.psadapted.foo.bar # 123 # [!code highlight]
+    ```
 - `psextended`: a `MemberSet` containing extended members **added at runtime**.
+    - properties appended dynamically(conditionally) are extended property, such as `PSPath` for `[FileSystemInfo]` created from item cmdlets.
+    - properties of a `[pscustomobject]` are extended properties.
 - `pstypenames`: a `CodeProperty` equivalent to `psobject.TypeNames`. Returns a collection containing the type names of inheritance chain.
 
     ```ps1
     $foo = 'I am foo'
     [object]::ReferenceEquals($foo.psobject.TypeNames, $foo.pstypenames) # True
     ```
+
+#### Member Priority
+
+1. `psextended`
+2. `psadapted`
+3. `psbase`
+
+### Intrinsic Methods
 
 Intrinsic methods and properties are to mimic singular object and collection in a same form.
 - `Where`: a method for filtering or slicing by condition. See [Where](../Object Manipulation/3.Where.md)
