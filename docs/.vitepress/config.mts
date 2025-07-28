@@ -35,10 +35,11 @@ const vitepressConfig = defineConfig({
       );
     },
   },
+  lang: 'en-CA',
   locales: {
     root: {
       label: 'English',
-      lang: 'en',
+      lang: 'en-CA',
     },
   },
   head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
@@ -82,6 +83,15 @@ const vitepressConfig = defineConfig({
     externalLinkIcon: true,
     lastUpdated: {
       text: 'Last updated',
+      // formatOptions: {
+      //   year: 'numeric',
+      //   month: '2-digit',
+      //   day: '2-digit',
+      //   hour: '2-digit',
+      //   minute: '2-digit',
+      //   second: '2-digit',
+      //   hourCycle: 'h23',
+      // },
     },
     search: {
       provider: 'local',
