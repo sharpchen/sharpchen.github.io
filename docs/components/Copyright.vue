@@ -5,9 +5,6 @@
         <br />
         Powered by
         <a class="bold" target="_blank" href="//vitepress.vuejs.org/">VitePress - {{ vitepressVersion }}</a>
-        <!-- <br />
-        Markdown Themed by
-        <a class="bold" target="_blank" href="https://github.com/fisheva/Eva-Theme">Eva-Theme@fisheva</a> -->
     </div>
 </template>
 

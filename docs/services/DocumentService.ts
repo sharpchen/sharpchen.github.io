@@ -11,7 +11,7 @@ export const skillDocMap = {
   'Modern CSharp': { icon: '🦖', description: '' },
   Articles: { icon: '📰', description: 'Regular articles' },
   Avalonia: { icon: '😱', description: 'AvaloniaUI' },
-  Docker: { icon: '🐳', description: '' },
+  // Docker: { icon: '🐳', description: '' },
   Git: { icon: '🐙', description: 'Git mastery' },
   JavaScript: { icon: '😅', description: '' },
   // SQL: { icon: '🦭', description: '' },
