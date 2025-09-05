@@ -2,11 +2,18 @@
 
 ## Binding Markup Extensions
 
-- `Binding`
-- `CompiledBinding`
+- `Binding`: the default binding method depending on scope or project setting, can be one of:
+    - `CompiledBinding`
+    - `ReflectionBinding`
 - `MultiBinding`
-- `ReflectionBinding`
-- ...
+- `StaticResource`: bind a resource for only **once**(on initialization)
+- `DynamicResource`: bind and watch the change of the resource
+- `x:Type`: reference for type, not real markup extension but has similar usage.
+- `x:Static`: reference for static/const members, not real markup extension but has similar usage.
+
+> [!NOTE]
+> Avalonia project created from dotnet template usually enabled `<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>` by default.
+> So, you don't need explicit `CompiledBinding`, you're already using it.
 
 TODO: each binding markup is an extension type, how does it work?
 https://docs.avaloniaui.net/docs/concepts/markupextensions
@@ -45,7 +52,6 @@ https://docs.avaloniaui.net/docs/concepts/markupextensions
 </local:MyControl>
 ```
 
-
 > [!NOTE]
 > See [Binding To Controls](https://docs.avaloniaui.net/docs/guides/data-binding/binding-to-controls)
 
@@ -56,3 +62,5 @@ https://docs.avaloniaui.net/docs/concepts/markupextensions
 ## Bind From Code
 
 <!-- TODO: https://docs.avaloniaui.net/docs/guides/data-binding/binding-from-code -->
+
+## Binding with Interpolation
