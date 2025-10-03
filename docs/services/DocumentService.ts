@@ -30,6 +30,7 @@ export const skillDocMap = {
   // 'HTML & CSS': { icon: '😬', description: '' },
   PowerShell: { icon: '🐚', description: 'A pretty solid shell' },
   Lua: { icon: '🌝', description: '' },
+  Networking: { icon: '🖥️', description: 'A lot protocols' },
 } as const satisfies DocumentInfo;
 
 const readingDocMap = {
