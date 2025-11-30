@@ -44,6 +44,8 @@ end
     ```lua
     local function foo(...) return unpack { ... } end
     _ = { foo(1, 2, 3) } -- [1, 2, 3]
+    _ = unpack({ 1, 2, 3, 4 }, 2) -- slice from index 2 to end(as splattered)
+    _ = { unpack({ 1, 2, 3, 4 }, 2) } -- slice from index 2 to end(collected as table)
     ```
 
 ## Iterator Function

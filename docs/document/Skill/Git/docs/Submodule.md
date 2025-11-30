@@ -10,17 +10,3 @@ git submodule add <repository_url> <path_to_submodule>
 ```
 
 Details of submodules can be inspected from `.gitmodules`
-
-## Clone with Submodule
-
-Fetching submodule on clone:
-
-```sh
-git clone <url> --recursive
-```
-
-If you forgot to append `--recursive` option when cloning for the first time, you can still remedy using the following command.
-
-```sh
-git submodule update --init --recursive
-```

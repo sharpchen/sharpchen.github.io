@@ -12,8 +12,8 @@ Nix does not handle string evaluation for all types but string, path and a nix p
 For other types, requires `builtins.toString`.
 
 ```nix
-"${123}"  # cannot evaluate number to string # [!code error] 
-"${builtins.toString 123}" # ok # [!code highlight] 
+"${123}"  # cannot evaluate number to string # [!code error]
+"${builtins.toString 123}" # ok # [!code highlight]
 ```
 
 ### Evaluation for Package
@@ -63,7 +63,7 @@ stdenv.mkDerivation {
 }
 ```
 
-Some editors support syntax injection for multi-line string. 
+`nvim-treesitter` plugin supports syntax injection for multi-line string.
 Add filetype as comment before the string to inform syntax parser.
 
 ```nix
@@ -80,14 +80,21 @@ in {}
 
 ### Escaping
 
+Escaping in double-quote string is pretty standard, using `\`
+
+```nix
+"[[ ! \${FOO-} ]] || return"
+```
+
+
 To escape in multi-line, prefix with `''`
 
 ```nix
 ''
-  This is a new line ''\n # [!code highlight] 
+  This is a new line ''\n # [!code highlight]
   This is a single quote: ''\'
-  This is also a single quote: '''
-  This is not a interpolation ''${foo} # [!code highlight] 
+  This is two single quotes: '''
+  This is not a interpolation ''${foo} # [!code highlight]
 ''
 ```
 
@@ -97,3 +104,8 @@ To escape in multi-line, prefix with `''`
 "foo" + "bar"
 ```
 
+To concat an list, use `builtins.concatStringsSep`
+
+```nix
+builtins.concatStringsSep "\n" [ "line1" "line2" "line3" ]
+```

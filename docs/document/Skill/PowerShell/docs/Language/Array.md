@@ -2,77 +2,64 @@
 
 ## Array Creation
 
+### From Constructor
+
 ```ps1
-$foo = 1,2,3
-$foo = @(1,2,3)
+$bar = [int[]]::new(5)
+```
 
-$foo = ,1 # with only one item
+### From Comma Operator
 
-$foo = 1..10 # from inclusive range 1 to 10
+Commas `,` create an array literal.
+
+```ps1
+$array = 1,2,3
+$single = ,1 # array with only one item
+```
+
+### From Array SubExpression Operator
+
+`@()` allows to spread collections to be part of a new array, expressions are separated by `;`
+
+```ps1
+@(<expr1>[; <expr2>...])
+
+$foo = @(1,2,3) # convoluted, @() unpacks inner array literal
 
 $foo = @() # empty array
 ```
 
-> [!NOTE]
-> The default type of a array literal is `object[]`, you can annotate with a type.
-> To create an empty array with fixed size, invoke `new()` constructor, this is also strongly typed.
-> ```ps1
-> [int[]]$foo = 1, 2, 3
-> $bar = [int[]]::new(5)
-> ```
+> [!IMPORTANT]
+> `;` distinguishes expressions while `,` creates array by the context
 
-> [!TIP]
-> Prefer `,...` to create an array with single element, it has less ambiguity.
+#### Array Merging
 
-> [!NOTE]
-> Things like `1,2,3` itself is an expression, you can capture them as an object.
-> But it cannot spread out items except a weird `,(1,2,3)`.
->```ps1
->(1,2,3).Length # 3
->
->$(1,2,3).Length # 3 this has different semantic but with same result
->
->(,(1,2,3)).Length # 3 # does spread items # [!code highlight]
->
->(,@(1,2,3)).Length # 1 # does not spread items # [!code highlight]
->
->((gci), (gci ..)).Length # 2 # [!code highlight]
-> ```
-
-### From Expression and Statement
-
-`@()` collects from expressions or statements like control flows that implicitly returns.
-You can choose either flatten items from expressions or treat them as a sub-array.
-
-- Use `;` to separate expressions for flatten arrays from them.
-- Use `,` to separate expressions if you want them to be sub-array.
+Given the nature of `@()` we can use it to merge different sources of collection-like objects/statement
 
 ```ps1
-@((1, 2, 3), (1, 2, 3)).Length # 2
-@((1, 2, 3); (1, 2, 3)).Length # 6
+@(1,2,3; 1,2,3).Length # 6
 
-@((ls), (ls ..)).Length # 2
-@(ls; ls ..).Length # > 0
+@(gci).Lengeth # 11
+@(gci; gci).Lengeth # 22
 
+@(@(1,2,3); @(1,2,3)).Length # 6
+
+# merge from collections
+$list = [System.Collections.Generic.List[string]]@(1,2,3)
+@($foo; @(1,2,3)).Length # 6
+
+# merge from enumerator
+$table = @{ foo = 123; bar = 123 }
+@($table.GetEnumerator(); @(1,2,3)).Length # 5
+
+# merge from control flow
 @(
     if ($true) {
         'yield this value to the array'
         'yield this value again'
-    }
-).Length # 2
-```
-
-### From Enumerator
-
-Similar to expression, you can collect items from a `IEnumerator`.
-
-```ps1
-$foo = @{
-    Name = 'foo'
-    Age = 18
-}
-
-@($foo.GetEnumerator()).Length # 2, System.Collections.DictionaryEntry from the HashTable # [!code highlight]
+    };
+    @(1,2,3)
+).Length # 5
 ```
 
 ### From Range
