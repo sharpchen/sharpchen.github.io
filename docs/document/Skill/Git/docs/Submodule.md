@@ -10,3 +10,13 @@ git submodule add <repository_url> <path_to_submodule>
 ```
 
 Details of submodules can be inspected from `.gitmodules`
+
+## Remove Submodule
+
+```sh
+git rm path/to/submodule
+```
+
+This deletes both physical storage of the submodule and its info in `.gitmodules`.
+Note that its history would still be reserved in case you wanted to inspect the old commits.
+You can manually delete it from `.git/modules/<submodule>` if you want to wipe out completely.

@@ -5,39 +5,71 @@
 - Root privilege on you android phone(it's not stable in devices without root)
 - nix-on-droid installed.
 - Optional: `adb`, `pwsh`
-    You can use `adb` to type inputs from your computer connected with your android device. 
+    You can use `adb` to type inputs from your computer connected with your android device.
     The following powershell function solves the escape problem of `adb shell input text`, so you don't have to escape manually.
     ```ps1
     # Use -Enter to press enter after command input
-    function adbin([string]$Str, [switch]$Enter) {
-        $special = @( ' ', '\|', '\$', '&', '\(', '\)', '~','\*', "\'",'"','<','>')
-        foreach ($char in $special) {
-            $Str = $Str -replace $char, ($char.Length -gt 1 ? $char : "\$char")
+    <#
+        This script helps to input text for terminal like Termux on Android
+        It may not function on input scenarios other than shell on Android
+        It DOES NOT start shell on Android but simulate key press to input text.
+        NOTE: if default port fails, try another port
+    #>
+    function Send-AdbShellInput {
+        param(
+            [Parameter(Mandatory)]
+            [string]$InputText,
+            [ushort]$Port = 5037,
+            [string]$SerialNumber,
+            [switch]$AcceptLine
+        )
+
+        begin {
+            & ./Assert-AdbServer.ps1 @PSBoundParameters
+
+            if (-not $SerialNumber) {
+                $flags = @('-P', $Port)
+            } else {
+                $flags = @('-P', $Port, '-s', $SerialNumber)
+            }
+
+            $specials = @'
+        |$%;\&~*'"`<>()
+        '@
+
         }
-        adb shell input text $Str
-        if ($Enter) {
-            adb shell input keyevent KEYCODE_ENTER
+
+        end {
+            $InputText = $InputText -replace "[$([regex]::Escape($specials))]", '\$0'
+            $InputText = $InputText -replace ' ', '%s'
+
+            adb @flags shell input text $InputText
+
+            if ($AcceptLine) {
+                adb @flags shell input keyevent KEYCODE_ENTER
+            }
         }
     }
+
     ```
     > [!NOTE]
     > You can wrap the same as bash function by `awk` or other text manipulation tools.
 
 ## Init
 
-- nix-on-droid may ask for url for certain file, if the url is not accessible on your phone, download it and transfer to your phone. And replace the default url as `file:///sdcard/...`
+1. `nix-on-droid` may ask for url for certain file, if the url is not accessible on your phone, download it and transfer to your phone. And replace the default url as `file:///sdcard/...`
 > remember to allow file permision for nix-on-droid.
-- type `yes` when nix prompt for downloads for first init.
-- add and update channels: 
+2. Type `yes` when nix prompt for downloads for first init.
+3. Add and update channels:
     ```sh
     nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs && nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager && nix-channel --update
     ```
     > [!TIP]
-    > If you use the wrapper function mentioned above, would be like this:
+    > If you use the wrapper function mentioned above, would much easier to input:
     >```ps1
-    >adbin -Enter 'nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager'
+    >Send-AdbShellInput -InputText 'nix-channel --add https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz home-manager' -AcceptLine
     >```
-- Update nix: default nix is out-dated, might not work with your current config like home-manager or any other.
+4. Update `nix` cli: default nix is out-dated, might not work with your current config like home-manager.
     ```sh
     nix profile install nixpkgs#nix --priority 4
     ```
@@ -69,9 +101,9 @@ mkdir -p ~/.ssh/ && touch ~/.ssh/authorized_keys && echo <pub> >> ~/.ssh/authori
 ```
 
 > [!TIP]
-> Use this instead if you prefer pwsh, replace the pubkey name if needed.
+> Use this instead if you prefer pwsh wrapper function above, replace the pubkey name if necessary.
 >```ps1
->adbin -Enter ('mkdir -p ~/.ssh/ && touch ~/.ssh/authorized_keys && echo ''{0}'' >> ~/.ssh/authorized_keys' -f (gc ~/.ssh/id_ed25519.pub))
+>Send-AdbShellInput -InputText ('mkdir -p ~/.ssh/ && touch ~/.ssh/authorized_keys && echo ''{0}'' >> ~/.ssh/authorized_keys' -f (gc ~/.ssh/id_ed25519.pub)) -AcceptLine
 >```
 
 - start ssh daemon by `sshd`
