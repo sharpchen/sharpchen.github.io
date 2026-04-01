@@ -6,20 +6,16 @@ Overview of pipeline in powershell:
 - Only one parameter can bind to a given pipeline object at a time.
 - PowerShell prioritizes by value over by property name.
 
-## Pipeline Parameter Binding
-
-
-
 ## Pipeline Input Strategy
 
 There's two solution when a pipeline input comes in as a fallback:
 
 - ByValue: the default strategy. Accepts when the coming object can be cast or converted to the target type of the parameter.
-- ByPropertyName: accepts when the coming object has property name matched to any parameter name of the cmdlet. 
+- ByPropertyName: accepts when the coming object has property name matched to any parameter name of the cmdlet.
 
 ### By Value
 
-
+The object is being passed by its own.
 
 ### By PropertyName
 
@@ -46,9 +42,9 @@ While for types that are not linear collection, manually invoking `GetEnumerator
 This is simply because these types are more likely to be treated as a whole object, even when dictionaries are `IEnumerable<KeyValuePair<,>>`.
 
 ```ps1
-$table = @{ Name = 'foo'; Age = 18 }   
+$table = @{ Name = 'foo'; Age = 18 }
 ($table | measure).Count # 1
-($table.GetEnumerator() | measure).Count # 2 # [!code highlight] 
+($table.GetEnumerator() | measure).Count # 2 # [!code highlight]
 ```
 
 ## Enumerate Pipeline Items
@@ -81,7 +77,7 @@ function Test {
         # $input.Current before MoveNext in each iteration is always $null
         # How weird!
         $input.Current -eq $null # True because we haven't start the enumeration!
-        $input.MoveNext() | Out-Null # [!code highlight] 
+        $input.MoveNext() | Out-Null # [!code highlight]
         $input.Current -eq $null # False
     }
 }
@@ -154,3 +150,60 @@ gci -file | Foo
 
 > [!TIP]
 > `ByPropertyName` parameter can also be a array type, it all depends the implementation you want, it behaves the same.
+
+## Pipeline Delegation
+
+> [!NOTE]
+> A function uses Pipeline Delegation is a *Proxy Function*
+
+Sometimes you might want to use an existing cmdlet to process items within your another custom cmdlet.
+
+For example, to make an alias `distinct` for `Sort-Object $name -Unique`, how could you do that while preserving the pipeline?
+
+You might think of `$input`, however `$input` collects all items before you pass it to the delegated cmdlet which is definitely not efficient.
+
+```ps1
+function distinct {
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [psobject]$InputObject,
+        [Parameter(Position = 0)]
+        [object]$Property
+    )
+
+    $input | Sort-Object $Property -Unique # [!code warning]
+}
+```
+
+To *concatenate* the pipeline, we can't do that in language level but using `scriptblock.GetSteppablePipeline` runtime call.
+The method constructs a inner entry for new *process* within the wrapper, A [`[System.Management.Automation.SteppablePipeline]`](https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.steppablepipeline?view=powershellsdk-7.4.0) would be returned with `Begin`[^1], `Process`, `End` method available.
+Note that the best practice is to inherit context like `$MyInvocation.CommandOrigin` and `$PSCmdlet` for the inner pipeline unless you know exactly your special needs.
+
+<!-- TODO: why use $MyInvocation.CommandOrigin? -->
+<!-- TODO: how to verify $PSCmdlet is inherited? -->
+
+```ps1
+function distinct {
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [psobject]$InputObject,
+        [Parameter(Position = 0)]
+        [object]$Property
+    )
+
+    begin {
+        $sort = { Sort-Object $Property -Unique }.GetSteppablePipeline($MyInvocation.CommandOrigin) # [!code highlight]
+        $sort.Begin($PSCmdlet) # pass context to the process
+    }
+
+    process {
+        $sort.Process($InputObject)
+    }
+
+    end {
+        $sort.End()
+    }
+}
+```
+
+[^1]: https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.steppablepipeline.begin?view=powershellsdk-7.4.0#system-management-automation-steppablepipeline-begin(system-boolean-system-management-automation-engineintrinsics)

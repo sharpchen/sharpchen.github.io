@@ -82,7 +82,7 @@ let _ = student.name // dot accessor for records // [!code highlight]
 
 **Discriminate Unions** uses new type to **wrap** over a known type to provide extra **label/description**.
 Such semantic difference is enforced by **nominal type system**. The following example shows how to define a `Shape` union with sub-types,
-the subjective relation is **not done by object inheritance** but by simple grouping since we don't need to maintain the statue thanks to **immutability**.
+the subjective relation is **not done by object inheritance** but by simple grouping since we don't need to maintain the object state thanks to **immutability**.
 
 ```fsharp
 type Shape =

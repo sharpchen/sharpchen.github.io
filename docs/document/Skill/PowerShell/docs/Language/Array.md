@@ -157,6 +157,23 @@ Use range operator to slice an array.
 > [!NOTE]
 > Differ from `C#`, range operator in Powershell is inclusive from both sides.
 
+## Flattening
+
+Powershell will implicitly unpack nested collection when evaluating items in `process` block.
+A general way to flatten collection is piping it to `ForEach-Object`.
+> [!IMPORTANT]
+> This approach only flatten **one level down**, you can't expand them further.
+
+```ps1
+$nested = 1, 2, 3, @(1, 2, 3)
+$flattened = $nested | foreach { $_ }
+$flattened.Count # 6
+
+$flatten = { process { $_ } }
+$flattened = $nested | & $flatten
+$flattened.Count # 6
+```
+
 ### Range Unions
 
 You can specify multiple ranges for slicing with `+`, selected item will be collected together.

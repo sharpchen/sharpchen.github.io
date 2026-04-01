@@ -19,6 +19,7 @@
     "@types/node": "^20.19.9",
     "axios": "^1.11.0",
     "jsonc-parser": "^3.3.1",
+    "markdown-it-mathjax3": "^4.3.2",
     "markdown-it-wikilinks": "^1.4.0",
     "mermaid": "11.7.0",
     "shiki": "^1.29.2",

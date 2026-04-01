@@ -16,7 +16,9 @@ type Is = ShikiThemeType extends VitepressThemeType ? true : false;
 const vitepressConfig = defineConfig({
   cleanUrls: true,
   markdown: {
+    math: true,
     lineNumbers: true,
+    image: { lazyLoading: true },
     theme: {
       light: 'github-light',
       dark: 'github-dark',
