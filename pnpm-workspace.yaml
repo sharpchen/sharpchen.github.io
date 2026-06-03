@@ -1,2 +1,5 @@
 onlyBuiltDependencies:
   - "reurl"
+allowBuilds:
+  reurl: true
+  esbuild: true

@@ -83,18 +83,18 @@ const vitepressConfig = defineConfig({
     socialLinks: [{ icon: 'github', link: 'https://github.com/sharpchen' }],
     siteTitle: 'sharpchen',
     externalLinkIcon: true,
-    lastUpdated: {
-      text: 'Last updated',
-      // formatOptions: {
-      //   year: 'numeric',
-      //   month: '2-digit',
-      //   day: '2-digit',
-      //   hour: '2-digit',
-      //   minute: '2-digit',
-      //   second: '2-digit',
-      //   hourCycle: 'h23',
-      // },
-    },
+    // lastUpdated: {
+    //   text: 'Last updated',
+    //   // formatOptions: {
+    //   //   year: 'numeric',
+    //   //   month: '2-digit',
+    //   //   day: '2-digit',
+    //   //   hour: '2-digit',
+    //   //   minute: '2-digit',
+    //   //   second: '2-digit',
+    //   //   hourCycle: 'h23',
+    //   // },
+    // },
     search: {
       provider: 'local',
     },

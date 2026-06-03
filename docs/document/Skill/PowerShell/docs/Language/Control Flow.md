@@ -11,9 +11,10 @@
 
 > [!NOTE]
 > You can cast falsy values to boolean.
->```ps1
->[bool]@() # False
->```
+>
+> ```ps1
+> [bool]@() # False
+> ```
 
 ## Newline Indicator
 
@@ -31,13 +32,14 @@ gci `
 
 > [!TIP]
 > Stop using backticks! They're ugly! Use HashTable splatting instead.
->```ps1
->$table = @{
+>
+> ```ps1
+> $table = @{
 >  Filter = '*.mp4';
 >  File = $true
->}
->gci @table
->```
+> }
+> gci @table
+> ```
 
 ## Multi-Line Piping
 
@@ -108,31 +110,33 @@ It has a few different patterns available:
 ### Overview
 
 `switch` in PowerShell differs from c-like languages in:
+
 - condition can be a procedure(scriptblock) so you can perform more nested and complex determine
-    ```ps1
-    switch (1) {
-        { $_ -is [int] } { "Int32" }
-    }
-    ```
+  ```ps1
+  switch (1) {
+      { $_ -is [int] } { "Int32" }
+  }
+  ```
 - can have implicit return, each time the case matches yields the result into the final array, or just the singular result when only one case matches
-    ```ps1
-    $foo = switch ($bar) { <# ... #> }
-    $foo -is [System.Object[]] # True
-    ```
+  ```ps1
+  $foo = switch ($bar) { <# ... #> }
+  $foo -is [System.Object[]] # True
+  ```
 - `default` block is not required(`$null` will be returned when no case is matched)
 - can match for not only a singular object but an collection
-    ```ps1
-    $foo = switch (1, 2, 3) {  }
-    ```
+  ```ps1
+  $foo = switch (1, 2, 3) {  }
+  ```
 - use `continue` to skip current enumeration
-    ```ps1
-    switch (1, 2) {
-        1 { continue } # I don't want to proceed with this value 1, next!
-        2 { "aha" }
-    } # aha
-    ```
+  ```ps1
+  switch (1, 2) {
+      1 { continue } # I don't want to proceed with this value 1, next!
+      2 { "aha" }
+  } # aha
+  ```
 
 There's options available for `switch`(specifically for `string` matching):
+
 - `-Exact`: the default option that matches the string by literal, can be elided
 - `-Regex`: match by regex condition
 - `-Wildcard`: match by wildcard condition
@@ -192,10 +196,11 @@ switch -Regex -CaseSensetive ("hello") {
 ## Trap
 
 `trap` is called as a statement in PowerShell, but it's more like a `trap` block
+
 - serve as a isolated process for handling any error raised in the script or function
 - can be defined anywhere inside the script or function
 
-But what makes it different from *block* is, you can specify multiple `trap` for different error types.
+But what makes it different from _block_ is, you can specify multiple `trap` for different error types.
 **And PowerShell only run the most specific `trap` statement for the error**
 
 > [!NOTE]
@@ -258,7 +263,7 @@ $foo.Length # 8
 
 ### Protected Call
 
-Cmdlet or functions with *Common Parameters* can perform a **protected call** that can be used as condition indicating whether the operation succeeded or not, while does not terminates the execution.
+Cmdlet or functions with _Common Parameters_ can perform a **protected call** that can be used as condition indicating whether the operation succeeded or not, while does not terminates the execution.
 This does not involve `try..catch`, which is very similar to a value based error handling in some other languages.
 You may store the error to a specified variable(an `ArrayList`) by `-ErrorVariable` to re-throw the message later if needed.
 
@@ -266,7 +271,7 @@ You may store the error to a specified variable(an `ArrayList`) by `-ErrorVariab
 if (Get-Command foo -ErrorAction SilentlyContinue) {
     # do something
 } else {
-    $Error[-1] # access latest error by automatic variable
+    $Error[0] # access latest error by automatic variable
 }
 if (Get-Command foo -ErrorAction SilentlyContinue -ErrorVariable err) {
     # do something
