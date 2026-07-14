@@ -1,5 +1,7 @@
 onlyBuiltDependencies:
   - "reurl"
+  - "esbuild"
 allowBuilds:
   reurl: true
   esbuild: true
+  reurl@https://codeload.github.com/jsepia/reurl/tar.gz/a3210117636c115fb139517fcfb2ea929025cded: true

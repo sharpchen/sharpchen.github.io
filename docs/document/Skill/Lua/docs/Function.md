@@ -10,9 +10,10 @@ print((function() end)() == nil) -- true
 
 ## Variadic Parameter
 
-Variadic parameter in lua does not have name and default type, it's a special identifier  `...` that has to be expanded to a table using `{ ... }`
+Variadic parameter in lua does not have name and default type, it's a special identifier `...` that has to be expanded to a table using `{ ... }`
 
 Such identifier can be used in:
+
 - `{ ... }`: direct expansion to a table
 - `{ a, ..., b }`: append extra items around inside a table
 - `select('#', ...)` and `select(idx, ...)` to get length or pick one item from args without intermediate expansion
@@ -39,14 +40,14 @@ end
 
 - `unpack(list: table, start?: integer, end?: integer)`: splatter items in successive indices from a table
 - `select(start: integer, ...any): ...unknown`: slice a splat from start into another splat
-    - `select(symbol: '#', ...any): ...unknown`: retrieve a length of the splat
+  - `select(symbol: '#', ...any): ...unknown`: retrieve a length of the splat
 - `{ <expr> }`: collect splats from `<expr>`, a function call for example.
-    ```lua
-    local function foo(...) return unpack { ... } end
-    _ = { foo(1, 2, 3) } -- [1, 2, 3]
-    _ = unpack({ 1, 2, 3, 4 }, 2) -- slice from index 2 to end(as splattered)
-    _ = { unpack({ 1, 2, 3, 4 }, 2) } -- slice from index 2 to end(collected as table)
-    ```
+  ```lua
+  local function foo(...) return unpack { ... } end
+  _ = { foo(1, 2, 3) } -- [1, 2, 3]
+  _ = unpack({ 1, 2, 3, 4 }, 2) -- slice from index 2 to end(as splattered)
+  _ = { unpack({ 1, 2, 3, 4 }, 2) } -- slice from index 2 to end(collected as table)
+  ```
 
 ## Iterator Function
 
@@ -81,3 +82,19 @@ for idx, item in iter_array { 1, 2, 3 } do
   print(idx, item)
 end
 ```
+
+> [!CAUTION]
+> Always remember to increment the `idx` before doing iteration, otherwise it can easily cause infinite iteration when you're not careful.
+>
+> ```lua
+> local idx = 0
+>
+> return function()
+>  idx = idx + 1 -- put it here
+>  if idx <= #array then
+>    current = rawget(array, idx)
+>    return idx, current
+>  end
+>  idx = idx + 1 -- not here -- [!code warning]
+> end
+> ```

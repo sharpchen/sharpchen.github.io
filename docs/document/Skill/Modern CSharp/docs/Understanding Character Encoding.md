@@ -14,7 +14,7 @@ In other words, characters are truths while Encodings are languages for the trut
 
 ## Coded Character Set
 
-A **Character Set** is certain set of concrete symbols, such as *A* to *Z* in human language.
+A **Character Set** is certain set of concrete symbols, such as _A_ to _Z_ in human language.
 A **Coded Character Set** is a Character Set with each item uniquely mapped to a numeric value.[^1]
 These numeric values are named as **Code Points**.
 
@@ -22,20 +22,20 @@ These numeric values are named as **Code Points**.
 
 ### Coded Charset is a Map
 
-A *coded character set* is a character set with each item uniquely mapped to a numeric value.[^1]
+A _coded character set_ is a character set with each item uniquely mapped to a numeric value.[^1]
 A character set has no real index, they theoretically exist on math, but to represent its range on computer, we have to cope with the size of integers.
 
 > [!NOTE]
-> In Unix and Unix-like systems, the term *charmap* is commonly used.
+> In Unix and Unix-like systems, the term _charmap_ is commonly used.
 
 ### Encoding as Charset?
 
 In the early days of computing, we don't have a intermediate map like Coded Character Set for encodings, we encode everything directly into bytes and vice versa.
-Encoding itself became the *de facto*  Coded Character Set when there's no intermediate map, this is the very reason why so many *ancient* encodings are also listed along with UTF encodings in your editor.
+Encoding itself became the _de facto_ Coded Character Set when there's no intermediate map, this is the very reason why so many _ancient_ encodings are also listed along with UTF encodings in your editor.
 ASCII for example, it sets `65` as the concrete value in byte of `A` while `65` is also the "code point" of `A` in ASCII table, meaning that it does not have any abstraction gap.
 
 > [!NOTE]
-> Of course ASCII has no concept of *code point*, we just borrow the idea from Unicode to adapt the mental model of Unicode over ASCII.
+> Of course ASCII has no concept of _code point_, we just borrow the idea from Unicode to adapt the mental model of Unicode over ASCII.
 
 ```cs
 // "code point" in ASCII is identical to its character presence in byte
@@ -57,8 +57,8 @@ This initial version of UCS is known as **UCS-2**, 2 means it takes 2 bytes to r
 But obviously we can imagine that our civilization keep evolving and creates more and more symbols to be added to UCS.
 Apparently 16-bit isn't enough to represent them all, Unicode started to design larger range for UCS.
 The original `2^16` range of UCS was named as **Basic Multilingual Plane(BMP)** afterward, which includes most commonly used characters.
-Unicode added extra 16 planes(17 in total) for future use, namely *supplementary planes*.
-Each supplementary planes has same amount of slots, which is *65536*
+Unicode added extra 16 planes(17 in total) for future use, namely _supplementary planes_.
+Each supplementary planes has same amount of slots, which is _65536_
 
 $$
 \begin{align}
@@ -81,12 +81,13 @@ _ = "👍".EnumerateRunes().Select(r => r.Plane).ToArray() is [1];
 
 Anything beyond **BMP** in UCS are of surrogate pair, two surrogates can be composed as 4-byte(`Int32`) code points.
 Only code points within certain range can be composed as part of the surrogate.
-The possible value of surrogates is selectively chosen from BMP, grouped as *high surrogates*(D800-DBFF) and *low surrogates*(DC00-DFFF), each has 1024 candidates in its range.
+The possible value of surrogates is selectively chosen from BMP, grouped as _high surrogates_(D800-DBFF) and _low surrogates_(DC00-DFFF), each has 1024 candidates in its range.
 Meaning that we have 1024 times 1024 possibilities to represent characters beyond BMP, exactly the same amount of code points in supplementary planes.
+
 <!-- TODO: why 1024 * 1024? -->
 
 > [!NOTE]
-> The high surrogates and low surrogates, `1024+1024=2048` in total, are *reserved surrogates* in BMP.
+> The high surrogates and low surrogates, `1024+1024=2048` in total, are _reserved surrogates_ in BMP.
 
 $$
 \begin{gather}
@@ -106,7 +107,7 @@ $$
 
 Unicode officially named the characters in BMP and those composed by surrogates as **Unicode Scalar Value**.
 Due to the variable-bit nature of UCS, some languages have a dedicated type to describe Unicode Scalar Value.
-`System.Text.Rune` is a implementation since .NET Core 3.0, the term *Rune* came from Go programming language[^2].
+`System.Text.Rune` is a implementation since .NET Core 3.0, the term _Rune_ came from Go programming language[^2].
 
 ```cs
 // Too many characters in character literal [CS1012]
@@ -140,11 +141,11 @@ Console.WriteLine("\U0001F44D" == "👍");
 #### Combining Character[^3]
 
 One character might have counterpart/variant in other cultures, with a little modification.
-Chinese pin-yin has *diacritics(变音符号)* on *final(韵母)*, a `ü` is a modification on `u`, appending diacritic on `ü` can make it a final `ǚ`.
+Chinese pin-yin has _diacritics(变音符号)_ on _final(韵母)_, a `ü` is a modification on `u`, appending diacritic on `ü` can make it a final `ǚ`.
 Here `u` is the **Base Letter** and the diacritics are **Combining Marks**[^4].
 
 > [!IMPORTANT]
-> [*Combining Mark*](https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-7/#G18195) is just one of the types of *Combining Character* in Unicode specification.
+> [_Combining Mark_](https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-7/#G18195) is just one of the types of _Combining Character_ in Unicode specification.
 > We can inspect [the category of a Unicode characters](#unicode-category) using `Rune.GetUnicodeCategory`.
 
 Most of these letter with diacritics have dedicated code point on BMP, which is called [**Precomposed character**](https://en.wikipedia.org/wiki/Precomposed_character):
@@ -159,17 +160,17 @@ _ = new Rune('ü').Plane is 0;
 _ = new Rune('ǚ').Plane is 0;
 ```
 
-But they also have a **composed form**, which combines *base letter* with *combining mark*, as the specification describes:
+But they also have a **composed form**, which combines _base letter_ with _combining mark_, as the specification describes:
 
 > In the Unicode Standard, all combining characters are to be used in sequence following the base characters to which they apply.[^5]
 
 We can "unpack" the characters being combined using [Normalization](#unicode-normalization)
 
-The benefit of inventing yet another form to represent existing characters is, the composing form can enforce corresponding encoding to read *base letter* before *combining marks*,
-making older versions of Unicode encoding implementations able to display the *base* and leave *combining characters* as non-character(box/question mark).
+The benefit of inventing yet another form to represent existing characters is, the composing form can enforce corresponding encoding to read _base letter_ before _combining marks_,
+making older versions of Unicode encoding implementations able to display the _base_ and leave _combining characters_ as non-character(box/question mark).
 
 This preserved some backward compatibility, a typical example is emoji, they're also composable.
-A emoji can be composed with a regular *base* `👍`(U+1F44D) with skin tone (U+1F3FC) in the following example.
+A emoji can be composed with a regular _base_ `👍`(U+1F44D) with skin tone (U+1F3FC) in the following example.
 When someone receives the emoji with skin tone in old device that has old encoding implementation, it will display a regular thumb-up and a non-character after it since the old encoding doesn't support it.
 This composing method preserved important information from the modern world to the ancient clients.
 
@@ -230,6 +231,10 @@ _ = "¼".Normalize(NormalizationForm.FormKD)
        .ToArray() is ['1', '⁄', '4'])
 ```
 
+#### Scalar Value & Grapheme
+
+<!-- TODO: Grapheme and scalar value are different! -->
+
 #### Unicode Category
 
 Any Unicode character has its named group in the specification, we may use `Rune.GetUnicodeCategory` to inspect it.
@@ -251,7 +256,7 @@ _ = Rune.GetUnicodeCategory(
 ### Universal Transformation Format
 
 > [!TIP]
-> *UTF* is in fact a derived format based on *Universal Coded Character Set(UCS)*.
+> _UTF_ is in fact a derived format based on _Universal Coded Character Set(UCS)_.
 > This implies that **we always have Coded Character Set before we implement a Encoding**, we need the map as a guide of transformation.
 > The charset itself is already an [Interface](#unicode-as-interface), a intermediate presence, allowing one to implement **conversion from one encoding to another**.
 
@@ -268,7 +273,7 @@ This implies UTF16 originally had no intermediate mapping just like ASCII until 
 
 #### Little & Big Endian
 
-TODO: figure out what's [word size](https://en.wikipedia.org/wiki/Word_(computer_architecture)#Word_size_choice) and how CPU process certain size when writing string bytes.
+TODO: figure out what's [word size](<https://en.wikipedia.org/wiki/Word_(computer_architecture)#Word_size_choice>) and how CPU process certain size when writing string bytes.
 TODO: and how such architecture difference requires BOM on UTF16.
 
 <!-- Each byte in hexadecimal is part of the code point of the character. -->
@@ -317,13 +322,13 @@ Once you read `A` which is of binary `01000001`, the leading `0` implies its a A
 If the current byte is `11100101`, then we know we should read next two bytes to consider the three as a whole.
 This design made UTF8 extremely comprehensive at byte presence, **with no byte-order issue**.
 
-|First Byte Bit Pattern | Meaning | Total Bytes|
-|-------------------------|---------|------------|
-| 0xxxxxxx | ASCII Character | 1 Byte |
-| 110xxxxx | Latin, Cyrillic alphabets etc | 2 Bytes |
-| 1110xxxx | The rest characters of BMP | 3 Bytes |
-| 11110xxx | Characters of surrogate pair | 4 Bytes |
-| 10xxxxxx | Continuation Byte | (Invalid as a start) |
+| First Byte Bit Pattern | Meaning                       | Total Bytes          |
+| ---------------------- | ----------------------------- | -------------------- |
+| 0xxxxxxx               | ASCII Character               | 1 Byte               |
+| 110xxxxx               | Latin, Cyrillic alphabets etc | 2 Bytes              |
+| 1110xxxx               | The rest characters of BMP    | 3 Bytes              |
+| 11110xxx               | Characters of surrogate pair  | 4 Bytes              |
+| 10xxxxxx               | Continuation Byte             | (Invalid as a start) |
 
 > **UTF32** is simply a radical evolution over UTF16, it takes 32-bit for every character, making it consistent but super consuming, also has byte-order problem.
 
@@ -337,9 +342,15 @@ To convert UTF16 to UTF8, we use UCS as an interface. We first convert UTF16 byt
 ## How Text Copying works
 
 [^1]: https://unicode.org/glossary/#coded_character_set
+
 [^2]: https://learn.microsoft.com/en-us/dotnet/fundamentals/runtime-libraries/system-text-rune?source=recommendations#rune-in-net-vs-other-languages
+
 [^3]: https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-2/#G1708
+
 [^4]: https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-2/#G1821
+
 [^5]: https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-7/#G18202
+
 [^6]: https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-2/#G11062
+
 [^7]: https://en.wikipedia.org/wiki/Unicode_compatibility_characters#Compatibility_character_types_and_keywords

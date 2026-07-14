@@ -58,14 +58,13 @@ Another option is use `$_` to represent the current item in `process` block, thi
 - `$input` represents a enumerator for pipeline input in `process` block.
 - `$input` represents the whole collection for pipeline input in `end` block.
 - `$input` will be consumed after being used once in either `process` or `end`. Use `Reset` to get it back.
-- You can't use `$input` in both `process` and `end`.
+- if `process` block exists, `$input` is empty in `end`
 
 ### Access Current Item
 
 > We're not going to talk about `$_`, it's fairly simple. All the quirks is about `$input`.
 
 `$input.Current` is `$null` by default, you'll have to manually invoke `MoveNext` before you access `Current` in `process` block since it's not a `while` loop.
-
 
 ```ps1
 function Test {
@@ -74,9 +73,8 @@ function Test {
     }
 
     process {
-        # $input.Current before MoveNext in each iteration is always $null
-        # How weird!
-        $input.Current -eq $null # True because we haven't start the enumeration!
+        $input.Current -eq $null # True because we haven't call MoveNext
+        # we must call MoveNext to get current value otherwise it's always null # [!code highlight]
         $input.MoveNext() | Out-Null # [!code highlight]
         $input.Current -eq $null # False
     }
@@ -154,7 +152,7 @@ gci -file | Foo
 ## Pipeline Delegation
 
 > [!NOTE]
-> A function uses Pipeline Delegation is a *Proxy Function*
+> A function uses Pipeline Delegation is a _Proxy Function_
 
 Sometimes you might want to use an existing cmdlet to process items within your another custom cmdlet.
 
@@ -175,8 +173,8 @@ function distinct {
 }
 ```
 
-To *concatenate* the pipeline, we can't do that in language level but using `scriptblock.GetSteppablePipeline` runtime call.
-The method constructs a inner entry for new *process* within the wrapper, A [`[System.Management.Automation.SteppablePipeline]`](https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.steppablepipeline?view=powershellsdk-7.4.0) would be returned with `Begin`[^1], `Process`, `End` method available.
+To _concatenate_ the pipeline, we can't do that in language level but using `scriptblock.GetSteppablePipeline` runtime call.
+The method constructs a inner entry for new _process_ within the wrapper, A [`[System.Management.Automation.SteppablePipeline]`](https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.steppablepipeline?view=powershellsdk-7.4.0) would be returned with `Begin`[^1], `Process`, `End` method available.
 Note that the best practice is to inherit context like `$MyInvocation.CommandOrigin` and `$PSCmdlet` for the inner pipeline unless you know exactly your special needs.
 
 <!-- TODO: why use $MyInvocation.CommandOrigin? -->
